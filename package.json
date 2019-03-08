@@ -1,0 +1,21 @@
+{
+  "name": "faust2webaudio",
+  "version": "0.0.1",
+  "description": "Generate WebAudio Node from Faust code or wasm compiled from faust",
+  "main": "./dist/index.js",
+  "scripts": {},
+  "author": "Fr0stbyteR",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.15.1",
+    "tslint": "^5.13.1",
+    "tslint-config-airbnb": "^5.11.1",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "libfaust-wasm": "file:../libfaust-wasm",
+    "sha1": "^1.1.1",
+    "utf8": "^3.0.0"
+  }
+}
