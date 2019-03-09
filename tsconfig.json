@@ -20,7 +20,7 @@
     "noFallthroughCasesInSwitch": true,
     "allowUnreachableCode": false,
     "experimentalDecorators": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
   },
   "include": [
     "src/*.ts"

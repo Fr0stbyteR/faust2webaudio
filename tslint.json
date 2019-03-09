@@ -69,7 +69,7 @@
       true,
       "never"
     ],
-    "no-this-assignment": false,
+    "no-this-assignment": true,
     "function-name": false,
     "variable-name": false,
     "align": false,

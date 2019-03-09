@@ -3,19 +3,29 @@
   "version": "0.0.1",
   "description": "Generate WebAudio Node from Faust code or wasm compiled from faust",
   "main": "./dist/index.js",
-  "scripts": {},
+  "scripts": {
+    "build": "webpack --mode development",
+    "dist": "webpack --mode production"
+  },
   "author": "Fr0stbyteR",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^5.15.1",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-typescript": "^7.3.3",
+    "babel-loader": "^8.0.5",
+    "crypto-libraries": "github:chrisveness/crypto",
+    "file-loader": "^3.0.1",
+    "ts-loader": "^5.3.3",
     "tslint": "^5.13.1",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.3.3333",
+    "webassembly-loader": "^1.1.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
   },
   "dependencies": {
-    "libfaust-wasm": "file:../libfaust-wasm",
-    "sha1": "^1.1.1",
-    "utf8": "^3.0.0"
+    "binaryen": "^72.0.0",
+    "libfaust-wasm": "github:fr0stbyter/libfaust-wasm"
   }
 }
