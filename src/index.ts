@@ -1,36 +1,7 @@
-import { FaustModule, LibFaust } from "libfaust-wasm";
+import { LibFaustLoader, LibFaust } from "libfaust-wasm";
 import sha1Js from "crypto-libraries/sha1.js";
 import * as Binaryen from "binaryen";
 const Sha1 = sha1Js;
-class FaustLoader {
-    static load() { // Don't convert to async
-        return fetch("./libfaust-wasm.wasm")
-        .then(response => response.arrayBuffer())
-        .then((buffer) => {
-            const libFaust = FaustModule({ wasmBinary: buffer });
-            libFaust.then = (f) => { // Workaround of issue https://github.com/emscripten-core/emscripten/issues/5820
-                f(libFaust);
-                delete libFaust.then;
-                return Promise.resolve(libFaust);
-            };
-            libFaust.lengthBytesUTF8 = (str: string) => {
-                let len = 0;
-                for (let i = 0; i < str.length; ++i) {
-                    let u = str.charCodeAt(i);
-                    if (u >= 55296 && u <= 57343) u = 65536 + ((u & 1023) << 10) | str.charCodeAt(++i) & 1023;
-                    if (u <= 127) ++len;
-                    else if (u <= 2047) len += 2;
-                    else if (u <= 65535) len += 3;
-                    else if (u <= 2097151) len += 4;
-                    else if (u <= 67108863) len += 5;
-                    else len += 6;
-                }
-                return len;
-            };
-            return libFaust;
-        }).then(libFaust => new Faust(libFaust));
-    }
-}
 class Faust {
     libFaust: LibFaust;
     createWasmCDSPFactoryFromString: ($name: number, $code: number, argvAuxLength: number, $argv: number, $errorMsg: number, internalMemory: boolean) => number;
@@ -488,5 +459,5 @@ class Faust {
         this._log.push(JSON.stringify(args));
     }
 }
-FaustLoader.load().then(faust => window["faust"] = faust);
-window["FaustLoader"] = FaustLoader;
+LibFaustLoader.load("./libfaust-wasm.wasm").then(libFaust => window["faust"] = new Faust(libFaust));
+window["LibFaustLoader"] = LibFaustLoader;
