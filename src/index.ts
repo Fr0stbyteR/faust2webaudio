@@ -1,6 +1,6 @@
 import { LibFaustLoader, LibFaust } from "libfaust-wasm";
 import sha1Js from "crypto-libraries/sha1.js";
-import * as Binaryen from "binaryen";
+// import * as Binaryen from "binaryen";
 const Sha1 = sha1Js;
 class Faust {
     libFaust: LibFaust;
@@ -363,6 +363,7 @@ class Faust {
     }
     readDSPFactoryFromMachineAux(codes: TCompiledCodes, shaKey: string, callback: (compiledDsp: TCompiledDsp) => any) {
         const time1 = performance.now();
+        /*
         if (typeof Binaryen !== "undefined") {
             try {
                 const binaryenModule = Binaryen.readBinary(codes.dsp.ui8Code);
@@ -375,7 +376,7 @@ class Faust {
                 this.log("Binaryen not available, no optimisation...");
             }
         }
-
+        */
         WebAssembly.compile(codes.dsp.ui8Code)
         .then((dspModule) => {
             const time2 = performance.now();

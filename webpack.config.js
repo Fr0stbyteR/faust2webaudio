@@ -35,16 +35,6 @@ module.exports = {
             }
           }
         ]
-      },
-      {
-        test: /\.wasm$/,
-        type: "javascript/auto",
-        use: [{
-            loader: "webassembly-loader",
-            options: {
-                export: "async"
-            }
-        }]
       }
     ]
   }
