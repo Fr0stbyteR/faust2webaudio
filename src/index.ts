@@ -1,8 +1,9 @@
 import { LibFaustLoader, LibFaust } from "libfaust-wasm";
-import sha1Js from "crypto-libraries/sha1.js";
+import sha1 from "crypto-libraries/sha1";
+import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes } from "./types";
+import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
 // import * as Binaryen from "binaryen";
-const Sha1 = sha1Js;
-class Faust {
+export class Faust {
     libFaust: LibFaust;
     createWasmCDSPFactoryFromString: ($name: number, $code: number, argvAuxLength: number, $argv: number, $errorMsg: number, internalMemory: boolean) => number;
     deleteAllWasmCDSPFactories: () => void;
@@ -195,7 +196,7 @@ class Faust {
     createDSPFactoryAux(code: string, argv: string[], internalMemory: boolean, callback: (...args: any) => any) {
         // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
         const strArgv = argv.join("");
-        const shaKey = Sha1.hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
+        const shaKey = sha1.hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
         const compiledDsp = this.factory_table[shaKey];
         if (compiledDsp) {
             this.log("Existing library : " + compiledDsp.codes.dspName);
@@ -337,7 +338,7 @@ class Faust {
         } as TCompiledStrCodes;
     }
     readDSPFactoryFromMachine(compiledStrCodes: TCompiledStrCodes, callback: (compiledDsp: TCompiledDsp) => any) {
-        const shaKey = Sha1.hash(compiledStrCodes.dsp.code, { msgFormat: "string" });
+        const shaKey = sha1.hash(compiledStrCodes.dsp.code, { msgFormat: "string" });
         const compiledDsp = this.factory_table[shaKey];
         if (compiledDsp) {
             this.log("Existing library : " + compiledDsp.codes.dspName);
@@ -451,6 +452,10 @@ class Faust {
         // The native C++ is cleared each time (freeWasmCModule has been already called in faust.compile)
         this.deleteAllWasmCDSPFactories();
     }
+    async createDSPInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number) {
+        return await new FaustWasmToScriptProcessor(compiledDsp, this).getNode(audioCtx, bufferSize);
+    }
+    deleteDSPInstance() {}
     log(...args: any[]) {
         if (this.debug) console.log(...args);
         this._log.push(JSON.stringify(args));
@@ -460,5 +465,6 @@ class Faust {
         this._log.push(JSON.stringify(args));
     }
 }
+window["F2SP"] = FaustWasmToScriptProcessor;
 LibFaustLoader.load("./libfaust-wasm.wasm").then(libFaust => window["faust"] = new Faust(libFaust));
 window["LibFaustLoader"] = LibFaustLoader;

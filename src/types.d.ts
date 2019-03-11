@@ -1,5 +1,5 @@
 /// <reference types="webassembly-js-api" />
-type TDSPMeta = {
+export type TDspMeta = {
     name: string,
     filename: string,
     compile_options: string,
@@ -10,10 +10,11 @@ type TDSPMeta = {
     version: string,
     library_list: string[],
     meta: { [key: string]: string }[],
-    ui: []
+    ui: TFaustUI
 };
-type TFaustUIItem = TFaustUIInputItem | TFaustUIOutputItem | TFaustUIGroup;
-type TFaustUIInputItem = {
+export type TFaustUI = TFaustUIGroup[];
+export type TFaustUIItem = TFaustUIInputItem | TFaustUIOutputItem | TFaustUIGroup;
+export type TFaustUIInputItem = {
     type: TFaustUIInputType,
     label: string,
     address: string,
@@ -24,29 +25,29 @@ type TFaustUIInputItem = {
     step?: string,
     meta?: any[]
 };
-type TFaustUIOutputItem = {
-    type: TFaustUIInputType,
+export type TFaustUIOutputItem = {
+    type: TFaustUIOutputType,
     label: string,
     address: string,
     index: string,
     min?: string,
     max?: string,
 };
-type TFaustUIGroupType = "vgroup" | "hgroup" | "tgroup";
-type TFaustUIOutputType = "hbargraph" | "vbargraph";
-type TFaustUIInputType = "vslider" | "hslider" | "button" | "checkbox" | "nentry";
-type TFaustUIGroup = {
+export type TFaustUIGroupType = "vgroup" | "hgroup" | "tgroup";
+export type TFaustUIOutputType = "hbargraph" | "vbargraph";
+export type TFaustUIInputType = "vslider" | "hslider" | "button" | "checkbox" | "nentry";
+export type TFaustUIGroup = {
     type: TFaustUIGroupType,
     label: string,
     items: TFaustUIItem[]
 }
-type TFaustUIType = TFaustUIGroupType | TFaustUIOutputType | TFaustUIInputType;
-type TCompiledCode = { ui8Code: Uint8Array, code: string, helpersCode: string };
-type TCompiledStrCode = { strCode: string, code: string, helpersCode: string };
-type TCompiledCodes = { dspName: string, dsp: TCompiledCode, effectName?: string, effect?: TCompiledCode};
-type TCompiledStrCodes = { dspName: string, dsp: TCompiledStrCode, effectName?: string, effect?: TCompiledStrCode};
-type THelpers = { json: string, base64Code: string, meta: TDSPMeta };
-type TCompiledDsp = {
+export type TFaustUIType = TFaustUIGroupType | TFaustUIOutputType | TFaustUIInputType;
+export type TCompiledCode = { ui8Code: Uint8Array, code: string, helpersCode: string };
+export type TCompiledStrCode = { strCode: string, code: string, helpersCode: string };
+export type TCompiledCodes = { dspName: string, dsp: TCompiledCode, effectName?: string, effect?: TCompiledCode};
+export type TCompiledStrCodes = { dspName: string, dsp: TCompiledStrCode, effectName?: string, effect?: TCompiledStrCode};
+export type THelpers = { json: string, base64Code: string, meta: TDspMeta };
+export type TCompiledDsp = {
     shaKey: string,
     polyphony: number[],
     dspModule: WebAssembly.Module,
@@ -55,8 +56,3 @@ type TCompiledDsp = {
     effectHelpers?: THelpers,
     codes: TCompiledCodes
 }
-declare module "libfaust-wasm/src/libfaust-wasm.wasm" {
-    export function wasmInstantiate(): Promise<{ instance: WebAssembly.Instance, module: WebAssembly.Module }>;
-    export default wasmInstantiate ;
-}
-interface Window { [key: string]: any }
