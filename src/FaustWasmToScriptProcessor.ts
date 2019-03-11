@@ -32,20 +32,14 @@ export class FaustWasmToScriptProcessor {
             table: new WebAssembly.Table({ initial: 0, element: "anyfunc" })
         }
     };
-    private _node: FaustScriptProcessorNode;
-    compiledDsp: TCompiledDsp;
     faust: Faust;
 
-    constructor(compiledDsp: TCompiledDsp, faust: Faust) {
-        this.compiledDsp = compiledDsp;
+    constructor(faust: Faust) {
         this.faust = faust;
     }
-    get node() {
-        return this._node;
-    }
-    private initNode(dspInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize: number) {
+    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize: number) {
         let node: FaustScriptProcessorNode;
-        const dspMeta = this.compiledDsp.dspHelpers.meta;
+        const dspMeta = compiledDsp.dspHelpers.meta;
         const inputs = parseInt(dspMeta.inputs);
         const outputs = parseInt(dspMeta.outputs);
         try {
@@ -241,18 +235,21 @@ export class FaustWasmToScriptProcessor {
      * Create a ScriptProcessorNode Web Audio object
      * by loading and compiling the Faust wasm file
      *
+     * @param {TCompiledDsp} compiledDsp - DSP Module compiled by libfaust
      * @param {AudioContext} audioCtx - the Web Audio context
      * @param {number} bufferSize - the bufferSize in frames
+     * @param {string} [mixerPath] - the path of polyphony mixer
      * @returns {Promise<ScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
      */
-    async getNode(audioCtx: AudioContext, bufferSize: number) {
+    async getNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number, mixerPath?: string) {
+        let node: FaustScriptProcessorNode;
         try {
-            const dspInstance = await WebAssembly.instantiate(this.compiledDsp.dspModule, FaustWasmToScriptProcessor.importObject);
-            this._node = this.initNode(dspInstance, audioCtx, bufferSize);
+            const dspInstance = await WebAssembly.instantiate(compiledDsp.dspModule, FaustWasmToScriptProcessor.importObject);
+            node = this.initNode(compiledDsp, dspInstance, audioCtx, bufferSize);
         } catch (e) {
             this.faust.error(e);
-            this.faust.error("Faust " + this.compiledDsp.codes.dspName + " cannot be loaded or compiled");
+            this.faust.error("Faust " + compiledDsp.codes.dspName + " cannot be loaded or compiled");
         }
-        return this._node;
+        return node;
     }
 }

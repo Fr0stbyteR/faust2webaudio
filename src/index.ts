@@ -188,9 +188,8 @@ export class Faust {
             let errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
             // Report the Emscripten error
             if (!errorMsg) errorMsg = e;
-            this.error(errorMsg);
             this.cleanupAfterException();
-            return null;
+            throw errorMsg;
         }
     }
     createDSPFactoryAux(code: string, argv: string[], internalMemory: boolean, callback: (...args: any) => any) {
@@ -218,7 +217,10 @@ export class Faust {
         const dspCompiledCode = this.compileCode(dspName, code, argv, internalMemory);
 
         if (!dspCompiledCode) return callback(null);
-        const effectCompiledCode = this.compileCode(effectName, effectCode, argv, internalMemory);
+        let effectCompiledCode: TCompiledCode;
+        try {
+            effectCompiledCode = this.compileCode(effectName, effectCode, argv, internalMemory);
+        } catch (e) {}
         const compiledCodes = { dspName, effectName, dsp: dspCompiledCode, effect: effectCompiledCode } as TCompiledCodes;
         return this.readDSPFactoryFromMachineAux(compiledCodes, shaKey, callback);
     }
@@ -409,7 +411,7 @@ export class Faust {
             this.factory_table[shaKey] = compiledDsp;
 
             // Possibly compile effect
-            if (!codes.effectName) {
+            if (codes.effectName && codes.effect) {
                 WebAssembly.compile(codes.effect.ui8Code)
                 .then((effectModule) => {
 
@@ -453,7 +455,7 @@ export class Faust {
         this.deleteAllWasmCDSPFactories();
     }
     async createDSPInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number) {
-        return await new FaustWasmToScriptProcessor(compiledDsp, this).getNode(audioCtx, bufferSize);
+        return await new FaustWasmToScriptProcessor(this).getNode(compiledDsp, audioCtx, bufferSize);
     }
     deleteDSPInstance() {}
     log(...args: any[]) {
