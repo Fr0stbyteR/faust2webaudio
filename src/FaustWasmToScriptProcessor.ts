@@ -1,7 +1,7 @@
 import { Faust } from "./index";
 import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
-import { TCompiledDsp } from "./types";
+import { TCompiledDsp, TFaustUI, TDspMeta, TFaustUIGroup, TFaustUIItem } from "./types";
 export class FaustWasmToScriptProcessor {
     private static heap2Str = (buf: number[]) => {
         let str = "";
@@ -11,33 +11,34 @@ export class FaustWasmToScriptProcessor {
         }
         return str;
     }
-    private static importObject = {
-        env: {
-            memoryBase: 0, tableBase: 0,
-            _abs: Math.abs,
-            // Float version
-            _acosf: Math.acos, _asinf: Math.asin, _atanf: Math.atan, _atan2f: Math.atan2,
-            _ceilf: Math.ceil, _cosf: Math.cos, _expf: Math.exp, _floorf: Math.floor,
-            _fmodf: (x: number, y: number) => x % y,
-            _logf: Math.log, _log10f: Math.log10, _max_f: Math.max, _min_f: Math.min,
-            _remainderf: (x: number, y: number) => x - Math.round(x / y) * y,
-            _powf: Math.pow, _roundf: Math.fround, _sinf: Math.sin, _sqrtf: Math.sqrt, _tanf: Math.tan,
-            // Double version
-            _acos: Math.acos, _asin: Math.asin, _atan: Math.atan, _atan2: Math.atan2,
-            _ceil: Math.ceil, _cos: Math.cos, _exp: Math.exp, _floor: Math.floor,
-            _fmod: (x: number, y: number) => x % y,
-            _log: Math.log, _log10: Math.log10, _max_: Math.max, _min_: Math.min,
-            _remainder: (x: number, y: number) => x - Math.round(x / y) * y,
-            _pow: Math.pow, _round: Math.fround, _sin: Math.sin, _sqrt: Math.sqrt, _tan: Math.tan,
-            table: new WebAssembly.Table({ initial: 0, element: "anyfunc" })
-        }
-    };
+    private static get importObject() {
+        return {
+            env: {
+                memory: null as WebAssembly.Memory, memoryBase: 0, tableBase: 0,
+                _abs: Math.abs,
+                // Float version
+                _acosf: Math.acos, _asinf: Math.asin, _atanf: Math.atan, _atan2f: Math.atan2,
+                _ceilf: Math.ceil, _cosf: Math.cos, _expf: Math.exp, _floorf: Math.floor,
+                _fmodf: (x: number, y: number) => x % y,
+                _logf: Math.log, _log10f: Math.log10, _max_f: Math.max, _min_f: Math.min,
+                _remainderf: (x: number, y: number) => x - Math.round(x / y) * y,
+                _powf: Math.pow, _roundf: Math.fround, _sinf: Math.sin, _sqrtf: Math.sqrt, _tanf: Math.tan,
+                // Double version
+                _acos: Math.acos, _asin: Math.asin, _atan: Math.atan, _atan2: Math.atan2,
+                _ceil: Math.ceil, _cos: Math.cos, _exp: Math.exp, _floor: Math.floor,
+                _fmod: (x: number, y: number) => x % y,
+                _log: Math.log, _log10: Math.log10, _max_: Math.max, _min_: Math.min,
+                _remainder: (x: number, y: number) => x - Math.round(x / y) * y,
+                _pow: Math.pow, _round: Math.fround, _sin: Math.sin, _sqrt: Math.sqrt, _tan: Math.tan,
+                table: new WebAssembly.Table({ initial: 0, element: "anyfunc" })
+            }
+        };
+    }
     faust: Faust;
-
     constructor(faust: Faust) {
         this.faust = faust;
     }
-    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize: number) {
+    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize: number, memory?: WebAssembly.Memory, voices?: number) {
         let node: FaustScriptProcessorNode;
         const dspMeta = compiledDsp.dspHelpers.meta;
         const inputs = parseInt(dspMeta.inputs);
@@ -46,9 +47,9 @@ export class FaustWasmToScriptProcessor {
             node = audioCtx.createScriptProcessor(bufferSize, inputs, outputs) as FaustScriptProcessorNode;
         } catch (e) {
             this.faust.error("Error in createScriptProcessor: " + e);
-            return null;
+            throw(e);
         }
-        node.meta = dspMeta;
+        node.dspMeta = dspMeta;
 
         node.outputHandler = null;
         node.$ins = null;
@@ -73,7 +74,7 @@ export class FaustWasmToScriptProcessor {
         node.sampleSize = 4;
 
         node.factory = dspInstance.exports as FaustWebAssemblyExports;
-        node.HEAP = node.factory.memory.buffer;
+        node.HEAP = voices ? memory.buffer : node.factory.memory.buffer;
         node.HEAP32 = new Int32Array(node.HEAP);
         node.HEAPF32 = new Float32Array(node.HEAP);
 
@@ -96,21 +97,119 @@ export class FaustWasmToScriptProcessor {
         // Start of HEAP index
 
         // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-        node.$audioHeap = parseInt(dspMeta.size);
+        node.$audioHeap = voices ? 0 : parseInt(node.dspMeta.size);
 
         // Setup pointers offset
         node.$$audioHeapInputs = node.$audioHeap;
         node.$$audioHeapOutputs = node.$$audioHeapInputs + node.numIn * node.ptrSize;
+        if (voices) {
+            node.$$audioHeapMixing = node.$$audioHeapOutputs + node.numOut * node.ptrSize;
+            // Setup buffer offset
+            node.$audioHeapInputs = node.$$audioHeapMixing + node.numOut * node.ptrSize;
+            node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * bufferSize * node.sampleSize;
+            node.$audioHeapMixing = node.$audioHeapOutputs + node.numOut * bufferSize * node.sampleSize;
+            node.$dsp = node.$audioHeapMixing + node.numOut * bufferSize * node.sampleSize;
+        } else {
+            node.$audioHeapInputs = node.$$audioHeapOutputs + node.numOut * node.ptrSize;
+            node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * bufferSize * node.sampleSize;
+            // Start of DSP memory : Mono DSP is placed first with index 0
+            node.$dsp = 0;
+        }
 
-        // Setup buffer offset
-        node.$audioHeapInputs = node.$$audioHeapOutputs + node.numOut * node.ptrSize;
-        node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * bufferSize * node.sampleSize;
+        if (voices) {
+            node.effectMeta = compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : null;
+            node.$mixing = null;
+            node.fFreqLabel$ = [];
+            node.fGateLabel$ = [];
+            node.fGainLabel$ = [];
+            node.fDate = 0;
 
-        // Start of DSP memory : DSP is placed first with index 0
-        node.$dsp = 0;
+            node.mixer = mixerInstance.exports;
+            node.effect = effectInstance ? effectInstance.exports : null;
+            this.faust.log(node.mixer);
+            this.faust.log(node.factory);
+            this.faust.log(node.effect);
+            // Start of DSP memory ('polyphony' DSP voices)
+            node.dspVoices$ = [];
+            node.dspVoicesState = [];
+            node.dspVoicesLevel = [];
+            node.dspVoicesDate = [];
+
+            node.kActiveVoice = 0;
+            node.kFreeVoice = -1;
+            node.kReleaseVoice = -2;
+            node.kNoVoice = -3;
+        }
 
         node.pathTable$ = {};
 
+        if (voices) {
+            for (let i = 0; i < voices; i++) {
+                node.dspVoices$[i] = node.$dsp + i * parseInt(node.dspMeta.size);
+                node.dspVoicesState[i] = node.kFreeVoice;
+                node.dspVoicesLevel[i] = 0;
+                node.dspVoicesDate[i] = 0;
+            }
+            // Effect memory starts after last voice
+            node.$effect = node.dspVoices$[voices - 1] + parseInt(node.dspMeta.size);
+
+            node.getPlayingVoice = (pitch) => {
+                let voice = node.kNoVoice;
+                let oldestDatePlaying = Number.MAX_VALUE;
+                for (let i = 0; i < voices; i++) {
+                    if (node.dspVoicesState[i] === pitch) {
+                        // Keeps oldest playing voice
+                        if (node.dspVoicesDate[i] < oldestDatePlaying) {
+                            oldestDatePlaying = node.dspVoicesDate[i];
+                            voice = i;
+                        }
+                    }
+                }
+                return voice;
+            };
+            // Always returns a voice
+            node.allocVoice = (voice) => {
+                // so that envelop is always re-initialized
+                node.factory.instanceClear(node.dspVoices$[voice]);
+                node.dspVoicesDate[voice] = node.fDate++;
+                node.dspVoicesState[voice] = node.kActiveVoice;
+                return voice;
+            };
+            node.getFreeVoice = () => {
+                for (let i = 0; i < voices; i++) {
+                    if (node.dspVoicesState[i] === node.kFreeVoice) return node.allocVoice(i);
+                }
+                let voiceRelease = node.kNoVoice;
+                let voicePlaying = node.kNoVoice;
+                let oldestDateRelease = Number.MAX_VALUE;
+                let oldestDatePlaying = Number.MAX_VALUE;
+                for (let i = 0; i < voices; i++) { // Scan all voices
+                    // Try to steal a voice in kReleaseVoice mode...
+                    if (node.dspVoicesState[i] === node.kReleaseVoice) {
+                        // Keeps oldest release voice
+                        if (node.dspVoicesDate[i] < oldestDateRelease) {
+                            oldestDateRelease = node.dspVoicesDate[i];
+                            voiceRelease = i;
+                        }
+                    } else {
+                        if (node.dspVoicesDate[i] < oldestDatePlaying) {
+                            oldestDatePlaying = node.dspVoicesDate[i];
+                            voicePlaying = i;
+                        }
+                    }
+                }
+                // Then decide which one to steal
+                if (oldestDateRelease !== Number.MAX_VALUE) {
+                    this.faust.log(`Steal release voice : voice_date = ${node.dspVoicesDate[voiceRelease]} cur_date = ${node.fDate} voice = ${voiceRelease}`);
+                    return node.allocVoice(voiceRelease);
+                }
+                if (oldestDatePlaying !== Number.MAX_VALUE) {
+                    this.faust.log(`Steal playing voice : voice_date = ${node.dspVoicesDate[voicePlaying]} cur_date = ${node.fDate} voice = ${voicePlaying}`);
+                    return node.allocVoice(voicePlaying);
+                }
+                return node.kNoVoice;
+            };
+        }
         node.updateOutputs = () => {
             if (node.outputsItems.length > 0 && node.outputHandler && node.outputsTimer-- === 0) {
                 node.outputsTimer = 5;
@@ -126,7 +225,21 @@ export class FaustWasmToScriptProcessor {
             }
             // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
             if (node.computeHandler) node.computeHandler(bufferSize);
-            node.factory.compute(node.$dsp, bufferSize, node.$ins, node.$outs); // Compute
+            if (voices) {
+                node.mixer.clearOutput(bufferSize, node.numOut, node.$outs); // First clear the outputs
+                for (let i = 0; i < voices; i++) { // Compute all running voices
+                    if (node.dspVoicesState[i] === node.kFreeVoice) continue;
+                    node.factory.compute(node.dspVoices$[i], bufferSize, node.$ins, node.$mixing); // Compute voice
+                    node.dspVoicesLevel[i] = node.mixer.mixVoice(bufferSize, node.numOut, node.$mixing, node.$outs); // Mix it in result
+                    // Check the level to possibly set the voice in kFreeVoice again
+                    if (node.dspVoicesLevel[i] < 0.0005 && node.dspVoicesState[i] === node.kReleaseVoice) {
+                        node.dspVoicesState[i] = node.kFreeVoice;
+                    }
+                }
+                if (node.effect) node.effect.compute(node.$effect, bufferSize, node.$outs, node.$outs); // Apply effect. Not a typo, effect is applied on the outs.
+            } else {
+                node.factory.compute(node.$dsp, bufferSize, node.$ins, node.$outs); // Compute
+            }
             node.updateOutputs(); // Update bargraph
             for (let i = 0; i < node.numOut; i++) { // Write outputs
                 const output = e.outputBuffer.getChannelData(i);
@@ -184,8 +297,10 @@ export class FaustWasmToScriptProcessor {
             }
             if (node.numOut > 0) {
                 node.$outs = node.$$audioHeapOutputs;
+                if (voices) node.$mixing = node.$$audioHeapMixing;
                 for (let i = 0; i < node.numOut; i++) {
                     node.HEAP32[(node.$outs >> 2) + i] = node.$audioHeapOutputs + bufferSize * node.sampleSize * i;
+                    if (voices) node.HEAP32[(node.$mixing >> 2) + i] = node.$audioHeapMixing + bufferSize * node.sampleSize * i;
                 }
                 // Prepare Out buffer tables
                 const dspOutChans = node.HEAP32.subarray(node.$outs >> 2, (node.$outs + node.numOut * node.ptrSize) >> 2);
@@ -194,21 +309,77 @@ export class FaustWasmToScriptProcessor {
                 }
             }
             // Parse JSON UI part
-            node.parseUI(node.meta.ui);
-            // Init DSP
-            node.factory.init(node.$dsp, audioCtx.sampleRate);
+            node.parseUI(node.dspMeta.ui);
+            if (node.effect) node.parseUI(node.effectMeta.ui);
+
+            // keep 'keyOn/keyOff' labels
+            if (voices) {
+                node.inputsItems.forEach((item) => {
+                    if (item.endsWith("/gate")) node.fGateLabel$.push(node.pathTable$[item]);
+                    else if (item.endsWith("/freq")) node.fFreqLabel$.push(node.pathTable$[item]);
+                    else if (item.endsWith("/gain")) node.fGainLabel$.push(node.pathTable$[item]);
+                });
+                // Init DSP voices
+                node.dspVoices$.forEach($voice => node.factory.init($voice, audioCtx.sampleRate));
+                // Init effect
+                if (node.effect) node.effect.init(node.$effect, audioCtx.sampleRate);
+            } else {
+                // Init DSP
+                node.factory.init(node.$dsp, audioCtx.sampleRate);
+            }
         };
         node.getSampleRate = () => audioCtx.sampleRate;
         node.getNumInputs = () => node.numIn;
         node.getNumOutputs = () => node.numOut;
-        node.init = sampleRate => node.factory.init(node.$dsp, sampleRate);
-        node.instanceInit = sampleRate => node.factory.instanceInit(node.$dsp, sampleRate);
-        node.instanceConstants = sampleRate => node.factory.instanceConstants(node.$dsp, sampleRate);
-        node.instanceResetUserInterface = () => node.factory.instanceResetUserInterface(node.$dsp);
-        node.instanceClear = () => node.factory.instanceClear(node.$dsp);
-        node.metadata = handler => dspMeta.meta ? dspMeta.meta.forEach(meta => handler.declare(Object.keys(meta)[0], meta[Object.keys(meta)[0]])) : undefined;
+        node.init = (sampleRate) => {
+            if (voices) node.dspVoices$.forEach($voice => node.factory.init($voice, sampleRate));
+            else node.factory.init(node.$dsp, sampleRate);
+        };
+        node.instanceInit = (sampleRate) => {
+            if (voices) node.dspVoices$.forEach($voice => node.factory.instanceInit($voice, sampleRate));
+            else node.factory.instanceInit(node.$dsp, sampleRate);
+        };
+        node.instanceConstants = (sampleRate) => {
+            if (voices) node.dspVoices$.forEach($voice => node.factory.instanceConstants($voice, sampleRate));
+            else node.factory.instanceConstants(node.$dsp, sampleRate);
+        };
+        node.instanceResetUserInterface = () => {
+            if (voices) node.dspVoices$.forEach($voice => node.factory.instanceResetUserInterface($voice));
+            else node.factory.instanceResetUserInterface(node.$dsp);
+        };
+        node.instanceClear = () => {
+            if (voices) node.dspVoices$.forEach($voice => node.factory.instanceClear($voice));
+            else node.factory.instanceClear(node.$dsp);
+        };
+        node.metadata = handler => node.dspMeta.meta ? node.dspMeta.meta.forEach(meta => handler.declare(Object.keys(meta)[0], meta[Object.keys(meta)[0]])) : undefined;
         node.setOutputParamHandler = handler => node.outputHandler = handler;
         node.getOutputParamHandler = () => node.outputHandler;
+        node.setComputeHandler = handler => node.computeHandler = handler;
+        node.getComputeHandler = () => node.computeHandler;
+        if (voices) {
+            const midiToFreq = (note: number) => 440.0 * Math.pow(2.0, (note - 69.0) / 12.0);
+            node.keyOn = (channel, pitch, velocity) => {
+                const voice = node.getFreeVoice();
+                this.faust.log("keyOn voice " + voice);
+                node.fFreqLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, midiToFreq(pitch)));
+                node.fGateLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, 1));
+                node.fGainLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, velocity / 127));
+                node.dspVoicesState[voice] = pitch;
+            };
+            node.keyOff = (channel, pitch, velocity) => {
+                const voice = node.getPlayingVoice(pitch);
+                if (voice === node.kNoVoice) return this.faust.log("Playing voice not found...");
+                this.faust.log("keyOff voice " + voice);
+                node.fGateLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, 0)); // No use of velocity for now...
+                node.dspVoicesState[voice] = node.kReleaseVoice; // Release voice
+            };
+            node.allNotesOff = () => {
+                for (let i = 0; i < voices; i++) {
+                    node.fGateLabel$.forEach($gate => node.factory.setParamValue(node.dspVoices$[i], $gate, 0));
+                    node.dspVoicesState[i] = node.kReleaseVoice;
+                }
+            };
+        }
         const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
         node.ctrlChange = (channel, ctrl, value) => {
             if (!node.fCtrlLabel[ctrl].length) return;
@@ -224,9 +395,52 @@ export class FaustWasmToScriptProcessor {
                 if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
             });
         };
-        node.setParamValue = (path, val) => node.factory.setParamValue(node.$dsp, node.pathTable$[path], val);
-        node.getParamValue = path => node.factory.getParamValue(node.$dsp, node.pathTable$[path]);
-        node.getJSON = () => JSON.stringify(dspMeta);
+        const findPath = (o: any, p: string) => {
+            if (typeof o !== "object") return false;
+            if (o.address) {
+                if (o.address === p) return true;
+                return false;
+            }
+            for (const k in o) {
+                if (findPath(o[k], p)) return true;
+            }
+            return false;
+        };
+        node.setParamValue = (path, val) => {
+            if (voices) {
+                if (node.effect && findPath(node.effectMeta.ui, path)) node.effect.setParamValue(node.$effect, node.pathTable$[path], val);
+                else node.dspVoices$.forEach($voice => node.factory.setParamValue($voice, node.pathTable$[path], val));
+            } else {
+                node.factory.setParamValue(node.$dsp, node.pathTable$[path], val);
+            }
+        };
+        node.getParamValue = (path) => {
+            if (voices) {
+                if (node.effect && findPath(node.effectMeta.ui, path)) return node.effect.getParamValue(node.$effect, node.pathTable$[path]);
+                return node.factory.getParamValue(node.dspVoices$[0], node.pathTable$[path]);
+            }
+            return node.factory.getParamValue(node.$dsp, node.pathTable$[path]);
+        };
+        node.getParams = () => node.inputsItems;
+        node.getJSON = () => {
+            if (voices) {
+                const o = node.dspMeta;
+                const e = node.effectMeta;
+                const r = { ...o };
+                if (e) {
+                    r.ui = [{ type: "tgroup", label: "Sequencer", items: [
+                        { type: "vgroup", label: "Instrument", items: o.ui },
+                        { type: "vgroup", label: "Effect", items: e.ui }
+                    ] }];
+                } else {
+                    r.ui = [{ type: "tgroup", label: "Polyphonic", items: [
+                        { type: "vgroup", label: "Voices", items: o.ui }
+                    ] }];
+                }
+                return JSON.stringify(r);
+            }
+            return JSON.stringify(node.dspMeta);
+        };
         // Init resulting DSP
         node.setup();
         return node;
@@ -239,17 +453,55 @@ export class FaustWasmToScriptProcessor {
      * @param {AudioContext} audioCtx - the Web Audio context
      * @param {number} bufferSize - the bufferSize in frames
      * @param {string} [mixerPath] - the path of polyphony mixer
+     * @param {number} [voices] - polyphony voices
      * @returns {Promise<ScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
      */
-    async getNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number, mixerPath?: string) {
+    async getNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number, mixerPath?: string, voices?: number) {
         let node: FaustScriptProcessorNode;
+        const importObject = FaustWasmToScriptProcessor.importObject;
         try {
-            const dspInstance = await WebAssembly.instantiate(compiledDsp.dspModule, FaustWasmToScriptProcessor.importObject);
-            node = this.initNode(compiledDsp, dspInstance, audioCtx, bufferSize);
+            let mixerInstance: WebAssembly.Instance;
+            let effectInstance: WebAssembly.Instance;
+            let memory: WebAssembly.Memory;
+            if (voices) {
+                memory = FaustWasmToScriptProcessor.createMemory(compiledDsp, bufferSize, voices);
+                importObject.env.memory = memory;
+                const mixerObject = { imports: { print: console.log }, memory: { memory } };
+                const mixerFile = await fetch(mixerPath);
+                const mixerBuffer = await mixerFile.arrayBuffer();
+                const mixerModule = await WebAssembly.instantiate(mixerBuffer, mixerObject);
+                mixerInstance = mixerModule.instance;
+                try {
+                    effectInstance = await WebAssembly.instantiate(compiledDsp.effectModule, importObject);
+                } catch (e) {}
+            }
+            const dspInstance = await WebAssembly.instantiate(compiledDsp.dspModule, importObject);
+            node = this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices);
         } catch (e) {
-            this.faust.error(e);
             this.faust.error("Faust " + compiledDsp.codes.dspName + " cannot be loaded or compiled");
+            throw(e);
         }
         return node;
+    }
+    static createMemory(compiledDsp: TCompiledDsp, bufferSize: number, voices: number) {
+        // Memory allocator
+        const ptrSize = 4;
+        const sampleSize = 4;
+        const pow2limit = (x: number) => {
+            let n = 65536; // Minimum = 64 kB
+            while (n < x) { n = 2 * n; }
+            return n;
+        };
+        const dspMeta = compiledDsp.dspHelpers.meta;
+        const effectMeta = compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : null;
+        const effectSize = effectMeta ? parseInt(effectMeta.size) : 0;
+        let memorySize = pow2limit(
+            effectSize
+            + parseInt(dspMeta.size) * voices
+            + (parseInt(dspMeta.inputs) + parseInt(dspMeta.outputs) * 2)
+            * (ptrSize + bufferSize * sampleSize)
+        ) / 65536;
+        memorySize = Math.max(2, memorySize); // As least 2
+        return new WebAssembly.Memory({ initial: memorySize, maximum: memorySize });
     }
 }

@@ -2,8 +2,10 @@
 import "./types";
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
 import { TDspMeta, TFaustUI, TFaustUIGroup, TFaustUIItem } from "./types";
+import { FaustWebAssemblyMixerExports } from "./FaustWebAssemblyMixerExports";
 export interface FaustScriptProcessorNode extends ScriptProcessorNode {
-    meta: TDspMeta;
+    dspMeta: TDspMeta;
+    effectMeta?: TDspMeta;
     $ins: number;
     $outs: number;
     dspInChannnels: Float32Array[];
@@ -28,6 +30,30 @@ export interface FaustScriptProcessorNode extends ScriptProcessorNode {
     HEAP: ArrayBuffer;
     HEAP32: Int32Array;
     HEAPF32: Float32Array;
+
+    $effect?: number;
+    $mixing?: number;
+    fFreqLabel$?: number[];
+    fGateLabel$?: number[];
+    fGainLabel$?: number[];
+    fDate?: number;
+    $$audioHeapMixing?: number;
+    $audioHeapMixing?: number;
+    mixer?: FaustWebAssemblyMixerExports;
+    effect?: FaustWebAssemblyExports;
+    dspVoices$?: number[];
+    dspVoicesState?: number[];
+    dspVoicesLevel?: number[];
+    dspVoicesDate?: number[];
+    kActiveVoice?: number;
+    kFreeVoice?: number;
+    kReleaseVoice?: number;
+    kNoVoice?: number;
+
+    getPlayingVoice?: (pitch: number) => number;
+    allocVoice?: (voice: number) => number;
+    getFreeVoice?: () => number;
+
     outputHandler: (address: string, value: number) => any;
     computeHandler: (bufferSize: number) => any;
     updateOutputs: () => void;
@@ -73,12 +99,18 @@ export interface FaustScriptProcessorNode extends ScriptProcessorNode {
      */
     init: (sampleRate: number) => void;
     /**
-     * Init instance constant state.
+     * Init instance state.
      *
      * @param {number} sampleRate - the sampling rate in Hertz
      * @memberof FaustScriptProcessorNode
      */
     instanceInit: (sampleRate: number) => void;
+    /**
+     * Init instance constant state.
+     *
+     * @param {number} sampleRate - the sampling rate in Hertz
+     * @memberof FaustScriptProcessorNode
+     */
     instanceConstants: (sampleRate: number) => void;
     /**
      * Init default control parameters values.
@@ -115,6 +147,44 @@ export interface FaustScriptProcessorNode extends ScriptProcessorNode {
      * @memberof FaustScriptProcessorNode
      */
     getOutputParamHandler: () => (path: string, value: number) => any;
+    /**
+     * Set a compute handler to be called each audio cycle
+     * (for instance to synchronize playing a MIDIFile...).
+     *
+     * @param {(bufferSize: number) => any} handler - a function of type function(buffer_size)
+     * @memberof FaustScriptProcessorNode
+     */
+    setComputeHandler: (handler: (bufferSize: number) => any) => void;
+    /**
+     * Get the current compute handler.
+     *
+     * @memberof FaustScriptProcessorNode
+     */
+    getComputeHandler: () => (bufferSize: number) => any;
+    /**
+     * Instantiates a new polyphonic voice.
+     *
+     * @param {number} channel - the MIDI channel (0..15, not used for now)
+     * @param {number} pitch - the MIDI pitch (0..127)
+     * @param {number} velocity - the MIDI velocity (0..127)
+     * @memberof FaustScriptProcessorNode
+     */
+    keyOn: (channel: number, pitch: number, velocity: number) => void;
+    /**
+     * De-instantiates a polyphonic voice.
+     *
+     * @param {number} channel - the MIDI channel (0..15, not used for now)
+     * @param {number} pitch - the MIDI pitch (0..127)
+     * @param {number} velocity - the MIDI velocity (0..127)
+     * @memberof FaustScriptProcessorNode
+     */
+    keyOff: (channel: number, pitch: number, velocity: number) => void;
+    /**
+     * Gently terminates all the active voices.
+     *
+     * @memberof FaustScriptProcessorNode
+     */
+    allNotesOff: () => void;
     /**
      * Control change
      *
