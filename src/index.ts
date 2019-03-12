@@ -2,6 +2,8 @@ import { LibFaustLoader, LibFaust } from "libfaust-wasm";
 import sha1 from "crypto-libraries/sha1";
 import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes } from "./types";
 import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
+import { FaustAudioWorkletProcessorWrapper } from "./FaustAudioWorkletProcessor";
+import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
 // import * as Binaryen from "binaryen";
 export class Faust {
     libFaust: LibFaust;
@@ -209,10 +211,10 @@ export class Faust {
         const effectName = "effect" + this.factory_number++;
 
         // Create 'effect' expression
-        const effectCode = "adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _; "
-            + "adaptor(F,G) = adapt(outputs(F),inputs(G));"
-            + "dsp_code = environment{" + code + "};"
-            + "process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;";
+        const effectCode = `adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _;
+            adaptor(F,G) = adapt(outputs(F),inputs(G));
+            dsp_code = environment{${code}};
+            process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
 
         const dspCompiledCode = this.compileCode(dspName, code, argv, internalMemory);
 
@@ -458,6 +460,24 @@ export class Faust {
         return await new FaustWasmToScriptProcessor(this).getNode(compiledDsp, audioCtx, bufferSize);
     }
     deleteDSPInstance() {}
+    async createDSPWorkletInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext) {
+        if (!compiledDsp.polyphony.length) {
+            const strProcessor = `
+const faustData = ${JSON.stringify({
+    name: compiledDsp.codes.dspName,
+    dspMeta: compiledDsp.dspHelpers.meta,
+    dspBase64Code: compiledDsp.dspHelpers.base64Code,
+    effectMeta: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : undefined,
+    effectBase64Code: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.base64Code : undefined
+})};
+(${FaustAudioWorkletProcessorWrapper.toString()})();
+`;
+            const url = window.URL.createObjectURL(new Blob([strProcessor], { type: "text/javascript" }));
+            await audioCtx.audioWorklet.addModule(url);
+            compiledDsp.polyphony.push(1);
+        }
+        return new FaustAudioWorkletNode(audioCtx, compiledDsp);
+    }
     log(...args: any[]) {
         if (this.debug) console.log(...args);
         this._log.push(JSON.stringify(args));

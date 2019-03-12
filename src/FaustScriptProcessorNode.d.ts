@@ -18,7 +18,7 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode {
     outputsTimer: number;
     inputsItems: string[];
     outputsItems: string[];
-    pathTable$: { [address: string]: number }
+    pathTable$: { [address: string]: number };
     $audioHeap: number;
     $$audioHeapInputs: number;
     $$audioHeapOutputs: number;
@@ -184,6 +184,13 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode {
      * @memberof FaustScriptProcessorNode
      */
     allNotesOff: () => void;
+    /**
+     * Handle Raw MIDI Messages 
+     *
+     * @param {number[]} data - MIDI message as array
+     * @memberof FaustScriptProcessorNode
+     */
+    midiMessage: (data: number[]) => void;
     /**
      * Control change
      *

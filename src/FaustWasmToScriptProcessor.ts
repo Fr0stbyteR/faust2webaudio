@@ -61,7 +61,7 @@ export class FaustWasmToScriptProcessor {
 
         node.fPitchwheelLabel = [];
         // tslint:disable-next-line: prefer-array-literal
-        node.fCtrlLabel = new Array(128).fill(null).map(() => []),
+        node.fCtrlLabel = new Array(128).fill(null).map(() => []);
 
         node.numIn = inputs;
         node.numOut = outputs;
@@ -380,6 +380,15 @@ export class FaustWasmToScriptProcessor {
                 }
             };
         }
+        node.midiMessage = (data: number[]) => {
+            const cmd = data[0] >> 4;
+            const channel = data[0] & 0xf;
+            const data1 = data[1];
+            const data2 = data[2];
+            if (channel === 9) return;
+            if (cmd === 11) return node.ctrlChange(channel, data1, data2);
+            if (cmd === 14) return node.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
+        };
         const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
         node.ctrlChange = (channel, ctrl, value) => {
             if (!node.fCtrlLabel[ctrl].length) return;
