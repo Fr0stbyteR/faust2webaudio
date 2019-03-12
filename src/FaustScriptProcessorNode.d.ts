@@ -1,9 +1,8 @@
 /// <reference types="webassembly-js-api" />
-import "./types";
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
 import { TDspMeta, TFaustUI, TFaustUIGroup, TFaustUIItem } from "./types";
 import { FaustWebAssemblyMixerExports } from "./FaustWebAssemblyMixerExports";
-export interface FaustScriptProcessorNode extends ScriptProcessorNode {
+export class FaustScriptProcessorNode extends ScriptProcessorNode {
     dspMeta: TDspMeta;
     effectMeta?: TDspMeta;
     $ins: number;

@@ -1,7 +1,7 @@
 import { Faust } from "./index";
 import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
-import { TCompiledDsp, TFaustUI, TDspMeta, TFaustUIGroup, TFaustUIItem } from "./types";
+import { TCompiledDsp } from "./types";
 export class FaustWasmToScriptProcessor {
     private static heap2Str = (buf: number[]) => {
         let str = "";
