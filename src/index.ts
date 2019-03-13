@@ -478,6 +478,7 @@ const faustData = ${JSON.stringify({
         }
         return new FaustAudioWorkletNode(audioCtx, compiledDsp);
     }
+    deleteDSPWorkletInstance() {}
     log(...args: any[]) {
         if (this.debug) console.log(...args);
         this._log.push(JSON.stringify(args));

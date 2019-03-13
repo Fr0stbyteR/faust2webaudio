@@ -2,9 +2,12 @@
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
 import { TDspMeta, TFaustUI, TFaustUIGroup, TFaustUIItem } from "./types";
 import { FaustWebAssemblyMixerExports } from "./FaustWebAssemblyMixerExports";
-export class FaustScriptProcessorNode extends ScriptProcessorNode {
+import { IFaustDspNode } from "./IFaustDspNode";
+export class FaustScriptProcessorNode extends ScriptProcessorNode implements IFaustDspNode {
+    // From FaustDSPNode interface
+    bufferSize: number;
+    voices: number;
     dspMeta: TDspMeta;
-    effectMeta?: TDspMeta;
     $ins: number;
     $outs: number;
     dspInChannnels: Float32Array[];
@@ -30,6 +33,7 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode {
     HEAP32: Int32Array;
     HEAPF32: Float32Array;
 
+    effectMeta?: TDspMeta;
     $effect?: number;
     $mixing?: number;
     fFreqLabel$?: number[];
@@ -49,24 +53,32 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode {
     kReleaseVoice?: number;
     kNoVoice?: number;
 
-    getPlayingVoice?: (pitch: number) => number;
-    allocVoice?: (voice: number) => number;
-    getFreeVoice?: () => number;
-
     outputHandler: (address: string, value: number) => any;
     computeHandler: (bufferSize: number) => any;
     updateOutputs: () => void;
+
     compute: (e: AudioProcessingEvent) => void;
     parseUI: (ui: TFaustUI) => void;
     parseGroup: (group: TFaustUIGroup) => void;
     parseItems: (items: TFaustUIItem[]) => void;
     parseItem: (ui: TFaustUIItem) => void;
-    /**
-     * Setup WebAudio ScriptProcessor callbacks
-     *
-     * @memberof FaustScriptProcessorNode
-     */
+
+    setParamValue: (path: string, val: number) => void;
+    getParamValue: (path: string) => number;
+
     setup: () => void;
+
+    getPlayingVoice?: (pitch: number) => number;
+    allocVoice?: (voice: number) => number;
+    getFreeVoice?: () => number;
+    keyOn?: (channel: number, pitch: number, velocity: number) => void;
+    keyOff?: (channel: number, pitch: number, velocity: number) => void;
+    allNotesOff?: () => void;
+
+    midiMessage: (data: number[]) => void;
+    ctrlChange: (channel: number, ctrl: number, value: number) => void;
+    pitchWheel: (channel: number, wheel: number) => void;
+
     /**
      * Return current sample rate.
      *
@@ -160,71 +172,6 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode {
      * @memberof FaustScriptProcessorNode
      */
     getComputeHandler: () => (bufferSize: number) => any;
-    /**
-     * Instantiates a new polyphonic voice.
-     *
-     * @param {number} channel - the MIDI channel (0..15, not used for now)
-     * @param {number} pitch - the MIDI pitch (0..127)
-     * @param {number} velocity - the MIDI velocity (0..127)
-     * @memberof FaustScriptProcessorNode
-     */
-    keyOn: (channel: number, pitch: number, velocity: number) => void;
-    /**
-     * De-instantiates a polyphonic voice.
-     *
-     * @param {number} channel - the MIDI channel (0..15, not used for now)
-     * @param {number} pitch - the MIDI pitch (0..127)
-     * @param {number} velocity - the MIDI velocity (0..127)
-     * @memberof FaustScriptProcessorNode
-     */
-    keyOff: (channel: number, pitch: number, velocity: number) => void;
-    /**
-     * Gently terminates all the active voices.
-     *
-     * @memberof FaustScriptProcessorNode
-     */
-    allNotesOff: () => void;
-    /**
-     * Handle Raw MIDI Messages 
-     *
-     * @param {number[]} data - MIDI message as array
-     * @memberof FaustScriptProcessorNode
-     */
-    midiMessage: (data: number[]) => void;
-    /**
-     * Control change
-     *
-     * @param {number} channel - the MIDI channel (0..15, not used for now)
-     * @param {number} ctrl - the MIDI controller number (0..127)
-     * @param {number} value - the MIDI controller value (0..127)
-     * @memberof FaustScriptProcessorNode
-     */
-    ctrlChange: (channel: number, ctrl: number, value: number) => void;
-    /**
-     * PitchWheel
-     *
-     * @param {number} channel - the MIDI channel (0..15, not used for now)
-     * @param {number} value - the MIDI controller value (-1..1)
-     * @memberof FaustScriptProcessorNode
-     */
-    pitchWheel: (channel: number, wheel: number) => void;
-    /**
-     * Set control value.
-     *
-     * @param {string} path - the path to the wanted control (retrieved using 'getParams' method)
-     * @param {number} val - the float value for the wanted parameter
-     * @memberof FaustScriptProcessorNode
-     */
-    setParamValue: (path: string, val: number) => void;
-    /**
-     * Get control value.
-     *
-     * @param {string} path - the path to the wanted control (retrieved using 'controls' method)
-     *
-     * @returns {number} the float value
-     * @memberof FaustScriptProcessorNode
-     */
-    getParamValue: (path: string) => number;
     /**
      * Get the table of all input parameters paths.
      *

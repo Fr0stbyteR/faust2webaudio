@@ -14,7 +14,7 @@ export class FaustWasmToScriptProcessor {
     private static get importObject() {
         return {
             env: {
-                memory: null as WebAssembly.Memory, memoryBase: 0, tableBase: 0,
+                memory: undefined as WebAssembly.Memory, memoryBase: 0, tableBase: 0,
                 _abs: Math.abs,
                 // Float version
                 _acosf: Math.acos, _asinf: Math.asin, _atanf: Math.atan, _atan2f: Math.atan2,
@@ -49,6 +49,7 @@ export class FaustWasmToScriptProcessor {
             this.faust.error("Error in createScriptProcessor: " + e);
             throw(e);
         }
+        node.voices = voices;
         node.dspMeta = dspMeta;
 
         node.outputHandler = null;
@@ -74,7 +75,7 @@ export class FaustWasmToScriptProcessor {
         node.sampleSize = 4;
 
         node.factory = dspInstance.exports as FaustWebAssemblyExports;
-        node.HEAP = voices ? memory.buffer : node.factory.memory.buffer;
+        node.HEAP = node.voices ? memory.buffer : node.factory.memory.buffer;
         node.HEAP32 = new Int32Array(node.HEAP);
         node.HEAPF32 = new Float32Array(node.HEAP);
 
@@ -97,26 +98,26 @@ export class FaustWasmToScriptProcessor {
         // Start of HEAP index
 
         // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-        node.$audioHeap = voices ? 0 : parseInt(node.dspMeta.size);
+        node.$audioHeap = node.voices ? 0 : parseInt(node.dspMeta.size);
 
         // Setup pointers offset
         node.$$audioHeapInputs = node.$audioHeap;
         node.$$audioHeapOutputs = node.$$audioHeapInputs + node.numIn * node.ptrSize;
-        if (voices) {
+        if (node.voices) {
             node.$$audioHeapMixing = node.$$audioHeapOutputs + node.numOut * node.ptrSize;
             // Setup buffer offset
             node.$audioHeapInputs = node.$$audioHeapMixing + node.numOut * node.ptrSize;
-            node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * bufferSize * node.sampleSize;
-            node.$audioHeapMixing = node.$audioHeapOutputs + node.numOut * bufferSize * node.sampleSize;
-            node.$dsp = node.$audioHeapMixing + node.numOut * bufferSize * node.sampleSize;
+            node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * node.bufferSize * node.sampleSize;
+            node.$audioHeapMixing = node.$audioHeapOutputs + node.numOut * node.bufferSize * node.sampleSize;
+            node.$dsp = node.$audioHeapMixing + node.numOut * node.bufferSize * node.sampleSize;
         } else {
             node.$audioHeapInputs = node.$$audioHeapOutputs + node.numOut * node.ptrSize;
-            node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * bufferSize * node.sampleSize;
+            node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * node.bufferSize * node.sampleSize;
             // Start of DSP memory : Mono DSP is placed first with index 0
             node.$dsp = 0;
         }
 
-        if (voices) {
+        if (node.voices) {
             node.effectMeta = compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : null;
             node.$mixing = null;
             node.fFreqLabel$ = [];
@@ -143,73 +144,6 @@ export class FaustWasmToScriptProcessor {
 
         node.pathTable$ = {};
 
-        if (voices) {
-            for (let i = 0; i < voices; i++) {
-                node.dspVoices$[i] = node.$dsp + i * parseInt(node.dspMeta.size);
-                node.dspVoicesState[i] = node.kFreeVoice;
-                node.dspVoicesLevel[i] = 0;
-                node.dspVoicesDate[i] = 0;
-            }
-            // Effect memory starts after last voice
-            node.$effect = node.dspVoices$[voices - 1] + parseInt(node.dspMeta.size);
-
-            node.getPlayingVoice = (pitch) => {
-                let voice = node.kNoVoice;
-                let oldestDatePlaying = Number.MAX_VALUE;
-                for (let i = 0; i < voices; i++) {
-                    if (node.dspVoicesState[i] === pitch) {
-                        // Keeps oldest playing voice
-                        if (node.dspVoicesDate[i] < oldestDatePlaying) {
-                            oldestDatePlaying = node.dspVoicesDate[i];
-                            voice = i;
-                        }
-                    }
-                }
-                return voice;
-            };
-            // Always returns a voice
-            node.allocVoice = (voice) => {
-                // so that envelop is always re-initialized
-                node.factory.instanceClear(node.dspVoices$[voice]);
-                node.dspVoicesDate[voice] = node.fDate++;
-                node.dspVoicesState[voice] = node.kActiveVoice;
-                return voice;
-            };
-            node.getFreeVoice = () => {
-                for (let i = 0; i < voices; i++) {
-                    if (node.dspVoicesState[i] === node.kFreeVoice) return node.allocVoice(i);
-                }
-                let voiceRelease = node.kNoVoice;
-                let voicePlaying = node.kNoVoice;
-                let oldestDateRelease = Number.MAX_VALUE;
-                let oldestDatePlaying = Number.MAX_VALUE;
-                for (let i = 0; i < voices; i++) { // Scan all voices
-                    // Try to steal a voice in kReleaseVoice mode...
-                    if (node.dspVoicesState[i] === node.kReleaseVoice) {
-                        // Keeps oldest release voice
-                        if (node.dspVoicesDate[i] < oldestDateRelease) {
-                            oldestDateRelease = node.dspVoicesDate[i];
-                            voiceRelease = i;
-                        }
-                    } else {
-                        if (node.dspVoicesDate[i] < oldestDatePlaying) {
-                            oldestDatePlaying = node.dspVoicesDate[i];
-                            voicePlaying = i;
-                        }
-                    }
-                }
-                // Then decide which one to steal
-                if (oldestDateRelease !== Number.MAX_VALUE) {
-                    this.faust.log(`Steal release voice : voice_date = ${node.dspVoicesDate[voiceRelease]} cur_date = ${node.fDate} voice = ${voiceRelease}`);
-                    return node.allocVoice(voiceRelease);
-                }
-                if (oldestDatePlaying !== Number.MAX_VALUE) {
-                    this.faust.log(`Steal playing voice : voice_date = ${node.dspVoicesDate[voicePlaying]} cur_date = ${node.fDate} voice = ${voicePlaying}`);
-                    return node.allocVoice(voicePlaying);
-                }
-                return node.kNoVoice;
-            };
-        }
         node.updateOutputs = () => {
             if (node.outputsItems.length > 0 && node.outputHandler && node.outputsTimer-- === 0) {
                 node.outputsTimer = 5;
@@ -217,36 +151,6 @@ export class FaustWasmToScriptProcessor {
             }
         };
 
-        node.compute = (e) => {
-            for (let i = 0; i < node.numIn; i++) { // Read inputs
-                const input = e.inputBuffer.getChannelData(i);
-                const dspInput = node.dspInChannnels[i];
-                dspInput.set(input);
-            }
-            // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
-            if (node.computeHandler) node.computeHandler(bufferSize);
-            if (voices) {
-                node.mixer.clearOutput(bufferSize, node.numOut, node.$outs); // First clear the outputs
-                for (let i = 0; i < voices; i++) { // Compute all running voices
-                    if (node.dspVoicesState[i] === node.kFreeVoice) continue;
-                    node.factory.compute(node.dspVoices$[i], bufferSize, node.$ins, node.$mixing); // Compute voice
-                    node.dspVoicesLevel[i] = node.mixer.mixVoice(bufferSize, node.numOut, node.$mixing, node.$outs); // Mix it in result
-                    // Check the level to possibly set the voice in kFreeVoice again
-                    if (node.dspVoicesLevel[i] < 0.0005 && node.dspVoicesState[i] === node.kReleaseVoice) {
-                        node.dspVoicesState[i] = node.kFreeVoice;
-                    }
-                }
-                if (node.effect) node.effect.compute(node.$effect, bufferSize, node.$outs, node.$outs); // Apply effect. Not a typo, effect is applied on the outs.
-            } else {
-                node.factory.compute(node.$dsp, bufferSize, node.$ins, node.$outs); // Compute
-            }
-            node.updateOutputs(); // Update bargraph
-            for (let i = 0; i < node.numOut; i++) { // Write outputs
-                const output = e.outputBuffer.getChannelData(i);
-                const dspOutput = node.dspOutChannnels[i];
-                output.set(dspOutput);
-            }
-        };
         // JSON parsing
         node.parseUI = ui => ui.forEach(group => node.parseGroup(group));
         node.parseGroup = group => group.items ? node.parseItems(group.items) : null;
@@ -272,91 +176,78 @@ export class FaustWasmToScriptProcessor {
                     } else {
                         const matched = strMidi.match(/^ctrl\s(\d+)/);
                         if (!matched) return;
-                        node.fCtrlLabel[parseInt(matched[1])].push({
-                            path: item.address,
-                            min: parseFloat(item.min),
-                            max: parseFloat(item.max)
-                        });
+                        node.fCtrlLabel[parseInt(matched[1])].push({ path: item.address, min: parseFloat(item.min), max: parseFloat(item.max) });
                     }
                 });
             }
         };
-        node.setup = () => { // Setup web audio context
-            this.faust.log("buffer_size " + bufferSize);
-            node.onaudioprocess = node.compute;
-            if (node.numIn > 0) {
-                node.$ins = node.$$audioHeapInputs;
-                for (let i = 0; i < node.numIn; i++) {
-                    node.HEAP32[(node.$ins >> 2) + i] = node.$audioHeapInputs + bufferSize * node.sampleSize * i;
-                }
-                // Prepare Ins buffer tables
-                const dspInChans = node.HEAP32.subarray(node.$ins >> 2, (node.$ins + node.numIn * node.ptrSize) >> 2);
-                for (let i = 0; i < node.numIn; i++) {
-                    node.dspInChannnels[i] = node.HEAPF32.subarray(dspInChans[i] >> 2, (dspInChans[i] + bufferSize * node.sampleSize) >> 2);
-                }
-            }
-            if (node.numOut > 0) {
-                node.$outs = node.$$audioHeapOutputs;
-                if (voices) node.$mixing = node.$$audioHeapMixing;
-                for (let i = 0; i < node.numOut; i++) {
-                    node.HEAP32[(node.$outs >> 2) + i] = node.$audioHeapOutputs + bufferSize * node.sampleSize * i;
-                    if (voices) node.HEAP32[(node.$mixing >> 2) + i] = node.$audioHeapMixing + bufferSize * node.sampleSize * i;
-                }
-                // Prepare Out buffer tables
-                const dspOutChans = node.HEAP32.subarray(node.$outs >> 2, (node.$outs + node.numOut * node.ptrSize) >> 2);
-                for (let i = 0; i < node.numOut; i++) {
-                    node.dspOutChannnels[i] = node.HEAPF32.subarray(dspOutChans[i] >> 2, (dspOutChans[i] + bufferSize * node.sampleSize) >> 2);
-                }
-            }
-            // Parse JSON UI part
-            node.parseUI(node.dspMeta.ui);
-            if (node.effect) node.parseUI(node.effectMeta.ui);
 
-            // keep 'keyOn/keyOff' labels
-            if (voices) {
-                node.inputsItems.forEach((item) => {
-                    if (item.endsWith("/gate")) node.fGateLabel$.push(node.pathTable$[item]);
-                    else if (item.endsWith("/freq")) node.fFreqLabel$.push(node.pathTable$[item]);
-                    else if (item.endsWith("/gain")) node.fGainLabel$.push(node.pathTable$[item]);
-                });
-                // Init DSP voices
-                node.dspVoices$.forEach($voice => node.factory.init($voice, audioCtx.sampleRate));
-                // Init effect
-                if (node.effect) node.effect.init(node.$effect, audioCtx.sampleRate);
-            } else {
-                // Init DSP
-                node.factory.init(node.$dsp, audioCtx.sampleRate);
+        if (node.voices) {
+            for (let i = 0; i < node.voices; i++) {
+                node.dspVoices$[i] = node.$dsp + i * parseInt(node.dspMeta.size);
+                node.dspVoicesState[i] = node.kFreeVoice;
+                node.dspVoicesLevel[i] = 0;
+                node.dspVoicesDate[i] = 0;
             }
-        };
-        node.getSampleRate = () => audioCtx.sampleRate;
-        node.getNumInputs = () => node.numIn;
-        node.getNumOutputs = () => node.numOut;
-        node.init = (sampleRate) => {
-            if (voices) node.dspVoices$.forEach($voice => node.factory.init($voice, sampleRate));
-            else node.factory.init(node.$dsp, sampleRate);
-        };
-        node.instanceInit = (sampleRate) => {
-            if (voices) node.dspVoices$.forEach($voice => node.factory.instanceInit($voice, sampleRate));
-            else node.factory.instanceInit(node.$dsp, sampleRate);
-        };
-        node.instanceConstants = (sampleRate) => {
-            if (voices) node.dspVoices$.forEach($voice => node.factory.instanceConstants($voice, sampleRate));
-            else node.factory.instanceConstants(node.$dsp, sampleRate);
-        };
-        node.instanceResetUserInterface = () => {
-            if (voices) node.dspVoices$.forEach($voice => node.factory.instanceResetUserInterface($voice));
-            else node.factory.instanceResetUserInterface(node.$dsp);
-        };
-        node.instanceClear = () => {
-            if (voices) node.dspVoices$.forEach($voice => node.factory.instanceClear($voice));
-            else node.factory.instanceClear(node.$dsp);
-        };
-        node.metadata = handler => node.dspMeta.meta ? node.dspMeta.meta.forEach(meta => handler.declare(Object.keys(meta)[0], meta[Object.keys(meta)[0]])) : undefined;
-        node.setOutputParamHandler = handler => node.outputHandler = handler;
-        node.getOutputParamHandler = () => node.outputHandler;
-        node.setComputeHandler = handler => node.computeHandler = handler;
-        node.getComputeHandler = () => node.computeHandler;
-        if (voices) {
+            // Effect memory starts after last voice
+            node.$effect = node.dspVoices$[node.voices - 1] + parseInt(node.dspMeta.size);
+
+            node.getPlayingVoice = (pitch) => {
+                let voice = node.kNoVoice;
+                let oldestDatePlaying = Number.MAX_VALUE;
+                for (let i = 0; i < node.voices; i++) {
+                    if (node.dspVoicesState[i] === pitch) {
+                        // Keeps oldest playing voice
+                        if (node.dspVoicesDate[i] < oldestDatePlaying) {
+                            oldestDatePlaying = node.dspVoicesDate[i];
+                            voice = i;
+                        }
+                    }
+                }
+                return voice;
+            };
+            // Always returns a voice
+            node.allocVoice = (voice) => {
+                // so that envelop is always re-initialized
+                node.factory.instanceClear(node.dspVoices$[voice]);
+                node.dspVoicesDate[voice] = node.fDate++;
+                node.dspVoicesState[voice] = node.kActiveVoice;
+                return voice;
+            };
+            node.getFreeVoice = () => {
+                for (let i = 0; i < node.voices; i++) {
+                    if (node.dspVoicesState[i] === node.kFreeVoice) return node.allocVoice(i);
+                }
+                let voiceRelease = node.kNoVoice;
+                let voicePlaying = node.kNoVoice;
+                let oldestDateRelease = Number.MAX_VALUE;
+                let oldestDatePlaying = Number.MAX_VALUE;
+                for (let i = 0; i < node.voices; i++) { // Scan all voices
+                    // Try to steal a voice in kReleaseVoice mode...
+                    if (node.dspVoicesState[i] === node.kReleaseVoice) {
+                        // Keeps oldest release voice
+                        if (node.dspVoicesDate[i] < oldestDateRelease) {
+                            oldestDateRelease = node.dspVoicesDate[i];
+                            voiceRelease = i;
+                        }
+                    } else {
+                        if (node.dspVoicesDate[i] < oldestDatePlaying) {
+                            oldestDatePlaying = node.dspVoicesDate[i];
+                            voicePlaying = i;
+                        }
+                    }
+                }
+                // Then decide which one to steal
+                if (oldestDateRelease !== Number.MAX_VALUE) {
+                    this.faust.log(`Steal release voice : voice_date = ${node.dspVoicesDate[voiceRelease]} cur_date = ${node.fDate} voice = ${voiceRelease}`);
+                    return node.allocVoice(voiceRelease);
+                }
+                if (oldestDatePlaying !== Number.MAX_VALUE) {
+                    this.faust.log(`Steal playing voice : voice_date = ${node.dspVoicesDate[voicePlaying]} cur_date = ${node.fDate} voice = ${voicePlaying}`);
+                    return node.allocVoice(voicePlaying);
+                }
+                return node.kNoVoice;
+            };
             const midiToFreq = (note: number) => 440.0 * Math.pow(2.0, (note - 69.0) / 12.0);
             node.keyOn = (channel, pitch, velocity) => {
                 const voice = node.getFreeVoice();
@@ -374,13 +265,13 @@ export class FaustWasmToScriptProcessor {
                 node.dspVoicesState[voice] = node.kReleaseVoice; // Release voice
             };
             node.allNotesOff = () => {
-                for (let i = 0; i < voices; i++) {
+                for (let i = 0; i < node.voices; i++) {
                     node.fGateLabel$.forEach($gate => node.factory.setParamValue(node.dspVoices$[i], $gate, 0));
                     node.dspVoicesState[i] = node.kReleaseVoice;
                 }
             };
         }
-        node.midiMessage = (data: number[]) => {
+        node.midiMessage = (data) => {
             const cmd = data[0] >> 4;
             const channel = data[0] & 0xf;
             const data1 = data[1];
@@ -404,6 +295,111 @@ export class FaustWasmToScriptProcessor {
                 if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
             });
         };
+        node.compute = (e) => {
+            for (let i = 0; i < node.numIn; i++) { // Read inputs
+                const input = e.inputBuffer.getChannelData(i);
+                const dspInput = node.dspInChannnels[i];
+                dspInput.set(input);
+            }
+            // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
+            if (node.computeHandler) node.computeHandler(node.bufferSize);
+            if (node.voices) {
+                node.mixer.clearOutput(node.bufferSize, node.numOut, node.$outs); // First clear the outputs
+                for (let i = 0; i < node.voices; i++) { // Compute all running voices
+                    if (node.dspVoicesState[i] === node.kFreeVoice) continue;
+                    node.factory.compute(node.dspVoices$[i], node.bufferSize, node.$ins, node.$mixing); // Compute voice
+                    node.dspVoicesLevel[i] = node.mixer.mixVoice(node.bufferSize, node.numOut, node.$mixing, node.$outs); // Mix it in result
+                    // Check the level to possibly set the voice in kFreeVoice again
+                    if (node.dspVoicesLevel[i] < 0.0005 && node.dspVoicesState[i] === node.kReleaseVoice) {
+                        node.dspVoicesState[i] = node.kFreeVoice;
+                    }
+                }
+                if (node.effect) node.effect.compute(node.$effect, node.bufferSize, node.$outs, node.$outs); // Apply effect. Not a typo, effect is applied on the outs.
+            } else {
+                node.factory.compute(node.$dsp, node.bufferSize, node.$ins, node.$outs); // Compute
+            }
+            node.updateOutputs(); // Update bargraph
+            for (let i = 0; i < node.numOut; i++) { // Write outputs
+                const output = e.outputBuffer.getChannelData(i);
+                const dspOutput = node.dspOutChannnels[i];
+                output.set(dspOutput);
+            }
+        };
+        node.setup = () => { // Setup web audio context
+            this.faust.log("buffer_size " + node.bufferSize);
+            node.onaudioprocess = node.compute;
+            if (node.numIn > 0) {
+                node.$ins = node.$$audioHeapInputs;
+                for (let i = 0; i < node.numIn; i++) {
+                    node.HEAP32[(node.$ins >> 2) + i] = node.$audioHeapInputs + node.bufferSize * node.sampleSize * i;
+                }
+                // Prepare Ins buffer tables
+                const dspInChans = node.HEAP32.subarray(node.$ins >> 2, (node.$ins + node.numIn * node.ptrSize) >> 2);
+                for (let i = 0; i < node.numIn; i++) {
+                    node.dspInChannnels[i] = node.HEAPF32.subarray(dspInChans[i] >> 2, (dspInChans[i] + bufferSize * node.sampleSize) >> 2);
+                }
+            }
+            if (node.numOut > 0) {
+                node.$outs = node.$$audioHeapOutputs;
+                if (node.voices) node.$mixing = node.$$audioHeapMixing;
+                for (let i = 0; i < node.numOut; i++) {
+                    node.HEAP32[(node.$outs >> 2) + i] = node.$audioHeapOutputs + node.bufferSize * node.sampleSize * i;
+                    if (node.voices) node.HEAP32[(node.$mixing >> 2) + i] = node.$audioHeapMixing + bufferSize * node.sampleSize * i;
+                }
+                // Prepare Out buffer tables
+                const dspOutChans = node.HEAP32.subarray(node.$outs >> 2, (node.$outs + node.numOut * node.ptrSize) >> 2);
+                for (let i = 0; i < node.numOut; i++) {
+                    node.dspOutChannnels[i] = node.HEAPF32.subarray(dspOutChans[i] >> 2, (dspOutChans[i] + bufferSize * node.sampleSize) >> 2);
+                }
+            }
+            // Parse JSON UI part
+            node.parseUI(node.dspMeta.ui);
+            if (node.effect) node.parseUI(node.effectMeta.ui);
+
+            // keep 'keyOn/keyOff' labels
+            if (node.voices) {
+                node.inputsItems.forEach((item) => {
+                    if (item.endsWith("/gate")) node.fGateLabel$.push(node.pathTable$[item]);
+                    else if (item.endsWith("/freq")) node.fFreqLabel$.push(node.pathTable$[item]);
+                    else if (item.endsWith("/gain")) node.fGainLabel$.push(node.pathTable$[item]);
+                });
+                // Init DSP voices
+                node.dspVoices$.forEach($voice => node.factory.init($voice, audioCtx.sampleRate));
+                // Init effect
+                if (node.effect) node.effect.init(node.$effect, audioCtx.sampleRate);
+            } else {
+                // Init DSP
+                node.factory.init(node.$dsp, audioCtx.sampleRate);
+            }
+        };
+        node.getSampleRate = () => audioCtx.sampleRate;
+        node.getNumInputs = () => node.numIn;
+        node.getNumOutputs = () => node.numOut;
+        node.init = (sampleRate) => {
+            if (node.voices) node.dspVoices$.forEach($voice => node.factory.init($voice, sampleRate));
+            else node.factory.init(node.$dsp, sampleRate);
+        };
+        node.instanceInit = (sampleRate) => {
+            if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceInit($voice, sampleRate));
+            else node.factory.instanceInit(node.$dsp, sampleRate);
+        };
+        node.instanceConstants = (sampleRate) => {
+            if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceConstants($voice, sampleRate));
+            else node.factory.instanceConstants(node.$dsp, sampleRate);
+        };
+        node.instanceResetUserInterface = () => {
+            if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceResetUserInterface($voice));
+            else node.factory.instanceResetUserInterface(node.$dsp);
+        };
+        node.instanceClear = () => {
+            if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceClear($voice));
+            else node.factory.instanceClear(node.$dsp);
+        };
+        node.metadata = handler => node.dspMeta.meta ? node.dspMeta.meta.forEach(meta => handler.declare(Object.keys(meta)[0], meta[Object.keys(meta)[0]])) : undefined;
+        node.setOutputParamHandler = handler => node.outputHandler = handler;
+        node.getOutputParamHandler = () => node.outputHandler;
+        node.setComputeHandler = handler => node.computeHandler = handler;
+        node.getComputeHandler = () => node.computeHandler;
         const findPath = (o: any, p: string) => {
             if (typeof o !== "object") return false;
             if (o.address) {
@@ -416,7 +412,7 @@ export class FaustWasmToScriptProcessor {
             return false;
         };
         node.setParamValue = (path, val) => {
-            if (voices) {
+            if (node.voices) {
                 if (node.effect && findPath(node.effectMeta.ui, path)) node.effect.setParamValue(node.$effect, node.pathTable$[path], val);
                 else node.dspVoices$.forEach($voice => node.factory.setParamValue($voice, node.pathTable$[path], val));
             } else {
@@ -424,7 +420,7 @@ export class FaustWasmToScriptProcessor {
             }
         };
         node.getParamValue = (path) => {
-            if (voices) {
+            if (node.voices) {
                 if (node.effect && findPath(node.effectMeta.ui, path)) return node.effect.getParamValue(node.$effect, node.pathTable$[path]);
                 return node.factory.getParamValue(node.dspVoices$[0], node.pathTable$[path]);
             }
@@ -432,7 +428,7 @@ export class FaustWasmToScriptProcessor {
         };
         node.getParams = () => node.inputsItems;
         node.getJSON = () => {
-            if (voices) {
+            if (node.voices) {
                 const o = node.dspMeta;
                 const e = node.effectMeta;
                 const r = { ...o };

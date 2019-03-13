@@ -1,5 +1,7 @@
 import { TFaustUI, TFaustUIGroup, TFaustUIItem, TDspMeta } from "./types";
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
+import { FaustWebAssemblyMixerExports } from "./FaustWebAssemblyMixerExports";
+import { IFaustDspNode } from "./IFaustDspNode";
 // AudioWorklet Globals
 declare class AudioWorkletProcessor {
     public port: MessagePort;
@@ -22,7 +24,8 @@ interface AudioParamDescriptor {
 }
 
 // Injected by Faust
-declare const faustData: { name: string, dspMeta: TDspMeta, dspBase64Code: string, effectMeta: TDspMeta, effectBase64Code: string };
+type FaustData =  { name: string, dspMeta: TDspMeta, dspBase64Code: string, effectMeta?: TDspMeta, effectBase64Code?: string, bufferSize?: number, voices?: number };
+declare const faustData: FaustData;
 
 export const FaustAudioWorkletProcessorWrapper = () => {
     class FaustConst {
@@ -57,10 +60,27 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 ? 63
                 : 0;
         }
+        static midiToFreq(note: number) {
+            return 440.0 * Math.pow(2.0, (note - 69.0) / 12.0);
+        }
+        static remap(v: number, mn0: number, mx0: number, mn1: number, mx1: number) {
+            return (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
+        }
+        static findPath(o: any, p: string) {
+            if (typeof o !== "object") return false;
+            if (o.address) {
+                if (o.address === p) return true;
+                return false;
+            }
+            for (const k in o) {
+                if (this.findPath(o[k], p)) return true;
+            }
+            return false;
+        }
         static get importObject() {
             return {
                 env: {
-                    memory: null as WebAssembly.Memory, memoryBase: 0, tableBase: 0,
+                    memory: this.effectBase64Code ? this.memory : undefined, memoryBase: 0, tableBase: 0,
                     _abs: Math.abs,
                     // Float version
                     _acosf: Math.acos, _asinf: Math.asin, _atanf: Math.atan, _atan2f: Math.atan2,
@@ -80,12 +100,50 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 }
             };
         }
-        static data = faustData;
-        static dspModule = new WebAssembly.Module(FaustConst.atob(faustData.dspBase64Code));
+        static createMemory() {
+            // Hack : at least 4 voices (to avoid weird wasm memory bug?)
+            const voices = Math.max(4, this.voices);
+            // Memory allocator
+            const ptrSize = 4;
+            const sampleSize = 4;
+            const pow2limit = (x: number) => {
+                let n = 65536; // Minimum = 64 kB
+                while (n < x) { n = 2 * n; }
+                return n;
+            };
+            const dspMeta = this.dspMeta;
+            const effectMeta = this.effectMeta;
+            const effectSize = effectMeta ? parseInt(effectMeta.size) : 0;
+            let memorySize = pow2limit(
+                effectSize
+                + parseInt(dspMeta.size) * voices
+                + (parseInt(dspMeta.inputs) + parseInt(dspMeta.outputs) * 2)
+                * (ptrSize + this.bufferSize * sampleSize)
+            ) / 65536;
+            memorySize = Math.max(2, memorySize); // As least 2
+            return new WebAssembly.Memory({ initial: memorySize, maximum: memorySize });
+        }
+        static get mixerObject() {
+            return { imports: { print: console.log }, memory: { memory: this.memory } };
+        }
+        static dspName = faustData.name;
+        static dspMeta = faustData.dspMeta;
+        static effectMeta = faustData.effectMeta;
+        static bufferSize = faustData.bufferSize || 128;
+        static voices = faustData.voices;
+        static memory = FaustConst.voices ? FaustConst.createMemory() : undefined;
+        private static dspBase64Code = faustData.dspBase64Code;
+        private static dspModule = new WebAssembly.Module(FaustConst.atob(FaustConst.dspBase64Code));
         static dspInstance = new WebAssembly.Instance(FaustConst.dspModule, FaustConst.importObject);
+        private static effectBase64Code = faustData.effectBase64Code;
+        private static effectModule = FaustConst.effectBase64Code ? new WebAssembly.Module(FaustConst.atob(FaustConst.effectBase64Code)) : undefined;
+        static effectInstance = FaustConst.effectModule ? new WebAssembly.Instance(FaustConst.effectModule, FaustConst.importObject) : undefined;
+        private static mixerBase64Code = "AGFzbQEAAAABj4CAgAACYAN/f38AYAR/f39/AX0CkoCAgAABBm1lbW9yeQZtZW1vcnkCAAIDg4CAgAACAAEHmoCAgAACC2NsZWFyT3V0cHV0AAAIbWl4Vm9pY2UAAQqKgoCAAALigICAAAEDfwJAQQAhBQNAAkAgAiAFQQJ0aigCACEDQQAhBANAAkAgAyAEQQJ0akMAAAAAOAIAIARBAWohBCAEIABIBEAMAgUMAQsACwsgBUEBaiEFIAUgAUgEQAwCBQwBCwALCwsLnYGAgAACBH8DfQJ9QQAhB0MAAAAAIQgDQAJAQQAhBiACIAdBAnRqKAIAIQQgAyAHQQJ0aigCACEFA0ACQCAEIAZBAnRqKgIAIQkgCCAJi5chCCAFIAZBAnRqKgIAIQogBSAGQQJ0aiAKIAmSOAIAIAZBAWohBiAGIABIBEAMAgUMAQsACwsgB0EBaiEHIAcgAUgEQAwCBQwBCwALCyAIDwsL";
+        private static mixerModule = FaustConst.voices ? new WebAssembly.Module(FaustConst.atob(FaustConst.mixerBase64Code)) : undefined;
+        static mixerInstance = FaustConst.voices ? new WebAssembly.Instance(FaustConst.mixerModule, FaustConst.mixerObject) : undefined;
     }
-    class FaustAudioWorkletProcessor extends AudioWorkletProcessor {
-        static bufferSize = 128;
+    class FaustAudioWorkletProcessor extends AudioWorkletProcessor implements IFaustDspNode {
+        static bufferSize = FaustConst.bufferSize;
         // JSON parsing functions
         static parseUI(ui: TFaustUI, obj: AudioParamDescriptor[] | FaustAudioWorkletProcessor, callback: (...args: any[]) => any) {
             for (let i = 0; i < ui.length; i++) {
@@ -122,22 +180,37 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 // Keep inputs adresses
                 obj.inputsItems.push(item.address);
                 obj.pathTable$[item.address] = parseInt(item.index);
+                if (!item.meta) return;
+                item.meta.forEach((meta) => {
+                    const midi = meta.midi;
+                    if (!midi) return;
+                    const strMidi = midi.trim();
+                    if (strMidi === "pitchwheel") {
+                        obj.fPitchwheelLabel.push(item.address);
+                    } else {
+                        const matched = strMidi.match(/^ctrl\s(\d+)/);
+                        if (!matched) return;
+                        obj.fCtrlLabel[parseInt(matched[1])].push({ path: item.address, min: parseFloat(item.min), max: parseFloat(item.max) });
+                    }
+                });
             }
-        }
-        static remap(v: number, mn0: number, mx0: number, mn1: number, mx1: number) {
-            return (v - mn0) / (mx0 - mn0) * mx1 - mn1 + mn1;
         }
         static get parameterDescriptors() {
             // Analyse JSON to generate AudioParam parameters
             const params = [] as AudioParamDescriptor[];
-            this.parseUI(FaustConst.data.dspMeta.ui, params, this.parseItem);
+            this.parseUI(FaustConst.dspMeta.ui, params, this.parseItem);
+            if (FaustConst.effectMeta) this.parseUI(FaustConst.effectMeta.ui, params, this.parseItem);
             return params;
         }
+        bufferSize: number;
+        voices: number;
         dspMeta: TDspMeta;
         $ins: number;
         $outs: number;
         dspInChannnels: Float32Array[];
         dspOutChannnels: Float32Array[];
+        fPitchwheelLabel: string[];
+        fCtrlLabel: { path: string, min: number, max: number }[][];
         numIn: number;
         numOut: number;
         ptrSize: number;
@@ -156,78 +229,57 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         HEAP: ArrayBuffer;
         HEAP32: Int32Array;
         HEAPF32: Float32Array;
+
+        effectMeta?: TDspMeta;
+        $effect?: number;
+        $mixing?: number;
+        fFreqLabel$?: number[];
+        fGateLabel$?: number[];
+        fGainLabel$?: number[];
+        fDate?: number;
+        $$audioHeapMixing?: number;
+        $audioHeapMixing?: number;
+        mixer?: FaustWebAssemblyMixerExports;
+        effect?: FaustWebAssemblyExports;
+        dspVoices$?: number[];
+        dspVoicesState?: number[];
+        dspVoicesLevel?: number[];
+        dspVoicesDate?: number[];
+        kActiveVoice?: number;
+        kFreeVoice?: number;
+        kReleaseVoice?: number;
+        kNoVoice?: number;
+
+        valueTable: any[];
+
         outputHandler: (address: string, value: number) => any;
-        /**
-         * Send output values to the AudioNode
-         *
-         * @memberof FaustAudioWorkletProcessor
-         */
-        updateOutputs = () => {
-            if (this.outputsItems.length > 0 && this.outputHandler && this.outputsTimer-- === 0) {
-                this.outputsTimer = 5;
-                for (let i = 0; i < this.outputsItems.length; i++) {
-                    this.outputHandler(this.outputsItems[i], this.HEAPF32[this.pathTable$[this.outputsItems[i]] >> 2]);
-                }
-            }
-        };
-        /**
-         * Setup WebAudio WorkletProcessor pointers
-         *
-         * @memberof FaustAudioWorkletProcessor
-         */
-        setup = () => {
-            const bufferSize = FaustAudioWorkletProcessor.bufferSize;
-            if (this.numIn > 0) {
-                this.$ins = this.$$audioHeapInputs;
-                for (let i = 0; i < this.numIn; i++) {
-                    this.HEAP32[(this.$ins >> 2) + i] = this.$audioHeapInputs + bufferSize * this.sampleSize * i;
-                }
-                // Prepare Ins buffer tables
-                const dspInChans = this.HEAP32.subarray(this.$ins >> 2, (this.$ins + this.numIn * this.ptrSize) >> 2);
-                for (let i = 0; i < this.numIn; i++) {
-                    this.dspInChannnels[i] = this.HEAPF32.subarray(dspInChans[i] >> 2, (dspInChans[i] + bufferSize * this.sampleSize) >> 2);
-                }
-            }
-            if (this.numOut > 0) {
-                this.$outs = this.$$audioHeapOutputs;
-                for (let i = 0; i < this.numOut; i++) {
-                    this.HEAP32[(this.$outs >> 2) + i] = this.$audioHeapOutputs + bufferSize * this.sampleSize * i;
-                }
-                // Prepare Out buffer tables
-                const dspOutChans = this.HEAP32.subarray(this.$outs >> 2, (this.$outs + this.numOut * this.ptrSize) >> 2);
-                for (let i = 0; i < this.numOut; i++) {
-                    this.dspOutChannnels[i] = this.HEAPF32.subarray(dspOutChans[i] >> 2, (dspOutChans[i] + FaustAudioWorkletProcessor.bufferSize * this.sampleSize) >> 2);
-                }
-            }
-            // Parse UI
-            FaustAudioWorkletProcessor.parseUI(this.dspMeta.ui, this, FaustAudioWorkletProcessor.parseItem2);
+        computeHandler: (bufferSize: number) => any;
 
-            // Init DSP
-            this.factory.init(this.$dsp, sampleRate); // 'sampleRate' is defined in AudioWorkletGlobalScope
-        };
-        /**
-         * Set control value.
-         *
-         * @param {string} path - the path to the wanted control (retrieved using 'getParams' method)
-         * @param {number} val - the float value for the wanted parameter
-         * @memberof FaustAudioWorkletProcessor
-         */
-        setParamValue = (path: string, val: number) => this.HEAPF32[this.pathTable$[path]] = val;
-        /**
-         * Get control value.
-         *
-         * @param {string} path - the path to the wanted control (retrieved using 'controls' method)
-         *
-         * @returns {number} the float value
-         * @memberof FaustAudioWorkletProcessor
-         */
-        getParamValue = (path: string) => this.HEAPF32[this.pathTable$[path]];
-
+        handleMessage = (event: MessageEvent) => {
+            const msg = event.data;
+            switch (msg.type) {
+                // Generic MIDI message
+                case "midi": this.midiMessage(msg.data); break;
+                // Typed MIDI message
+                case "keyOn": this.keyOn(msg.data[0], msg.data[1], msg.data[2]); break;
+                case "keyOff": this.keyOff(msg.data[0], msg.data[1], msg.data[2]); break;
+                case "ctrlChange": this.ctrlChange(msg.data[0], msg.data[1], msg.data[2]); break;
+                case "pitchWheel": this.pitchWheel(msg.data[0], msg.data[1]); break;
+                // Generic data message
+                case "param": this.setParamValue(msg.key, msg.value); break;
+                // case "patch": this.onpatch(msg.data); break;
+            }
+        }
         constructor(options: AudioWorkletNodeOptions) {
             super(options);
-            this.dspMeta = FaustConst.data.dspMeta;
+            this.port.onmessage = this.handleMessage; // Naturally binded with arrow function property
+
+            this.bufferSize = FaustConst.bufferSize;
+            this.voices = FaustConst.voices;
+            this.dspMeta = FaustConst.dspMeta;
 
             this.outputHandler = (path, value) => this.port.postMessage({ path, value });
+            this.computeHandler = null;
 
             this.$ins = null;
             this.$outs = null;
@@ -270,17 +322,241 @@ export const FaustAudioWorkletProcessorWrapper = () => {
 
             // Setup buffer offset
             this.$audioHeapInputs = this.$$audioHeapOutputs + (this.numOut * this.ptrSize);
-            this.$audioHeapOutputs = this.$audioHeapInputs + (this.numIn * FaustAudioWorkletProcessor.bufferSize * this.sampleSize);
+            this.$audioHeapOutputs = this.$audioHeapInputs + (this.numIn * this.bufferSize * this.sampleSize);
+            if (this.voices) {
+                this.$$audioHeapMixing = this.$$audioHeapOutputs + this.numOut * this.ptrSize;
+                // Setup buffer offset
+                this.$audioHeapInputs = this.$$audioHeapMixing + this.numOut * this.ptrSize;
+                this.$audioHeapOutputs = this.$audioHeapInputs + this.numIn * this.bufferSize * this.sampleSize;
+                this.$audioHeapMixing = this.$audioHeapOutputs + this.numOut * this.bufferSize * this.sampleSize;
+                this.$dsp = this.$audioHeapMixing + this.numOut * this.bufferSize * this.sampleSize;
+            } else {
+                this.$audioHeapInputs = this.$$audioHeapOutputs + this.numOut * this.ptrSize;
+                this.$audioHeapOutputs = this.$audioHeapInputs + this.numIn * this.bufferSize * this.sampleSize;
+                // Start of DSP memory : Mono DSP is placed first with index 0
+                this.$dsp = 0;
+            }
 
-            // Start of DSP memory : DSP is placed first with index 0
-            this.$dsp = 0;
+            if (this.voices) {
+                this.effectMeta = FaustConst.effectMeta;
+                this.$mixing = null;
+                this.fFreqLabel$ = [];
+                this.fGateLabel$ = [];
+                this.fGainLabel$ = [];
+                this.fDate = 0;
+
+                this.mixer = FaustConst.mixerInstance.exports;
+                this.effect = FaustConst.effectInstance ? FaustConst.effectInstance.exports : null;
+
+                // Start of DSP memory ('polyphony' DSP voices)
+                this.dspVoices$ = [];
+                this.dspVoicesState = [];
+                this.dspVoicesLevel = [];
+                this.dspVoicesDate = [];
+
+                this.kActiveVoice = 0;
+                this.kFreeVoice = -1;
+                this.kReleaseVoice = -2;
+                this.kNoVoice = -3;
+            }
 
             this.pathTable$ = {};
+            // Allocate table for 'setParamValue'
+            this.valueTable = [];
 
             // Init resulting DSP
             this.setup();
         }
+        updateOutputs() {
+            if (this.outputsItems.length > 0 && this.outputHandler && this.outputsTimer-- === 0) {
+                this.outputsTimer = 5;
+                for (let i = 0; i < this.outputsItems.length; i++) {
+                    this.outputHandler(this.outputsItems[i], this.HEAPF32[this.pathTable$[this.outputsItems[i]] >> 2]);
+                }
+            }
+        }
 
+        parseUI(ui: TFaustUI) {
+            return FaustAudioWorkletProcessor.parseUI(ui, this, FaustAudioWorkletProcessor.parseItem2);
+        }
+        parseGroup(group: TFaustUIGroup) {
+            return FaustAudioWorkletProcessor.parseGroup(group, this, FaustAudioWorkletProcessor.parseItem2);
+        }
+        parseItems(items: TFaustUIItem[]) {
+            return FaustAudioWorkletProcessor.parseItems(items, this, FaustAudioWorkletProcessor.parseItem2);
+        }
+        parseItem(item: TFaustUIItem) {
+            return  FaustAudioWorkletProcessor.parseItem2(item, this, FaustAudioWorkletProcessor.parseItem2);
+        }
+
+        setParamValue(path: string, val: number) {
+            if (this.voices) {
+                if (this.effect && FaustConst.findPath(this.effectMeta.ui, path)) this.effect.setParamValue(this.$effect, this.pathTable$[path], val);
+                else this.dspVoices$.forEach($voice => this.factory.setParamValue($voice, this.pathTable$[path], val));
+            } else {
+                this.factory.setParamValue(this.$dsp, this.pathTable$[path], val);
+            }
+        }
+        getParamValue(path: string) {
+            if (this.voices) {
+                if (this.effect && FaustConst.findPath(this.effectMeta.ui, path)) return this.effect.getParamValue(this.$effect, this.pathTable$[path]);
+                return this.factory.getParamValue(this.dspVoices$[0], this.pathTable$[path]);
+            }
+            return this.factory.getParamValue(this.$dsp, this.pathTable$[path]);
+        }
+        setup() {
+            const bufferSize = this.bufferSize;
+            if (this.numIn > 0) {
+                this.$ins = this.$$audioHeapInputs;
+                for (let i = 0; i < this.numIn; i++) {
+                    this.HEAP32[(this.$ins >> 2) + i] = this.$audioHeapInputs + bufferSize * this.sampleSize * i;
+                }
+                // Prepare Ins buffer tables
+                const dspInChans = this.HEAP32.subarray(this.$ins >> 2, (this.$ins + this.numIn * this.ptrSize) >> 2);
+                for (let i = 0; i < this.numIn; i++) {
+                    this.dspInChannnels[i] = this.HEAPF32.subarray(dspInChans[i] >> 2, (dspInChans[i] + bufferSize * this.sampleSize) >> 2);
+                }
+            }
+            if (this.numOut > 0) {
+                this.$outs = this.$$audioHeapOutputs;
+                if (this.voices) this.$mixing = this.$$audioHeapMixing;
+                for (let i = 0; i < this.numOut; i++) {
+                    this.HEAP32[(this.$outs >> 2) + i] = this.$audioHeapOutputs + bufferSize * this.sampleSize * i;
+                    if (this.voices) this.HEAP32[(this.$mixing >> 2) + i] = this.$audioHeapMixing + bufferSize * this.sampleSize * i;
+                }
+                // Prepare Out buffer tables
+                const dspOutChans = this.HEAP32.subarray(this.$outs >> 2, (this.$outs + this.numOut * this.ptrSize) >> 2);
+                for (let i = 0; i < this.numOut; i++) {
+                    this.dspOutChannnels[i] = this.HEAPF32.subarray(dspOutChans[i] >> 2, (dspOutChans[i] + this.bufferSize * this.sampleSize) >> 2);
+                }
+            }
+            // Parse UI
+            this.parseUI(this.dspMeta.ui);
+            if (this.effect) this.parseUI(this.effectMeta.ui);
+
+            // keep 'keyOn/keyOff' labels
+            if (this.voices) {
+                this.inputsItems.forEach((item) => {
+                    if (item.endsWith("/gate")) this.fGateLabel$.push(this.pathTable$[item]);
+                    else if (item.endsWith("/freq")) this.fFreqLabel$.push(this.pathTable$[item]);
+                    else if (item.endsWith("/gain")) this.fGainLabel$.push(this.pathTable$[item]);
+                });
+                // Init DSP voices
+                this.dspVoices$.forEach($voice => this.factory.init($voice, sampleRate));
+                // Init effect
+                if (this.effect) this.effect.init(this.$effect, sampleRate);
+            } else {
+                // Init DSP
+                this.factory.init(this.$dsp, sampleRate); // 'sampleRate' is defined in AudioWorkletGlobalScope
+            }
+        }
+        // Poly only methods
+        getPlayingVoice(pitch: number) {
+            if (!this.voices) return null;
+            let voice = this.kNoVoice;
+            let oldestDatePlaying = Number.MAX_VALUE;
+            for (let i = 0; i < this.voices; i++) {
+                if (this.dspVoicesState[i] === pitch) {
+                    // Keeps oldest playing voice
+                    if (this.dspVoicesDate[i] < oldestDatePlaying) {
+                        oldestDatePlaying = this.dspVoicesDate[i];
+                        voice = i;
+                    }
+                }
+            }
+            return voice;
+        }
+        allocVoice(voice: number) {
+            if (!this.voices) return null;
+            // so that envelop is always re-initialized
+            this.factory.instanceClear(this.dspVoices$[voice]);
+            this.dspVoicesDate[voice] = this.fDate++;
+            this.dspVoicesState[voice] = this.kActiveVoice;
+            return voice;
+        }
+        getFreeVoice() {
+            if (!this.voices) return null;
+            for (let i = 0; i < this.voices; i++) {
+                if (this.dspVoicesState[i] === this.kFreeVoice) return this.allocVoice(i);
+            }
+            let voiceRelease = this.kNoVoice;
+            let voicePlaying = this.kNoVoice;
+            let oldestDateRelease = Number.MAX_VALUE;
+            let oldestDatePlaying = Number.MAX_VALUE;
+            for (let i = 0; i < this.voices; i++) { // Scan all voices
+                // Try to steal a voice in kReleaseVoice mode...
+                if (this.dspVoicesState[i] === this.kReleaseVoice) {
+                    // Keeps oldest release voice
+                    if (this.dspVoicesDate[i] < oldestDateRelease) {
+                        oldestDateRelease = this.dspVoicesDate[i];
+                        voiceRelease = i;
+                    }
+                } else {
+                    if (this.dspVoicesDate[i] < oldestDatePlaying) {
+                        oldestDatePlaying = this.dspVoicesDate[i];
+                        voicePlaying = i;
+                    }
+                }
+            }
+            // Then decide which one to steal
+            if (oldestDateRelease !== Number.MAX_VALUE) {
+                // console.log(`Steal release voice : voice_date = ${this.dspVoicesDate[voiceRelease]} cur_date = ${this.fDate} voice = ${voiceRelease}`);
+                return this.allocVoice(voiceRelease);
+            }
+            if (oldestDatePlaying !== Number.MAX_VALUE) {
+                // console.log(`Steal playing voice : voice_date = ${this.dspVoicesDate[voicePlaying]} cur_date = ${this.fDate} voice = ${voicePlaying}`);
+                return this.allocVoice(voicePlaying);
+            }
+            return this.kNoVoice;
+        }
+        keyOn(channel: number, pitch: number, velocity: number) {
+            if (!this.voices) return;
+            const voice = this.getFreeVoice();
+            // console.log("keyOn voice " + voice);
+            this.fFreqLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, FaustConst.midiToFreq(pitch)));
+            this.fGateLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, 1));
+            this.fGainLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, velocity / 127));
+            this.dspVoicesState[voice] = pitch;
+        }
+        keyOff(channel: number, pitch: number, velocity: number) {
+            if (!this.voices) return;
+            const voice = this.getPlayingVoice(pitch);
+            if (voice === this.kNoVoice) return; // console.log("Playing voice not found...");
+            // console.log("keyOff voice " + voice);
+            this.fGateLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, 0)); // No use of velocity for now...
+            this.dspVoicesState[voice] = this.kReleaseVoice; // Release voice
+        }
+        allNotesOff() {
+            if (!this.voices) return;
+            for (let i = 0; i < this.voices; i++) {
+                this.fGateLabel$.forEach($gate => this.factory.setParamValue(this.dspVoices$[i], $gate, 0));
+                this.dspVoicesState[i] = this.kReleaseVoice;
+            }
+        }
+
+        midiMessage(data: number[]) {
+            const cmd = data[0] >> 4;
+            const channel = data[0] & 0xf;
+            const data1 = data[1];
+            const data2 = data[2];
+            if (channel === 9) return;
+            if (cmd === 11) return this.ctrlChange(channel, data1, data2);
+            if (cmd === 14) return this.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
+        }
+        ctrlChange(channel: number, ctrl: number, value: number) {
+            if (!this.fCtrlLabel[ctrl].length) return;
+            this.fCtrlLabel[ctrl].forEach((ctrl) => {
+                const path = ctrl.path;
+                this.setParamValue(path, FaustConst.remap(value, 0, 127, ctrl.min, ctrl.max));
+                if (this.outputHandler) this.outputHandler(path, this.getParamValue(path));
+            });
+        }
+        pitchWheel(channel: number, wheel: number) {
+            this.fPitchwheelLabel.forEach((path) => {
+                this.setParamValue(path, Math.pow(2, wheel / 12));
+                if (this.outputHandler) this.outputHandler(path, this.getParamValue(path));
+            });
+        }
         process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: any) {
             const input = inputs[0];
             const output = outputs[0];
@@ -306,8 +582,23 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 const value = parameters[key];
                 this.HEAPF32[this.pathTable$[key] >> 2] = value[0];
             }
-            // Compute
-            this.factory.compute(this.$dsp, FaustAudioWorkletProcessor.bufferSize, this.$ins, this.$outs);
+            // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
+            if (this.computeHandler) this.computeHandler(this.bufferSize);
+            if (this.voices) {
+                this.mixer.clearOutput(this.bufferSize, this.numOut, this.$outs); // First clear the outputs
+                for (let i = 0; i < this.voices; i++) { // Compute all running voices
+                    if (this.dspVoicesState[i] === this.kFreeVoice) continue;
+                    this.factory.compute(this.dspVoices$[i], this.bufferSize, this.$ins, this.$mixing); // Compute voice
+                    this.dspVoicesLevel[i] = this.mixer.mixVoice(this.bufferSize, this.numOut, this.$mixing, this.$outs); // Mix it in result
+                    // Check the level to possibly set the voice in kFreeVoice again
+                    if (this.dspVoicesLevel[i] < 0.0005 && this.dspVoicesState[i] === this.kReleaseVoice) {
+                        this.dspVoicesState[i] = this.kFreeVoice;
+                    }
+                }
+                if (this.effect) this.effect.compute(this.$effect, this.bufferSize, this.$outs, this.$outs); // Apply effect. Not a typo, effect is applied on the outs.
+            } else {
+                this.factory.compute(this.$dsp, this.bufferSize, this.$ins, this.$outs); // Compute
+            }
             // Update bargraph
             this.updateOutputs();
             // Copy outputs
@@ -319,14 +610,28 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             }
             return true;
         }
+        printMemory() {
+            console.log("============== Memory layout ==============");
+            console.log("dspMeta.size: " + this.dspMeta.size);
+            console.log("$audioHeap: " + this.$audioHeap);
+            console.log("$$audioHeapInputs: " + this.$$audioHeapInputs);
+            console.log("$$audioHeapOutputs: " + this.$$audioHeapOutputs);
+            console.log("$$audioHeapMixing: " + this.$$audioHeapMixing);
+            console.log("$audioHeapInputs: " + this.$audioHeapInputs);
+            console.log("$audioHeapOutputs: " + this.$audioHeapOutputs);
+            console.log("$audioHeapMixing: " + this.$audioHeapMixing);
+            console.log("$dsp: " + this.$dsp);
+            this.dspVoices$.forEach(($voice, i) => console.log("dspVoices$[" + i + "]: " + $voice));
+            console.log("$effect: " + this.$effect);
+        }
     }
 
     // Globals
     // Synchronously compile and instantiate the WASM module
     try {
-        registerProcessor(FaustConst.data.name || "mydsp", FaustAudioWorkletProcessor);
+        registerProcessor(FaustConst.dspName || "mydsp", FaustAudioWorkletProcessor);
     } catch (e) {
         console.error(e);
-        console.error("Faust " + (FaustConst.data.name || "mydsp") + " cannot be loaded or compiled");
+        console.error("Faust " + (FaustConst.dspName || "mydsp") + " cannot be loaded or compiled");
     }
 };

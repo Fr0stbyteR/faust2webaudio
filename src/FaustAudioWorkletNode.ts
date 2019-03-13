@@ -5,9 +5,7 @@ declare interface AudioParamMap extends ReadonlyMap<string, AudioParam> {}
 const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
 
 export class FaustAudioWorkletNode extends AudioWorkletNode {
-    onprocessorerror = (e: Event) => {
-        console.error("Error from " + name + " AudioWorkletNode: " + e);
-    };
+    onprocessorerror = (e: Event) => console.error("Error from " + name + " AudioWorkletNode: " + e);
     parseUI = (ui: TFaustUI) => ui.forEach(group => this.parseGroup(group));
     parseGroup = (group: TFaustUIGroup) => group.items ? this.parseItems(group.items) : null;
     parseItems = (items: TFaustUIItem[]) => items.forEach(item => this.parseItem(item));
