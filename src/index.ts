@@ -62,7 +62,7 @@ export class Faust {
         }
         const compiledDsp = await this.compileCodes(code, argv, voices ? false : true);
         if (!compiledDsp) return null;
-        const node = await this[useWorklet ? "getAudioWorkletNode" : "getScriptProcessorNode"](compiledDsp, audioCtx, bufferSize, voices);
+        const node = await this[useWorklet ? "getAudioWorkletNode" : "getScriptProcessorNode"](compiledDsp, audioCtx, useWorklet ? 128 : bufferSize, voices);
         return node;
     }
     private compileCode(factoryName: string, code: string, argv: string[], internalMemory: boolean) {
