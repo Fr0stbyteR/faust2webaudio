@@ -586,6 +586,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                     dspInput.set(input[chan]);
                 }
             }
+            console.log("bp1");
             // Update controls (possibly needed for sample accurate control)
             for (const key in parameters) {
                 const value = parameters[key];
@@ -594,12 +595,16 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
             if (this.computeHandler) this.computeHandler(this.bufferSize);
             if (this.voices) {
+                console.log("bp4");
                 this.mixer.clearOutput(this.bufferSize, this.numOut, this.$outs); // First clear the outputs
+                console.log("bp5");
                 for (let i = 0; i < this.voices; i++) { // Compute all running voices
                     if (this.dspVoicesState[i] === this.kFreeVoice) continue;
                     this.factory.compute(this.dspVoices$[i], this.bufferSize, this.$ins, this.$mixing); // Compute voice
+                    console.log("bp9 " + i + " " + this.$mixing);
                     this.dspVoicesLevel[i] = this.mixer.mixVoice(this.bufferSize, this.numOut, this.$mixing, this.$outs); // Mix it in result
                     // Check the level to possibly set the voice in kFreeVoice again
+                    console.log("bp10 " + i + " " + this.$outs);
                     if (this.dspVoicesLevel[i] < 0.0005 && this.dspVoicesState[i] === this.kReleaseVoice) {
                         this.dspVoicesState[i] = this.kFreeVoice;
                     }
@@ -608,6 +613,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             } else {
                 this.factory.compute(this.$dsp, this.bufferSize, this.$ins, this.$outs); // Compute
             }
+            console.log("bp98");
             // Update bargraph
             this.updateOutputs();
             // Copy outputs
@@ -617,6 +623,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                     output[chan].set(dspOutput);
                 }
             }
+            console.log("bp99");
             return true;
         }
         printMemory() {
@@ -630,7 +637,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             console.log("$audioHeapOutputs: " + this.$audioHeapOutputs);
             console.log("$audioHeapMixing: " + this.$audioHeapMixing);
             console.log("$dsp: " + this.$dsp);
-            this.dspVoices$.forEach(($voice, i) => console.log("dspVoices$[" + i + "]: " + $voice));
+            if (this.dspVoices$) this.dspVoices$.forEach(($voice, i) => console.log("dspVoices$[" + i + "]: " + $voice));
             console.log("$effect: " + this.$effect);
         }
     }

@@ -2,6 +2,39 @@ import { Faust } from "./index";
 import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
 import { TCompiledDsp } from "./types";
+const b64ToUint6 = (nChr: number) => {
+    return nChr > 64 && nChr < 91
+        ? nChr - 65
+        : nChr > 96 && nChr < 123
+        ? nChr - 71
+        : nChr > 47 && nChr < 58
+        ? nChr + 4
+        : nChr === 43
+        ? 62
+        : nChr === 47
+        ? 63
+        : 0;
+};
+const atoAB = (sBase64: string, nBlocksSize?: number) => {
+    // if (typeof atob === "function") return atob(sBase64); It does not return an ArrayBuffer
+    const sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, "");
+    const nInLen = sB64Enc.length;
+    const nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2;
+    const taBytes = new Uint8Array(nOutLen);
+    for (let nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
+        nMod4 = nInIdx & 3;
+        nUint24 |= b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
+        if (nMod4 === 3 || nInLen - nInIdx === 1) {
+            for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
+                taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
+            }
+            nUint24 = 0;
+        }
+    }
+    return taBytes.buffer;
+};
+const mixerBase64Code = "AGFzbQEAAAABj4CAgAACYAN/f38AYAR/f39/AX0CkoCAgAABBm1lbW9yeQZtZW1vcnkCAAIDg4CAgAACAAEHmoCAgAACC2NsZWFyT3V0cHV0AAAIbWl4Vm9pY2UAAQqKgoCAAALigICAAAEDfwJAQQAhBQNAAkAgAiAFQQJ0aigCACEDQQAhBANAAkAgAyAEQQJ0akMAAAAAOAIAIARBAWohBCAEIABIBEAMAgUMAQsACwsgBUEBaiEFIAUgAUgEQAwCBQwBCwALCwsLnYGAgAACBH8DfQJ9QQAhB0MAAAAAIQgDQAJAQQAhBiACIAdBAnRqKAIAIQQgAyAHQQJ0aigCACEFA0ACQCAEIAZBAnRqKgIAIQkgCCAJi5chCCAFIAZBAnRqKgIAIQogBSAGQQJ0aiAKIAmSOAIAIAZBAWohBiAGIABIBEAMAgUMAQsACwsgB0EBaiEHIAcgAUgEQAwCBQwBCwALCyAIDwsL";
+
 export class FaustWasmToScriptProcessor {
     private static heap2Str = (buf: number[]) => {
         let str = "";
@@ -38,8 +71,9 @@ export class FaustWasmToScriptProcessor {
     constructor(faust: Faust) {
         this.faust = faust;
     }
-    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize: number, memory?: WebAssembly.Memory, voices?: number) {
+    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSizeIn?: number, memory?: WebAssembly.Memory, voices?: number) {
         let node: FaustScriptProcessorNode;
+        const bufferSize = bufferSizeIn || 512;
         const dspMeta = compiledDsp.dspHelpers.meta;
         const inputs = parseInt(dspMeta.inputs);
         const outputs = parseInt(dspMeta.outputs);
@@ -461,21 +495,19 @@ export class FaustWasmToScriptProcessor {
      * @param {number} [voices] - polyphony voices
      * @returns {Promise<ScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
      */
-    async getNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number, mixerPath?: string, voices?: number) {
+    async getNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number, voices?: number) {
         let node: FaustScriptProcessorNode;
         const importObject = FaustWasmToScriptProcessor.importObject;
         try {
-            let mixerInstance: WebAssembly.Instance;
             let effectInstance: WebAssembly.Instance;
+            let mixerInstance: WebAssembly.Instance;
             let memory: WebAssembly.Memory;
             if (voices) {
                 memory = FaustWasmToScriptProcessor.createMemory(compiledDsp, bufferSize, voices);
                 importObject.env.memory = memory;
                 const mixerObject = { imports: { print: console.log }, memory: { memory } };
-                const mixerFile = await fetch(mixerPath);
-                const mixerBuffer = await mixerFile.arrayBuffer();
-                const mixerModule = await WebAssembly.instantiate(mixerBuffer, mixerObject);
-                mixerInstance = mixerModule.instance;
+                const mixerModule = new WebAssembly.Module(atoAB(mixerBase64Code));
+                mixerInstance = new WebAssembly.Instance(mixerModule, mixerObject);
                 try {
                     effectInstance = await WebAssembly.instantiate(compiledDsp.effectModule, importObject);
                 } catch (e) {}

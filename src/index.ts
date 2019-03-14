@@ -456,14 +456,15 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         // The native C++ is cleared each time (freeWasmCModule has been already called in faust.compile)
         this.deleteAllWasmCDSPFactories();
     }
-    async createDSPInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number) {
-        return await new FaustWasmToScriptProcessor(this).getNode(compiledDsp, audioCtx, bufferSize);
+    async createDSPInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number) {
+        return await new FaustWasmToScriptProcessor(this).getNode(compiledDsp, audioCtx, bufferSize, voices);
     }
     deleteDSPInstance() {}
-    async createDSPWorkletInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, voices?: number) {
+    async createDSPWorkletInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number) {
         if (compiledDsp.polyphony.indexOf(voices) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
+    bufferSize,
     voices,
     name: compiledDsp.codes.dspName,
     dspMeta: compiledDsp.dspHelpers.meta,

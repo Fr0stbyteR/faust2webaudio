@@ -62,9 +62,6 @@ export class FaustAudioWorkletNode extends AudioWorkletNode {
         this.voices = voices;
         this.dspMeta = compiledDsp.dspHelpers.meta;
         if (compiledDsp.effectHelpers) this.effectMeta = compiledDsp.effectHelpers.meta;
-        this.init();
-    }
-    init() {
         this.outputHandler = null;
         this.inputsItems = [];
         this.outputsItems = [];
