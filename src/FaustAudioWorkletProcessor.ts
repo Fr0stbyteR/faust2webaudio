@@ -17,6 +17,7 @@ declare const currentFrame: number;
 declare const currentTime: number;
 declare const sampleRate: number;
 interface AudioParamDescriptor {
+    automationRate?: AutomationRate;
     defaultValue?: number;
     maxValue?: number;
     minValue?: number;
@@ -80,7 +81,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         static get importObject() {
             return {
                 env: {
-                    memory: this.effectBase64Code ? this.memory : undefined, memoryBase: 0, tableBase: 0,
+                    memory: this.voices ? this.memory : undefined, memoryBase: 0, tableBase: 0,
                     _abs: Math.abs,
                     // Float version
                     _acosf: Math.acos, _asinf: Math.asin, _atanf: Math.atan, _atan2f: Math.atan2,
@@ -165,8 +166,10 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 this.parseItems(item.items, obj, callback);
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Nothing
-            } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
-                obj.push({ name: item.address, defaultValue: +item.init, minValue: +item.min, maxValue: +item.max });
+            } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
+                obj.push({ name: item.address, defaultValue: +item.init | 0, minValue: isFinite(+item.min) ? +item.min : Number.MIN_VALUE, maxValue: isFinite(+item.max) ? +item.max : Number.MAX_VALUE });
+            } else if (item.type === "button" || item.type === "checkbox") {
+                obj.push({ name: item.address, defaultValue: +item.init | 0, minValue: 0, maxValue: 1 });
             }
         }
         static parseItem2(item: TFaustUIItem, obj: FaustAudioWorkletProcessor, callback: (...args: any[]) => any) {
@@ -250,12 +253,10 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         kReleaseVoice?: number;
         kNoVoice?: number;
 
-        valueTable: any[];
-
         outputHandler: (address: string, value: number) => any;
         computeHandler: (bufferSize: number) => any;
 
-        handleMessage = (event: MessageEvent) => {
+        handleMessage = (event: MessageEvent) => { // use arrow function for binding
             const msg = event.data;
             switch (msg.type) {
                 // Generic MIDI message
@@ -287,6 +288,10 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.dspInChannnels = [];
             this.dspOutChannnels = [];
 
+            this.fPitchwheelLabel = [];
+            // tslint:disable-next-line: prefer-array-literal
+            this.fCtrlLabel = new Array(128).fill(null).map(() => []);
+
             this.numIn = parseInt(this.dspMeta.inputs);
             this.numOut = parseInt(this.dspMeta.outputs);
 
@@ -295,8 +300,8 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.sampleSize = 4;
 
             // Create the WASM instance
-            this.factory = FaustConst.dspInstance.exports;
-            this.HEAP = FaustConst.dspInstance.exports.memory.buffer;
+            this.factory = FaustConst.dspInstance.exports as FaustWebAssemblyExports;
+            this.HEAP = this.voices ? FaustConst.memory.buffer : this.factory.memory.buffer;
             this.HEAP32 = new Int32Array(this.HEAP);
             this.HEAPF32 = new Float32Array(this.HEAP);
 
@@ -314,7 +319,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             // Start of HEAP index
 
             // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-            this.$audioHeap = parseInt(this.dspMeta.size);
+            this.$audioHeap = this.voices ? 0 : parseInt(this.dspMeta.size);
 
             // Setup pointers offset
             this.$$audioHeapInputs = this.$audioHeap;
@@ -354,6 +359,15 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 this.dspVoicesLevel = [];
                 this.dspVoicesDate = [];
 
+                for (let i = 0; i < this.voices; i++) {
+                    this.dspVoices$[i] = this.$dsp + i * parseInt(this.dspMeta.size);
+                    this.dspVoicesState[i] = this.kFreeVoice;
+                    this.dspVoicesLevel[i] = 0;
+                    this.dspVoicesDate[i] = 0;
+                }
+                // Effect memory starts after last voice
+                this.$effect = this.dspVoices$[this.voices - 1] + parseInt(this.dspMeta.size);
+
                 this.kActiveVoice = 0;
                 this.kFreeVoice = -1;
                 this.kReleaseVoice = -2;
@@ -361,8 +375,6 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             }
 
             this.pathTable$ = {};
-            // Allocate table for 'setParamValue'
-            this.valueTable = [];
 
             // Init resulting DSP
             this.setup();
@@ -370,9 +382,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         updateOutputs() {
             if (this.outputsItems.length > 0 && this.outputHandler && this.outputsTimer-- === 0) {
                 this.outputsTimer = 5;
-                for (let i = 0; i < this.outputsItems.length; i++) {
-                    this.outputHandler(this.outputsItems[i], this.HEAPF32[this.pathTable$[this.outputsItems[i]] >> 2]);
-                }
+                this.outputsItems.forEach(item => this.outputHandler(item, this.factory.getParamValue(this.$dsp, this.pathTable$[item])));
             }
         }
 
@@ -405,24 +415,23 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             return this.factory.getParamValue(this.$dsp, this.pathTable$[path]);
         }
         setup() {
-            const bufferSize = this.bufferSize;
             if (this.numIn > 0) {
                 this.$ins = this.$$audioHeapInputs;
                 for (let i = 0; i < this.numIn; i++) {
-                    this.HEAP32[(this.$ins >> 2) + i] = this.$audioHeapInputs + bufferSize * this.sampleSize * i;
+                    this.HEAP32[(this.$ins >> 2) + i] = this.$audioHeapInputs + this.bufferSize * this.sampleSize * i;
                 }
                 // Prepare Ins buffer tables
                 const dspInChans = this.HEAP32.subarray(this.$ins >> 2, (this.$ins + this.numIn * this.ptrSize) >> 2);
                 for (let i = 0; i < this.numIn; i++) {
-                    this.dspInChannnels[i] = this.HEAPF32.subarray(dspInChans[i] >> 2, (dspInChans[i] + bufferSize * this.sampleSize) >> 2);
+                    this.dspInChannnels[i] = this.HEAPF32.subarray(dspInChans[i] >> 2, (dspInChans[i] + this.bufferSize * this.sampleSize) >> 2);
                 }
             }
             if (this.numOut > 0) {
                 this.$outs = this.$$audioHeapOutputs;
                 if (this.voices) this.$mixing = this.$$audioHeapMixing;
                 for (let i = 0; i < this.numOut; i++) {
-                    this.HEAP32[(this.$outs >> 2) + i] = this.$audioHeapOutputs + bufferSize * this.sampleSize * i;
-                    if (this.voices) this.HEAP32[(this.$mixing >> 2) + i] = this.$audioHeapMixing + bufferSize * this.sampleSize * i;
+                    this.HEAP32[(this.$outs >> 2) + i] = this.$audioHeapOutputs + this.bufferSize * this.sampleSize * i;
+                    if (this.voices) this.HEAP32[(this.$mixing >> 2) + i] = this.$audioHeapMixing + this.bufferSize * this.sampleSize * i;
                 }
                 // Prepare Out buffer tables
                 const dspOutChans = this.HEAP32.subarray(this.$outs >> 2, (this.$outs + this.numOut * this.ptrSize) >> 2);
@@ -631,7 +640,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
     try {
         registerProcessor(FaustConst.dspName || "mydsp", FaustAudioWorkletProcessor);
     } catch (e) {
-        console.error(e);
         console.error("Faust " + (FaustConst.dspName || "mydsp") + " cannot be loaded or compiled");
+        throw e;
     }
 };

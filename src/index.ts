@@ -52,7 +52,7 @@ export class Faust {
         this.getErrorAfterException = this.libFaust.cwrap("getErrorAfterException", "number", []);
         this.getLibFaustVersion = () => libFaust.UTF8ToString(this.getCLibFaustVersion());
     }
-    compileCode(factoryName: string, code: string, argv: string[], internalMemory: boolean) {
+    private compileCode(factoryName: string, code: string, argv: string[], internalMemory: boolean) {
         const codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
         const $code = this.libFaust._malloc(codeSize);
         const name = "FaustDSP";
@@ -194,7 +194,7 @@ export class Faust {
             throw errorMsg;
         }
     }
-    createDSPFactoryAux(code: string, argv: string[], internalMemory: boolean, callback: (...args: any) => any) {
+    compileCodes(code: string, argv: string[], internalMemory: boolean, callback: (...args: any) => any) {
         // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
         const strArgv = argv.join("");
         const shaKey = sha1.hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
@@ -212,9 +212,9 @@ export class Faust {
 
         // Create 'effect' expression
         const effectCode = `adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _;
-            adaptor(F,G) = adapt(outputs(F),inputs(G));
-            dsp_code = environment{${code}};
-            process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
+adaptor(F,G) = adapt(outputs(F),inputs(G));
+dsp_code = environment{${code}};
+process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
 
         const dspCompiledCode = this.compileCode(dspName, code, argv, internalMemory);
 
@@ -224,7 +224,7 @@ export class Faust {
             effectCompiledCode = this.compileCode(effectName, effectCode, argv, internalMemory);
         } catch (e) {}
         const compiledCodes = { dspName, effectName, dsp: dspCompiledCode, effect: effectCompiledCode } as TCompiledCodes;
-        return this.readDSPFactoryFromMachineAux(compiledCodes, shaKey, callback);
+        return this.compileDsp(compiledCodes, shaKey, callback);
     }
     /**
      * Create a DSP factory from source code as a string to be used to create 'monophonic' DSP
@@ -235,7 +235,7 @@ export class Faust {
      * @memberof Faust
      */
     createDSPFactory(code: string, argv: string[], callback: (...args: any) => any) {
-        return this.createDSPFactoryAux(code, argv, true, callback);
+        return this.compileCodes(code, argv, true, callback);
     }
     /**
      * Create a DSP factory from source code as a string to be used to create 'polyphonic' DSP
@@ -246,7 +246,7 @@ export class Faust {
      * @memberof Faust
      */
     createPolyDSPFactory(code: string, argv: string[], callback: (...args: any) => any) {
-        return this.createDSPFactoryAux(code, argv, false, callback);
+        return this.compileCodes(code, argv, false, callback);
     }
     /**
      * From a DSP source file, creates a 'self-contained' DSP source string where all needed librairies have been included.
@@ -363,10 +363,10 @@ export class Faust {
                     helpersCode: compiledStrCodes.effect.helpersCode
                 }
             } as TCompiledCodes;
-            this.readDSPFactoryFromMachineAux(compiledCodes, shaKey, callback);
+            this.compileDsp(compiledCodes, shaKey, callback);
         }
     }
-    readDSPFactoryFromMachineAux(codes: TCompiledCodes, shaKey: string, callback: (compiledDsp: TCompiledDsp) => any) {
+    compileDsp(codes: TCompiledCodes, shaKey: string, callback: (compiledDsp: TCompiledDsp) => any) {
         const time1 = performance.now();
         /*
         if (typeof Binaryen !== "undefined") {
@@ -460,10 +460,11 @@ export class Faust {
         return await new FaustWasmToScriptProcessor(this).getNode(compiledDsp, audioCtx, bufferSize);
     }
     deleteDSPInstance() {}
-    async createDSPWorkletInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext) {
-        if (!compiledDsp.polyphony.length) {
+    async createDSPWorkletInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, voices?: number) {
+        if (compiledDsp.polyphony.indexOf(voices) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
+    voices,
     name: compiledDsp.codes.dspName,
     dspMeta: compiledDsp.dspHelpers.meta,
     dspBase64Code: compiledDsp.dspHelpers.base64Code,
@@ -474,7 +475,7 @@ const faustData = ${JSON.stringify({
 `;
             const url = window.URL.createObjectURL(new Blob([strProcessor], { type: "text/javascript" }));
             await audioCtx.audioWorklet.addModule(url);
-            compiledDsp.polyphony.push(1);
+            compiledDsp.polyphony.push(voices || 1);
         }
         return new FaustAudioWorkletNode(audioCtx, compiledDsp);
     }

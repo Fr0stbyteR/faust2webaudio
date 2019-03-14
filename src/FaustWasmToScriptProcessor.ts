@@ -53,9 +53,9 @@ export class FaustWasmToScriptProcessor {
         node.dspMeta = dspMeta;
 
         node.outputHandler = null;
+        node.computeHandler = null;
         node.$ins = null;
         node.$outs = null;
-        node.computeHandler = null;
 
         node.dspInChannnels = [];
         node.dspOutChannnels = [];
@@ -136,6 +136,15 @@ export class FaustWasmToScriptProcessor {
             node.dspVoicesLevel = [];
             node.dspVoicesDate = [];
 
+            for (let i = 0; i < node.voices; i++) {
+                node.dspVoices$[i] = node.$dsp + i * parseInt(node.dspMeta.size);
+                node.dspVoicesState[i] = node.kFreeVoice;
+                node.dspVoicesLevel[i] = 0;
+                node.dspVoicesDate[i] = 0;
+            }
+            // Effect memory starts after last voice
+            node.$effect = node.dspVoices$[node.voices - 1] + parseInt(node.dspMeta.size);
+
             node.kActiveVoice = 0;
             node.kFreeVoice = -1;
             node.kReleaseVoice = -2;
@@ -183,15 +192,6 @@ export class FaustWasmToScriptProcessor {
         };
 
         if (node.voices) {
-            for (let i = 0; i < node.voices; i++) {
-                node.dspVoices$[i] = node.$dsp + i * parseInt(node.dspMeta.size);
-                node.dspVoicesState[i] = node.kFreeVoice;
-                node.dspVoicesLevel[i] = 0;
-                node.dspVoicesDate[i] = 0;
-            }
-            // Effect memory starts after last voice
-            node.$effect = node.dspVoices$[node.voices - 1] + parseInt(node.dspMeta.size);
-
             node.getPlayingVoice = (pitch) => {
                 let voice = node.kNoVoice;
                 let oldestDatePlaying = Number.MAX_VALUE;
