@@ -25,7 +25,7 @@ interface AudioParamDescriptor {
 }
 
 // Injected by Faust
-type FaustData =  { name: string, dspMeta: TDspMeta, dspBase64Code: string, effectMeta?: TDspMeta, effectBase64Code?: string, bufferSize?: number, voices?: number };
+type FaustData = { name: string, dspMeta: TDspMeta, dspBase64Code: string, effectMeta?: TDspMeta, effectBase64Code?: string, bufferSize?: number, voices?: number };
 declare const faustData: FaustData;
 
 export const FaustAudioWorkletProcessorWrapper = () => {

@@ -1,10 +1,20 @@
 import { LibFaustLoader, LibFaust } from "libfaust-wasm";
 import sha1 from "crypto-libraries/sha1";
-import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes } from "./types";
+import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes, FaustCompileOptions } from "./types";
 import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
 import { FaustAudioWorkletProcessorWrapper } from "./FaustAudioWorkletProcessor";
 import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
 // import * as Binaryen from "binaryen";
+const ab2str = (buf: ArrayBuffer): string => buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null;
+const str2ab = (str: string) => {
+    if (!str) return null;
+    const buf = new ArrayBuffer(str.length);
+    const bufView = new Uint8Array(buf);
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+};
 export class Faust {
     libFaust: LibFaust;
     createWasmCDSPFactoryFromString: ($name: number, $code: number, argvAuxLength: number, $argv: number, $errorMsg: number, internalMemory: boolean) => number;
@@ -19,21 +29,9 @@ export class Faust {
     cleanupAfterException: () => void;
     getErrorAfterException: () => number;
     getLibFaustVersion: () => string;
-    static ab2str(buf: ArrayBuffer): string {
-        return buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null;
-    }
-    static str2ab(str: string) {
-        if (!str) return null;
-        const buf = new ArrayBuffer(str.length);
-        const bufView = new Uint8Array(buf);
-        for (let i = 0, strLen = str.length; i < strLen; i++) {
-            bufView[i] = str.charCodeAt(i);
-        }
-        return buf;
-    }
     debug = false;
-    factory_number = 0;
-    factory_table = {} as { [key: string]: TCompiledDsp };
+    private dspCount = 0;
+    private dspTable = {} as { [key: string]: TCompiledDsp };
     private _log = [] as string[];
     constructor(libFaust: LibFaust, options?: { debug: boolean; }) {
         this.debug = options && options.debug ? true : false;
@@ -51,6 +49,21 @@ export class Faust {
         this.cleanupAfterException = this.libFaust.cwrap("cleanupAfterException", null, []);
         this.getErrorAfterException = this.libFaust.cwrap("getErrorAfterException", "number", []);
         this.getLibFaustVersion = () => libFaust.UTF8ToString(this.getCLibFaustVersion());
+    }
+    async getNode(code: string, options: FaustCompileOptions) {
+        const audioCtx = options.audioCtx;
+        const voices = options.voices;
+        const useWorklet = options.useWorklet;
+        const bufferSize = options.bufferSize;
+        const argv = [] as string[];
+        for (const key in options.argv) {
+            argv.push("-" + key);
+            argv.push(options.argv[key]);
+        }
+        const compiledDsp = await this.compileCodes(code, argv, voices ? false : true);
+        if (!compiledDsp) return null;
+        const node = await this[useWorklet ? "getAudioWorkletNode" : "getScriptProcessorNode"](compiledDsp, audioCtx, bufferSize, voices);
+        return node;
     }
     private compileCode(factoryName: string, code: string, argv: string[], internalMemory: boolean) {
         const codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
@@ -194,21 +207,21 @@ export class Faust {
             throw errorMsg;
         }
     }
-    compileCodes(code: string, argv: string[], internalMemory: boolean, callback: (...args: any) => any) {
+    private async compileCodes(code: string, argv: string[], internalMemory: boolean) {
         // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
         const strArgv = argv.join("");
         const shaKey = sha1.hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
-        const compiledDsp = this.factory_table[shaKey];
+        const compiledDsp = this.dspTable[shaKey];
         if (compiledDsp) {
             this.log("Existing library : " + compiledDsp.codes.dspName);
             // Existing factory, do not create it...
-            return callback(compiledDsp);
+            return compiledDsp;
         }
         this.log("libfaust.js version : " + this.getLibFaustVersion());
 
         // Factory name for DSP and effect
-        const dspName = "mydsp" + this.factory_number;
-        const effectName = "effect" + this.factory_number++;
+        const dspName = "mydsp" + this.dspCount;
+        const effectName = "effect" + this.dspCount++;
 
         // Create 'effect' expression
         const effectCode = `adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _;
@@ -218,48 +231,16 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
 
         const dspCompiledCode = this.compileCode(dspName, code, argv, internalMemory);
 
-        if (!dspCompiledCode) return callback(null);
+        if (!dspCompiledCode) return null;
         let effectCompiledCode: TCompiledCode;
         try {
             effectCompiledCode = this.compileCode(effectName, effectCode, argv, internalMemory);
         } catch (e) {}
         const compiledCodes = { dspName, effectName, dsp: dspCompiledCode, effect: effectCompiledCode } as TCompiledCodes;
-        return this.compileDsp(compiledCodes, shaKey, callback);
+        return this.compileDsp(compiledCodes, shaKey);
     }
-    /**
-     * Create a DSP factory from source code as a string to be used to create 'monophonic' DSP
-     *
-     * @param {string} code - the source code as a string
-     * @param {string[]} argv - an array of parameters to be given to the Faust compiler
-     * @param {(...args: any) => any} callback - a callback taking the created DSP factory as parameter, or null in case of error
-     * @memberof Faust
-     */
-    createDSPFactory(code: string, argv: string[], callback: (...args: any) => any) {
-        return this.compileCodes(code, argv, true, callback);
-    }
-    /**
-     * Create a DSP factory from source code as a string to be used to create 'polyphonic' DSP
-     *
-     * @param {string} code - the source code as a string
-     * @param {string[]} argv - an array of parameters to be given to the Faust compiler
-     * @param {(...args: any) => any} callback - a callback taking the created DSP factory as parameter, or null in case of error
-     * @memberof Faust
-     */
-    createPolyDSPFactory(code: string, argv: string[], callback: (...args: any) => any) {
-        return this.compileCodes(code, argv, false, callback);
-    }
-    /**
-     * From a DSP source file, creates a 'self-contained' DSP source string where all needed librairies have been included.
-     * All compilations options are 'normalized' and included as a comment in the expanded string.
-     *
-     * @param {string} code - the source code as a string
-     * @param {string[]} argv - and array of paramaters to be given to the Faust compiler
-     * @returns {string} the expanded DSP as a string (possibly empty).
-     * @memberof Faust
-     */
-    expandDSP(code: string, argvIn: string[]) {
+    private expandCode(code: string, argvIn: string[]) {
         this.log("libfaust.js version : " + this.getLibFaustVersion());
-
         // Allocate strings on the HEAP
         const codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
         const $code = this.libFaust._malloc(codeSize);
@@ -290,21 +271,18 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
             $argv_buffer[i] = $arg;
         }
         try {
-            const $expandDsp = this.expandCDSPFromString($name, $code, argv.length, $argv, $shaKey, $errorMsg);
-            const expandDsp = this.libFaust.UTF8ToString($expandDsp);
+            const $expandedCode = this.expandCDSPFromString($name, $code, argv.length, $argv, $shaKey, $errorMsg);
+            const expandedCode = this.libFaust.UTF8ToString($expandedCode);
             const shaKey = this.libFaust.UTF8ToString($shaKey);
             const errorMsg = this.libFaust.UTF8ToString($errorMsg);
             if (errorMsg) this.error(errorMsg);
-
             // Free strings
             this.libFaust._free($code);
             this.libFaust._free($name);
             this.libFaust._free($shaKey);
             this.libFaust._free($errorMsg);
-
             // Free C allocated expanded string
-            this.freeCMemory($expandDsp);
-
+            this.freeCMemory($expandedCode);
             // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
             $argv_buffer = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);
             // Free 'argv' C side array
@@ -312,61 +290,17 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
                 this.libFaust._free($argv_buffer[i]);
             }
             this.libFaust._free($argv);
-
-            return expandDsp;
-
+            return expandedCode;
         } catch (e) {
             // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
             let errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
             // Report the Emscripten error
             if (!errorMsg) errorMsg = e;
-            this.error(errorMsg);
             this.cleanupAfterException();
-            return null;
+            throw errorMsg;
         }
     }
-    writeDSPFactoryToMachine(compiledCodes: TCompiledCodes) {
-        return {
-            dspName: compiledCodes.dspName,
-            dsp: {
-                strCode: Faust.ab2str(compiledCodes.dsp.ui8Code),
-                code: compiledCodes.dsp.code,
-                helpersCode: compiledCodes.dsp.helpersCode
-            },
-            effectName : compiledCodes.effectName,
-            effect: {
-                strCode: Faust.ab2str(compiledCodes.effect.ui8Code),
-                code: compiledCodes.effect.code,
-                helpersCode: compiledCodes.effect.helpersCode
-            }
-        } as TCompiledStrCodes;
-    }
-    readDSPFactoryFromMachine(compiledStrCodes: TCompiledStrCodes, callback: (compiledDsp: TCompiledDsp) => any) {
-        const shaKey = sha1.hash(compiledStrCodes.dsp.code, { msgFormat: "string" });
-        const compiledDsp = this.factory_table[shaKey];
-        if (compiledDsp) {
-            this.log("Existing library : " + compiledDsp.codes.dspName);
-            // Existing factory, do not create it...
-            callback(compiledDsp);
-        } else {
-            const compiledCodes = {
-                dspName: compiledStrCodes.dspName,
-                effectName: compiledStrCodes.effectName,
-                dsp: {
-                    ui8Code: Faust.str2ab(compiledStrCodes.dsp.strCode),
-                    code: compiledStrCodes.dsp.code,
-                    helpersCode: compiledStrCodes.dsp.helpersCode
-                },
-                effect: {
-                    ui8Code: Faust.str2ab(compiledStrCodes.effect.strCode),
-                    code: compiledStrCodes.effect.code,
-                    helpersCode: compiledStrCodes.effect.helpersCode
-                }
-            } as TCompiledCodes;
-            this.compileDsp(compiledCodes, shaKey, callback);
-        }
-    }
-    compileDsp(codes: TCompiledCodes, shaKey: string, callback: (compiledDsp: TCompiledDsp) => any) {
+    private async compileDsp(codes: TCompiledCodes, shaKey: string) {
         const time1 = performance.now();
         /*
         if (typeof Binaryen !== "undefined") {
@@ -382,85 +316,52 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
             }
         }
         */
-        WebAssembly.compile(codes.dsp.ui8Code)
-        .then((dspModule) => {
-            const time2 = performance.now();
-            this.log("WASM compilation duration : " + (time2 - time1));
-
-            const compiledDsp = {
-                shaKey,
-                codes,
-                dspModule,
-                polyphony: [] as number[] // Default mode
-            } as TCompiledDsp;
-
+        const dspModule = await WebAssembly.compile(codes.dsp.ui8Code);
+        if (!dspModule) return this.error("Faust DSP factory cannot be compiled");
+        const time2 = performance.now();
+        this.log("WASM compilation duration : " + (time2 - time1));
+        const compiledDsp = { shaKey, codes, dspModule, polyphony: [] as number[] } as TCompiledDsp; // Default mode
+        // 'libfaust.js' wasm backend generates UI methods, then we compile the code
+        // eval(helpers_code1);
+        // factory.getJSON = eval("getJSON" + dspName);
+        // factory.getBase64Code = eval("getBase64Code" + dspName);
+        try {
+            const json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1];
+            const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
+            const meta = JSON.parse(json);
+            compiledDsp.dspHelpers = { json, base64Code, meta };
+        } catch (e) {
+            this.error("Error in JSON.parse: " + e);
+            throw e;
+        }
+        this.dspTable[shaKey] = compiledDsp;
+        // Possibly compile effect
+        if (!codes.effectName || !codes.effect) return compiledDsp;
+        try {
+            const effectModule = await WebAssembly.compile(codes.effect.ui8Code);
+            compiledDsp.effectModule = effectModule;
             // 'libfaust.js' wasm backend generates UI methods, then we compile the code
-            // eval(helpers_code1);
-            // factory.getJSON = eval("getJSON" + dspName);
-            // factory.getBase64Code = eval("getBase64Code" + dspName);
-
+            // eval(helpers_code2);
+            // factory.getJSONeffect = eval("getJSON" + factory_name2);
+            // factory.getBase64Codeeffect = eval("getBase64Code" + factory_name2);
             try {
-                const json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1];
-                const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
+                const json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1];
+                const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
                 const meta = JSON.parse(json);
-                compiledDsp.dspHelpers = { json, base64Code, meta };
+                compiledDsp.effectHelpers = { json, base64Code, meta };
             } catch (e) {
                 this.error("Error in JSON.parse: " + e);
-                callback(null);
-                throw true;
+                throw e;
             }
-
-            this.factory_table[shaKey] = compiledDsp;
-
-            // Possibly compile effect
-            if (codes.effectName && codes.effect) {
-                WebAssembly.compile(codes.effect.ui8Code)
-                .then((effectModule) => {
-
-                    compiledDsp.effectModule = effectModule;
-
-                    // 'libfaust.js' wasm backend generates UI methods, then we compile the code
-                    // eval(helpers_code2);
-                    // factory.getJSONeffect = eval("getJSON" + factory_name2);
-                    // factory.getBase64Codeeffect = eval("getBase64Code" + factory_name2);
-
-                    try {
-                        const json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1];
-                        const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
-                        const meta = JSON.parse(json);
-                        compiledDsp.effectHelpers = { json, base64Code, meta };
-                    } catch (e) {
-                        this.error("Error in JSON.parse: " + e);
-                        callback(null);
-                        throw true;
-                    }
-
-                    callback(compiledDsp);
-                }).catch((error) => {
-                    this.error(error);
-                    this.error("Faust DSP factory cannot be compiled");
-                    callback(null);
-                });
-            } else {
-                callback(compiledDsp);
-            }
-        }).catch((error) => {
-            this.error(error);
-            this.error("Faust DSP factory cannot be compiled");
-            callback(null);
-        });
+        } catch (e) {
+            return compiledDsp;
+        }
     }
-    deleteDSPFactory(compiledDsp: TCompiledDsp) {
-        // The JS side is cleared
-        delete this.factory_table[compiledDsp.shaKey];
-        // The native C++ is cleared each time (freeWasmCModule has been already called in faust.compile)
-        this.deleteAllWasmCDSPFactories();
-    }
-    async createDSPInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number) {
+    private async getScriptProcessorNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number) {
         return await new FaustWasmToScriptProcessor(this).getNode(compiledDsp, audioCtx, bufferSize, voices);
     }
-    deleteDSPInstance() {}
-    async createDSPWorkletInstance(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number) {
+    // deleteDSPInstance() {}
+    private async getAudioWorkletNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number) {
         if (compiledDsp.polyphony.indexOf(voices) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
@@ -480,7 +381,53 @@ const faustData = ${JSON.stringify({
         }
         return new FaustAudioWorkletNode(audioCtx, compiledDsp);
     }
-    deleteDSPWorkletInstance() {}
+    deleteDsp(compiledDsp: TCompiledDsp) {
+        // The JS side is cleared
+        delete this.dspTable[compiledDsp.shaKey];
+        // The native C++ is cleared each time (freeWasmCModule has been already called in faust.compile)
+        this.deleteAllWasmCDSPFactories();
+    }
+    private getCompiledCodesForMachine(compiledCodes: TCompiledCodes) {
+        return {
+            dspName: compiledCodes.dspName,
+            dsp: {
+                strCode: ab2str(compiledCodes.dsp.ui8Code),
+                code: compiledCodes.dsp.code,
+                helpersCode: compiledCodes.dsp.helpersCode
+            },
+            effectName : compiledCodes.effectName,
+            effect: {
+                strCode: ab2str(compiledCodes.effect.ui8Code),
+                code: compiledCodes.effect.code,
+                helpersCode: compiledCodes.effect.helpersCode
+            }
+        } as TCompiledStrCodes;
+    }
+    private async getCompiledCodeFromMachine(compiledStrCodes: TCompiledStrCodes) {
+        const shaKey = sha1.hash(compiledStrCodes.dsp.code, { msgFormat: "string" });
+        const compiledDsp = this.dspTable[shaKey];
+        if (compiledDsp) {
+            this.log("Existing library : " + compiledDsp.codes.dspName);
+            // Existing factory, do not create it...
+            return compiledDsp;
+        }
+        const compiledCodes = {
+            dspName: compiledStrCodes.dspName,
+            effectName: compiledStrCodes.effectName,
+            dsp: {
+                ui8Code: str2ab(compiledStrCodes.dsp.strCode),
+                code: compiledStrCodes.dsp.code,
+                helpersCode: compiledStrCodes.dsp.helpersCode
+            },
+            effect: {
+                ui8Code: str2ab(compiledStrCodes.effect.strCode),
+                code: compiledStrCodes.effect.code,
+                helpersCode: compiledStrCodes.effect.helpersCode
+            }
+        } as TCompiledCodes;
+        return this.compileDsp(compiledCodes, shaKey);
+    }
+    // deleteDSPWorkletInstance() {}
     log(...args: any[]) {
         if (this.debug) console.log(...args);
         this._log.push(JSON.stringify(args));

@@ -56,3 +56,14 @@ export type TCompiledDsp = {
     effectHelpers?: THelpers,
     codes: TCompiledCodes
 }
+export type FaustCompileOptions = {
+    audioCtx: AudioContext;
+    useWorklet?: boolean;
+    voices?: number;
+    bufferSize?: 128 | 256 | 512 | 1024 | 2048 | 4096;
+    argv?: {
+        ftz?: 0 | 1 | 2;
+        I?: string;
+        [key: string]: any;
+    }
+}
