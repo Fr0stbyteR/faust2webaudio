@@ -1,6 +1,6 @@
 {
   "name": "faust2webaudio",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Generate WebAudio Node from Faust code or wasm compiled from faust",
   "main": "./dist/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dist": "webpack --mode production"
   },
   "author": "Fr0stbyteR",
-  "license": "ISC",
+  "license": "GPL-2.0-or-later",
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-typescript": "^7.3.3",

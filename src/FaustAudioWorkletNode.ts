@@ -2,7 +2,7 @@ import { TFaustUI, TFaustUIGroup, TFaustUIItem, TCompiledDsp, TDspMeta } from ".
 
 declare interface AudioParamMap extends ReadonlyMap<string, AudioParam> {}
 
-export class FaustAudioWorkletNode extends AudioWorkletNode {
+const FaustAudioWorkletNode = window.AudioWorklet && window.AudioWorkletNode ? class FaustAudioWorkletNode extends AudioWorkletNode {
     onprocessorerror = (e: Event) => {
         console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: ");
         throw e;
@@ -169,4 +169,5 @@ export class FaustAudioWorkletNode extends AudioWorkletNode {
         }
         return JSON.stringify(this.dspMeta);
     }
-}
+} : null;
+export { FaustAudioWorkletNode };
