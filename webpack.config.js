@@ -1,13 +1,11 @@
 const path = require('path');
 
-module.exports = {
+const config = {
   entry: './src/index.ts',
   resolve: {
     extensions: ['.ts', '.js']
   },
-  devtool: 'inline-source-map',
   output: {
-    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
   node: {
@@ -23,19 +21,17 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/
-      },
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        use: [ 
-          {
-            loader: 'file-loader',
-            options: {
-              outputPath: 'assets/',
-              publicPath: 'assets/'
-            }
-          }
-        ]
       }
     ]
   }
+};
+module.exports = (env, argv) => {
+  if (argv.mode === 'development') {
+    config.devtool = 'inline-source-map';
+    config.output.filename = 'faust.js';
+  }
+  if (argv.mode === 'production') {
+    config.output.filename = 'faust.min.js';
+  }
+  return config;
 };

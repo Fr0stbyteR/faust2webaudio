@@ -437,9 +437,9 @@ const faustData = ${JSON.stringify({
         this._log.push(JSON.stringify(args));
     }
 }
-window["F2SP"] = FaustWasmToScriptProcessor;
-LibFaustLoader.load("./libfaust-wasm.wasm").then(libFaust => window["faust"] = new Faust(libFaust));
-window["LibFaustLoader"] = LibFaustLoader;
+
+window.LibFaustLoader = LibFaustLoader;
+window.Faust = Faust;
 
 const mydspPolyProcessorString = `
 

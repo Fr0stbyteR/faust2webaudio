@@ -1,6 +1,26 @@
 <html>
     <head>
-        <script src="bundle.js"></script>
+        <script src="faust.min.js"></script>
+        <script>
+            audioCtx = new AudioContext();
+            LibFaustLoader.load("./libfaust-wasm.wasm")
+            .then(libFaust => {
+                const faust = new Faust(libFaust);
+                window.faust = faust;
+                code = 'phasor(f)=f/48000:(+,1:fmod)~_;osc(f) = sin(phasor(f) * 2 * 3.14159265358980);process=osc(440);';
+                polycode = 'phasor(f)=f/48000:(+,1:fmod)~_;osc(f) = sin(phasor(f) * 2 * 3.14159265358980);process=osc(freq) * gate * gain with { freq = hslider("freq", 440, 40, 8000, 1);gain = hslider("gain", 0.5, 0, 1, 0.01);gate = button("gate"); };';
+                faust.getNode(polycode, { audioCtx, useWorklet: false, voices: 4 })
+                .then(node => {
+                    window.node = node;
+                    node.connect(audioCtx.destination);
+                });
+                faust.getNode(code, { audioCtx })
+                .then(node => {
+                    window.node1 = node;
+                    node.connect(audioCtx.destination);
+                });
+            })
+        </script>
     </head>
     <body>
     </body>
