@@ -28,10 +28,10 @@ const config = {
 module.exports = (env, argv) => {
   if (argv.mode === 'development') {
     config.devtool = 'inline-source-map';
-    config.output.filename = 'faust.js';
+    config.output.filename = 'index.js';
   }
   if (argv.mode === 'production') {
-    config.output.filename = 'faust.min.js';
+    config.output.filename = 'index.min.js';
   }
   return config;
 };

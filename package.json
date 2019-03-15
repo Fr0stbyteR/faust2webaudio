@@ -2,7 +2,8 @@
   "name": "faust2webaudio",
   "version": "0.1.1",
   "description": "Generate WebAudio Node from Faust code or wasm compiled from faust",
-  "main": "./dist/index.js",
+  "main": "./dist/index.min.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "webpack --mode development",
     "dist": "webpack --mode production"

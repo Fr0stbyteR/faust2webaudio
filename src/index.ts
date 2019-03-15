@@ -4,6 +4,7 @@ import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes, FaustCo
 import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
 import { FaustAudioWorkletProcessorWrapper } from "./FaustAudioWorkletProcessor";
 import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
+import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
 // import * as Binaryen from "binaryen";
 const ab2str = (buf: ArrayBuffer): string => buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null;
 const str2ab = (str: string) => {
