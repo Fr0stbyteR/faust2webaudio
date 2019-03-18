@@ -1,17 +1,16 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": { "*": ["types/*"] },
     "noImplicitAny": true,
     "module": "commonjs",
     "removeComments": true,
     "preserveConstEnums": true,
     "target": "es2015",
     "sourceMap": true,
-    "lib": ["es2015", "dom"],
+    "lib": ["es2015", "dom", "dom.iterable"],
     "jsx": "react",
     "outDir": "dist",
     "declaration": true,
+    "declarationDir": "src",
     "noUnusedLocals": false,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -21,10 +20,10 @@
     "noFallthroughCasesInSwitch": true,
     "allowUnreachableCode": false,
     "experimentalDecorators": true,
-    "downlevelIteration": true,
+    "downlevelIteration": true
   },
   "include": [
-    "src/*.ts"
+    "src/*.ts", "src/**/*.ts"
   ],
   "exclude": [
     "dist",

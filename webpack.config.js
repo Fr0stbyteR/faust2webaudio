@@ -1,7 +1,7 @@
 const path = require('path');
 
 const config = {
-  entry: './src/index.ts',
+  entry: './src/Faust.ts',
   resolve: {
     extensions: ['.ts', '.js']
   },
@@ -13,21 +13,24 @@ const config = {
   },
   module: {
     rules: [{
-        test: /\.js$/,
+        test: /\.(ts|js)x?$/,
         use: "babel-loader",
         exclude: /node_modules/,
       },
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
+        test: /\.wasm$/,
+        loader: 'url-loader',
+        type: 'javascript/auto',
+        exclude: /node_modules/,
+        options: {
+          mimetype: 'application/wasm'
+        }
       }
     ]
   }
 };
 module.exports = (env, argv) => {
   if (argv.mode === 'development') {
-    config.devtool = 'inline-source-map';
     config.output.filename = 'index.js';
   }
   if (argv.mode === 'production') {

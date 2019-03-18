@@ -6,24 +6,33 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "webpack --mode development",
-    "dist": "webpack --mode production"
+    "dist": "npm run build && webpack --mode production"
   },
   "author": "Fr0stbyteR",
+  "repository": "http://github.com/Fr0stbyteR/faust2webaudio",
   "license": "GPL-2.0-or-later",
   "devDependencies": {
     "@babel/core": "^7.3.4",
+    "@babel/plugin-proposal-class-properties": "^7.3.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.4",
+    "@babel/plugin-transform-async-to-generator": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
     "@babel/preset-typescript": "^7.3.3",
+    "@babel/runtime": "^7.3.4",
+    "@types/webassembly-js-api": "0.0.2",
     "babel-loader": "^8.0.5",
     "crypto-libraries": "github:chrisveness/crypto",
-    "ts-loader": "^5.3.3",
-    "tslint": "^5.13.1",
+    "tslint": "^5.14.0",
     "tslint-config-airbnb": "^5.11.1",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.3.3333",
+    "url-loader": "^1.1.2",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.3.0",
+    "ws": "^6.2.0"
   },
   "dependencies": {
-    "libfaust-wasm": "github:fr0stbyter/libfaust-wasm"
+    "@types/node": "^11.11.3"
   }
 }

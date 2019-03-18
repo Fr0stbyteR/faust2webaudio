@@ -1,4 +1,4 @@
-import { Faust } from "./index";
+import { Faust, mixer32Base64Code } from "./Faust";
 import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
 import { TCompiledDsp } from "./types";
@@ -33,8 +33,6 @@ const atoAB = (sBase64: string, nBlocksSize?: number) => {
     }
     return taBytes.buffer;
 };
-const mixerBase64Code = "AGFzbQEAAAABj4CAgAACYAN/f38AYAR/f39/AX0CkoCAgAABBm1lbW9yeQZtZW1vcnkCAAIDg4CAgAACAAEHmoCAgAACC2NsZWFyT3V0cHV0AAAIbWl4Vm9pY2UAAQqKgoCAAALigICAAAEDfwJAQQAhBQNAAkAgAiAFQQJ0aigCACEDQQAhBANAAkAgAyAEQQJ0akMAAAAAOAIAIARBAWohBCAEIABIBEAMAgUMAQsACwsgBUEBaiEFIAUgAUgEQAwCBQwBCwALCwsLnYGAgAACBH8DfQJ9QQAhB0MAAAAAIQgDQAJAQQAhBiACIAdBAnRqKAIAIQQgAyAHQQJ0aigCACEFA0ACQCAEIAZBAnRqKgIAIQkgCCAJi5chCCAFIAZBAnRqKgIAIQogBSAGQQJ0aiAKIAmSOAIAIAZBAWohBiAGIABIBEAMAgUMAQsACwsgB0EBaiEHIAcgAUgEQAwCBQwBCwALCyAIDwsL";
-
 export class FaustWasmToScriptProcessor {
     private static heap2Str = (buf: number[]) => {
         let str = "";
@@ -506,7 +504,7 @@ export class FaustWasmToScriptProcessor {
                 memory = FaustWasmToScriptProcessor.createMemory(compiledDsp, bufferSize, voices);
                 importObject.env.memory = memory;
                 const mixerObject = { imports: { print: console.log }, memory: { memory } };
-                const mixerModule = new WebAssembly.Module(atoAB(mixerBase64Code));
+                const mixerModule = new WebAssembly.Module(atoAB(mixer32Base64Code));
                 mixerInstance = new WebAssembly.Instance(mixerModule, mixerObject);
                 try {
                     effectInstance = await WebAssembly.instantiate(compiledDsp.effectModule, importObject);

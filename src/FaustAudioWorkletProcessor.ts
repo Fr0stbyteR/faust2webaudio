@@ -7,7 +7,6 @@ declare class AudioWorkletProcessor {
     public port: MessagePort;
     constructor(options: AudioWorkletNodeOptions);
     public process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: any): boolean;
-    static parameterDescriptors: AudioParamDescriptor[];
 }
 type AudioWorkletProcessorConstructor<T extends AudioWorkletProcessor> = {
     new (options: AudioWorkletNodeOptions): T;
@@ -25,7 +24,16 @@ interface AudioParamDescriptor {
 }
 
 // Injected by Faust
-type FaustData = { name: string, dspMeta: TDspMeta, dspBase64Code: string, effectMeta?: TDspMeta, effectBase64Code?: string, bufferSize?: number, voices?: number };
+export type FaustData = {
+    name: string,
+    dspMeta: TDspMeta,
+    dspBase64Code: string,
+    effectMeta?: TDspMeta,
+    effectBase64Code?: string,
+    mixerBase64Code?: string,
+    bufferSize?: number,
+    voices?: number
+};
 declare const faustData: FaustData;
 
 export const FaustAudioWorkletProcessorWrapper = () => {
@@ -136,7 +144,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         private static effectBase64Code = faustData.effectBase64Code;
         private static effectModule = FaustConst.effectBase64Code ? new WebAssembly.Module(FaustConst.atob(FaustConst.effectBase64Code)) : undefined;
         static effectInstance = FaustConst.effectModule ? new WebAssembly.Instance(FaustConst.effectModule, FaustConst.importObject) : undefined;
-        private static mixerBase64Code = "AGFzbQEAAAABj4CAgAACYAN/f38AYAR/f39/AX0CkoCAgAABBm1lbW9yeQZtZW1vcnkCAAIDg4CAgAACAAEHmoCAgAACC2NsZWFyT3V0cHV0AAAIbWl4Vm9pY2UAAQqKgoCAAALigICAAAEDfwJAQQAhBQNAAkAgAiAFQQJ0aigCACEDQQAhBANAAkAgAyAEQQJ0akMAAAAAOAIAIARBAWohBCAEIABIBEAMAgUMAQsACwsgBUEBaiEFIAUgAUgEQAwCBQwBCwALCwsLnYGAgAACBH8DfQJ9QQAhB0MAAAAAIQgDQAJAQQAhBiACIAdBAnRqKAIAIQQgAyAHQQJ0aigCACEFA0ACQCAEIAZBAnRqKgIAIQkgCCAJi5chCCAFIAZBAnRqKgIAIQogBSAGQQJ0aiAKIAmSOAIAIAZBAWohBiAGIABIBEAMAgUMAQsACwsgB0EBaiEHIAcgAUgEQAwCBQwBCwALCyAIDwsL";
+        private static mixerBase64Code = faustData.mixerBase64Code;
         private static mixerModule = FaustConst.voices ? new WebAssembly.Module(FaustConst.atob(FaustConst.mixerBase64Code)) : undefined;
         private static mixerObject = FaustConst.voices ? { imports: { print: console.log }, memory: { memory: FaustConst.memory } } : undefined;
         static mixerInstance = FaustConst.voices ? new WebAssembly.Instance(FaustConst.mixerModule, FaustConst.mixerObject) : undefined;
