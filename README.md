@@ -2,6 +2,8 @@
 
 Produce a ScriptProcessorNode or an AudioWorkletNode with Faust .dsp code using the libfaust WebAssembly compiler.
 
+Supported Platforms: Chrome >= 49, Firefox >= 45, Edge >= 13, Safari >= 10, iOS >= 10, Android >= 68
+
 ## Testing
 
 Clone a copy of the repo:
@@ -21,7 +23,7 @@ Example:
 
 ```JavaScript
 import { Faust } from "faust2webaudio";
-const audioCtx = new AudioContext();
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();;
 const code = `
 import("stdfaust.lib");
 process = ba.pulsen(1, 10000) : pm.djembe(60, 0.3, 0.4, 1) <: dm.freeverb_demo;`;
