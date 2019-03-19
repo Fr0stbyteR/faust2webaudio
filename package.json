@@ -20,6 +20,7 @@
     "@babel/preset-env": "^7.3.4",
     "@babel/preset-typescript": "^7.3.3",
     "@babel/runtime": "^7.3.4",
+    "@types/node": "^11.11.3",
     "@types/webassembly-js-api": "0.0.2",
     "babel-loader": "^8.0.5",
     "crypto-libraries": "github:chrisveness/crypto",
@@ -32,7 +33,5 @@
     "webpack-cli": "^3.3.0",
     "ws": "^6.2.0"
   },
-  "dependencies": {
-    "@types/node": "^11.11.3"
-  }
+  "dependencies": {}
 }
