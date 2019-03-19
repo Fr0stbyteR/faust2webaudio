@@ -1,5 +1,7 @@
 # Faust2WebAudio
 
+Produce a ScriptProcessorNode or an AudioWorkletNode with Faust .dsp code using the libfaust WebAssembly compiler.
+
 ## Testing
 
 Clone a copy of the repo:
