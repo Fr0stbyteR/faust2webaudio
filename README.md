@@ -66,7 +66,7 @@ To build everything (using Webpack 4, Babel 7, TypeScript), this will produce `d
 npm run dist
 ```
 
-If you don't want to build ths minified js for testing purpose:
+If you don't want to build the minified js for testing purpose:
 ```bash
 npm run build
 ```
