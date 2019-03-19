@@ -61,9 +61,19 @@ export type FaustCompileOptions = {
     useWorklet?: boolean;
     voices?: number;
     bufferSize?: 128 | 256 | 512 | 1024 | 2048 | 4096;
-    argv?: {
-        ftz?: 0 | 1 | 2;
-        I?: string;
+    args?: {
+        /**
+         * Flush to zero the code added to recursive signals [0:no (default), 1:fabs based, 2:mask based (fastest)]
+         *
+         * @type {(0 | 1 | 2)}
+         */
+        "-ftz"?: 0 | 1 | 2;
+        /**
+         * Add the directory to the import search path
+         *
+         * @type {string}
+         */
+        "-I"?: string;
         [key: string]: any;
     }
 }

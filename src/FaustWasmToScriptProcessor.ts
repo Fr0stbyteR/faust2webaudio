@@ -69,9 +69,8 @@ export class FaustWasmToScriptProcessor {
     constructor(faust: Faust) {
         this.faust = faust;
     }
-    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSizeIn?: number, memory?: WebAssembly.Memory, voices?: number) {
+    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number) {
         let node: FaustScriptProcessorNode;
-        const bufferSize = bufferSizeIn || 512;
         const dspMeta = compiledDsp.dspHelpers.meta;
         const inputs = parseInt(dspMeta.inputs);
         const outputs = parseInt(dspMeta.outputs);
@@ -368,7 +367,7 @@ export class FaustWasmToScriptProcessor {
                 // Prepare Ins buffer tables
                 const dspInChans = node.HEAP32.subarray(node.$ins >> 2, (node.$ins + node.numIn * node.ptrSize) >> 2);
                 for (let i = 0; i < node.numIn; i++) {
-                    node.dspInChannnels[i] = node.HEAPF32.subarray(dspInChans[i] >> 2, (dspInChans[i] + bufferSize * node.sampleSize) >> 2);
+                    node.dspInChannnels[i] = node.HEAPF32.subarray(dspInChans[i] >> 2, (dspInChans[i] + node.bufferSize * node.sampleSize) >> 2);
                 }
             }
             if (node.numOut > 0) {
@@ -376,12 +375,12 @@ export class FaustWasmToScriptProcessor {
                 if (node.voices) node.$mixing = node.$$audioHeapMixing;
                 for (let i = 0; i < node.numOut; i++) {
                     node.HEAP32[(node.$outs >> 2) + i] = node.$audioHeapOutputs + node.bufferSize * node.sampleSize * i;
-                    if (node.voices) node.HEAP32[(node.$mixing >> 2) + i] = node.$audioHeapMixing + bufferSize * node.sampleSize * i;
+                    if (node.voices) node.HEAP32[(node.$mixing >> 2) + i] = node.$audioHeapMixing + node.bufferSize * node.sampleSize * i;
                 }
                 // Prepare Out buffer tables
                 const dspOutChans = node.HEAP32.subarray(node.$outs >> 2, (node.$outs + node.numOut * node.ptrSize) >> 2);
                 for (let i = 0; i < node.numOut; i++) {
-                    node.dspOutChannnels[i] = node.HEAPF32.subarray(dspOutChans[i] >> 2, (dspOutChans[i] + bufferSize * node.sampleSize) >> 2);
+                    node.dspOutChannnels[i] = node.HEAPF32.subarray(dspOutChans[i] >> 2, (dspOutChans[i] + node.bufferSize * node.sampleSize) >> 2);
                 }
             }
             // Parse JSON UI part
@@ -493,7 +492,8 @@ export class FaustWasmToScriptProcessor {
      * @param {number} [voices] - polyphony voices
      * @returns {Promise<ScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
      */
-    async getNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize: number, voices?: number) {
+    async getNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSizeIn: number, voices?: number) {
+        const bufferSize = bufferSizeIn || 512;
         let node: FaustScriptProcessorNode;
         const importObject = FaustWasmToScriptProcessor.importObject;
         try {
@@ -518,7 +518,7 @@ export class FaustWasmToScriptProcessor {
         }
         return node;
     }
-    static createMemory(compiledDsp: TCompiledDsp, bufferSize: number, voices: number) {
+    private static createMemory(compiledDsp: TCompiledDsp, bufferSize: number, voices: number) {
         // Memory allocator
         const ptrSize = 4;
         const sampleSize = 4;

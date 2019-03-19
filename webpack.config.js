@@ -31,6 +31,7 @@ const config = {
 };
 module.exports = (env, argv) => {
   if (argv.mode === 'development') {
+    config.devtool = 'inline-source-map';
     config.output.filename = 'index.js';
   }
   if (argv.mode === 'production') {

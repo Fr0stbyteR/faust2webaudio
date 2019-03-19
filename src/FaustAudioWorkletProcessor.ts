@@ -169,7 +169,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         }
         static parseItem(item: TFaustUIItem, obj: AudioParamDescriptor[], callback: (...args: any[]) => any) {
             if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
-                this.parseItems(item.items, obj, callback);
+                FaustAudioWorkletProcessor.parseItems(item.items, obj, callback); // callback may not binded to this
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Nothing
             } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
@@ -180,7 +180,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         }
         static parseItem2(item: TFaustUIItem, obj: FaustAudioWorkletProcessor, callback: (...args: any[]) => any) {
             if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
-                this.parseItems(item.items, obj, callback);
+                FaustAudioWorkletProcessor.parseItems(item.items, obj, callback); // callback may not binded to this
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Keep bargraph adresses
                 obj.outputsItems.push(item.address);

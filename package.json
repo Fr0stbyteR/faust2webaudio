@@ -1,14 +1,14 @@
 {
   "name": "faust2webaudio",
-  "version": "0.1.1",
-  "description": "Generate WebAudio Node from Faust code or wasm compiled from faust",
+  "version": "0.1.2",
+  "description": "Generate WebAudio Node from Faust code.",
   "main": "./dist/index.min.js",
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "webpack --mode development",
     "dist": "npm run build && webpack --mode production"
   },
-  "author": "Fr0stbyteR",
+  "author": "Grame-CNCM",
   "repository": "http://github.com/Fr0stbyteR/faust2webaudio",
   "license": "GPL-2.0-or-later",
   "devDependencies": {
