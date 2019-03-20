@@ -33,7 +33,7 @@ process = ba.pulsen(1, 10000) : pm.djembe(ba.hz2midikey(freq), 0.3, 0.4, 1) * ga
     gate = button("gate");
 };
 effect = dm.freeverb_demo;`;
-new Faust().ready.then((faust) => {
+new Faust2WebAudio.Faust().ready.then((faust) => {
     faust.getNode(polycode, { audioCtx, useWorklet: window.AudioWorklet ? true : false, voices: 4, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" } })
     .then(node => node.connect(audioCtx.destination));
     faust.getNode(code, { audioCtx, useWorklet: window.AudioWorklet ? true : false, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" } })

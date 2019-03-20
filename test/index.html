@@ -3,7 +3,7 @@
         <script src="../dist/index.min.js"></script>
         <script>
             audioCtx = new AudioContext();
-            const faust = new Faust();
+            const faust = new Faust2WebAudio.Faust();
             window.faust = faust;
             faust.ready
             .then(() => {

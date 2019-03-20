@@ -1,12 +1,14 @@
 const path = require('path');
 
 const config = {
-  entry: './src/Faust.ts',
+  entry: './src/index.ts',
   resolve: {
     extensions: ['.ts', '.js']
   },
   output: {
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
+    library: 'Faust2WebAudio',
+    libraryTarget: 'umd'
   },
   node: {
     fs: 'empty'

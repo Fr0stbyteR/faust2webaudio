@@ -582,4 +582,3 @@ const faustData = ${JSON.stringify({
         this._log.push(JSON.stringify(args));
     }
 }
-if (typeof module === "undefined" || typeof module.exports === "undefined") window.Faust = Faust;
