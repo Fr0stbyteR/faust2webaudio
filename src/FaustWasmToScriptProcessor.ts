@@ -167,6 +167,11 @@ export class FaustWasmToScriptProcessor {
             node.dspVoicesLevel = [];
             node.dspVoicesDate = [];
 
+            node.kActiveVoice = 0;
+            node.kFreeVoice = -1;
+            node.kReleaseVoice = -2;
+            node.kNoVoice = -3;
+
             for (let i = 0; i < node.voices; i++) {
                 node.dspVoices$[i] = node.$dsp + i * parseInt(node.dspMeta.size);
                 node.dspVoicesState[i] = node.kFreeVoice;
@@ -175,11 +180,6 @@ export class FaustWasmToScriptProcessor {
             }
             // Effect memory starts after last voice
             node.$effect = node.dspVoices$[node.voices - 1] + parseInt(node.dspMeta.size);
-
-            node.kActiveVoice = 0;
-            node.kFreeVoice = -1;
-            node.kReleaseVoice = -2;
-            node.kNoVoice = -3;
         }
 
         node.pathTable$ = {};

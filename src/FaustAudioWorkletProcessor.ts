@@ -365,6 +365,11 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 this.dspVoicesLevel = [];
                 this.dspVoicesDate = [];
 
+                this.kActiveVoice = 0;
+                this.kFreeVoice = -1;
+                this.kReleaseVoice = -2;
+                this.kNoVoice = -3;
+
                 for (let i = 0; i < this.voices; i++) {
                     this.dspVoices$[i] = this.$dsp + i * parseInt(this.dspMeta.size);
                     this.dspVoicesState[i] = this.kFreeVoice;
@@ -373,11 +378,6 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 }
                 // Effect memory starts after last voice
                 this.$effect = this.dspVoices$[this.voices - 1] + parseInt(this.dspMeta.size);
-
-                this.kActiveVoice = 0;
-                this.kFreeVoice = -1;
-                this.kReleaseVoice = -2;
-                this.kNoVoice = -3;
             }
 
             this.pathTable$ = {};

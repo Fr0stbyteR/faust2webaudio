@@ -11,7 +11,15 @@ Clone a copy of the repo:
 ```bash
 git clone https://github.com/Fr0stbyteR/faust2webaudio.git
 ```
-Put the directory in a local server, then open `./test/index.html`
+Put the directory in a local server, then open following pages:
+
+For Mono ScriptProcessor: `./test/mono.html`
+
+For Poly ScriptProcessor: `./test/poly.html`
+
+For Mono AudioWorklet: `./test/wmono.html`
+
+For Poly AudioWorklet: `./test/wpoly.html`
 
 ## Installing as npm package
 
