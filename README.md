@@ -78,4 +78,12 @@ If you don't want to build the minified js for testing purpose:
 ```bash
 npm run build
 ```
-To test, put the directory in a local server, then open `./test/index.html`
+To test, put the directory in a local server, then open following pages:
+
+For Mono ScriptProcessor: `./test/mono.html`
+
+For Poly ScriptProcessor: `./test/poly.html`
+
+For Mono AudioWorklet: `./test/wmono.html`
+
+For Poly AudioWorklet: `./test/wpoly.html`
