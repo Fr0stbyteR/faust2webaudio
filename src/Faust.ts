@@ -500,7 +500,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * @memberof Faust
      */
     private async getAudioWorkletNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number): Promise<FaustAudioWorkletNode> {
-        if (compiledDsp.polyphony.indexOf(voices) === -1) {
+        if (compiledDsp.polyphony.indexOf(voices || 0) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
     bufferSize,
@@ -516,7 +516,7 @@ const faustData = ${JSON.stringify({
 `;
             const url = window.URL.createObjectURL(new Blob([strProcessor], { type: "text/javascript" }));
             await audioCtx.audioWorklet.addModule(url);
-            compiledDsp.polyphony.push(voices || 1);
+            compiledDsp.polyphony.push(voices || 0);
         }
         return new FaustAudioWorkletNode(audioCtx, compiledDsp);
     }
