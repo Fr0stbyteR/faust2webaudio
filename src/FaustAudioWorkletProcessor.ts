@@ -549,7 +549,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             }
         }
 
-        midiMessage(data: number[]) {
+        midiMessage(data: number[] | Uint8Array) {
             const cmd = data[0] >> 4;
             const channel = data[0] & 0xf;
             const data1 = data[1];

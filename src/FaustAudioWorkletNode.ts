@@ -1,5 +1,9 @@
 import { TFaustUI, TFaustUIGroup, TFaustUIItem, TCompiledDsp, TDspMeta } from "./types";
-
+declare global {
+    interface Window {
+        AudioWorkletNode: AudioWorkletNode;
+    }
+}
 class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode : null) {
     onprocessorerror = (e: Event) => {
         console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: ");
@@ -121,7 +125,7 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
     pitchWheel(channel: number, wheel: number) {
         this.port.postMessage({ type: "pitchWheel", data: [channel, wheel] });
     }
-    midiMessage(data: number[]) {
+    midiMessage(data: number[] | Uint8Array) {
         this.port.postMessage({ data, type: "midi" });
     }
     metadata() {}

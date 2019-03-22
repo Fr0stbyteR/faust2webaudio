@@ -75,7 +75,7 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode implements IFa
     keyOff?: (channel: number, pitch: number, velocity: number) => void;
     allNotesOff?: () => void;
 
-    midiMessage: (data: number[]) => void;
+    midiMessage: (data: number[] | Uint8Array) => void;
     ctrlChange: (channel: number, ctrl: number, value: number) => void;
     pitchWheel: (channel: number, wheel: number) => void;
 
