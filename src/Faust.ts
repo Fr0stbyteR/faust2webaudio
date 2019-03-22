@@ -2,6 +2,7 @@ import { LibFaustLoader, LibFaust } from "./LibFaustLoader";
 import sha1 from "crypto-libraries/sha1";
 import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes, FaustCompileOptions } from "./types";
 import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
+import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
 import { FaustAudioWorkletProcessorWrapper, FaustData } from "./FaustAudioWorkletProcessor";
 import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
 
@@ -131,10 +132,10 @@ export class Faust {
      *
      * @param {string} code - the source code
      * @param {FaustCompileOptions} options - options with audioCtx, bufferSize, voices, useWorklet and args
-     * @returns {Promise<AudioWorkletNode | ScriptProcessorNode>}
+     * @returns {Promise<FaustAudioWorkletNode | FaustScriptProcessorNode>}
      * @memberof Faust
      */
-    async getNode(code: string, options: FaustCompileOptions): Promise<AudioWorkletNode | ScriptProcessorNode> {
+    async getNode(code: string, options: FaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
         const audioCtx = options.audioCtx;
         const voices = options.voices;
         const useWorklet = options.useWorklet;
@@ -480,10 +481,10 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * @param {AudioContext} audioCtx
      * @param {number} [bufferSize] - By default 512
      * @param {number} [voices] - Polyphony voices, 0 or undefined for mono DSP
-     * @returns {Promise<ScriptProcessorNode>}
+     * @returns {Promise<FaustScriptProcessorNode>}
      * @memberof Faust
      */
-    private async getScriptProcessorNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number): Promise<ScriptProcessorNode> {
+    private async getScriptProcessorNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number): Promise<FaustScriptProcessorNode> {
         return await new FaustWasmToScriptProcessor(this).getNode(compiledDsp, audioCtx, bufferSize, voices);
     }
     // deleteDSPInstance() {}
