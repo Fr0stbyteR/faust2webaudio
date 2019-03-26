@@ -308,6 +308,8 @@ export class FaustWasmToScriptProcessor {
             const data1 = data[1];
             const data2 = data[2];
             if (channel === 9) return;
+            if (cmd === 8 || (cmd === 9 && data2 === 0)) return node.keyOff(channel, data1, data2);
+            if (cmd === 9) return node.keyOn(channel, data1, data2);
             if (cmd === 11) return node.ctrlChange(channel, data1, data2);
             if (cmd === 14) return node.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
         };
