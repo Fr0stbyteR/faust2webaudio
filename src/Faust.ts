@@ -609,12 +609,27 @@ const faustData = ${JSON.stringify({
         this.generateCAuxFilesFromString($name, $code, argv.length, $argv, $errorMsg);
         return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", { encoding: "utf8" });
     }
+    /**
+     * Read a file from LibFaust Emscripten Module File System
+     *
+     * @param {string} path path string
+     * @returns {string} file as string UTF-8 encoded
+     * @memberof Faust
+     */
+    readFile(path: string): string {
+        return this.libFaust.FS.readFile(path, { encoding: "utf8" });
+    }
     log(...args: any[]) {
         if (this.debug) console.log(...args);
-        this._log.push(JSON.stringify(args));
+        const msg = JSON.stringify(args.length !== 1 ? args : args[0]);
+        this._log.push(msg);
+        if (typeof this.logHandler === "function") this.logHandler(msg, 0);
     }
     error(...args: any[]) {
         console.error(...args);
-        this._log.push(JSON.stringify(args));
+        const msg = JSON.stringify(args.length !== 1 ? args : args[0]);
+        this._log.push(msg);
+        if (typeof this.logHandler === "function") this.logHandler(msg, 1);
     }
+    logHandler: (msg: string, errorLevel: 1 | 0) => any;
 }
