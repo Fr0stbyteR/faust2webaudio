@@ -592,7 +592,7 @@ const faustData = ${JSON.stringify({
         const $name = this.libFaust._malloc(nameSize);
         const $errorMsg = this.libFaust._malloc(4096);
 
-        const argv = [...argvIn, "-lang", "wast", "-svg"];
+        const argv = [...argvIn, "-lang", "wast", "-o", "/dev/null", "-svg"];
         this.libFaust.stringToUTF8(name, $name, nameSize);
         this.libFaust.stringToUTF8(code, $code, codeSize);
 
