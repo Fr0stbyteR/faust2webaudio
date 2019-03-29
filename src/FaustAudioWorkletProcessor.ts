@@ -173,9 +173,9 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Nothing
             } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
-                obj.push({ name: item.address, defaultValue: +item.init | 0, minValue: isFinite(+item.min) ? +item.min : Number.MIN_VALUE, maxValue: isFinite(+item.max) ? +item.max : Number.MAX_VALUE });
+                obj.push({ name: item.address, defaultValue: +item.init || 0, minValue: isFinite(+item.min) ? +item.min : Number.MIN_VALUE, maxValue: isFinite(+item.max) ? +item.max : Number.MAX_VALUE });
             } else if (item.type === "button" || item.type === "checkbox") {
-                obj.push({ name: item.address, defaultValue: +item.init | 0, minValue: 0, maxValue: 1 });
+                obj.push({ name: item.address, defaultValue: +item.init || 0, minValue: 0, maxValue: 1 });
             }
         }
         static parseItem2(item: TFaustUIItem, obj: FaustAudioWorkletProcessor, callback: (...args: any[]) => any) {
