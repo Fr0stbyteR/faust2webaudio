@@ -535,45 +535,60 @@ const faustData = ${JSON.stringify({
         // The native C++ is cleared each time (freeWasmCModule has been already called in faust.compile)
         this.deleteAllWasmCDSPFactories();
     }
-    private getCompiledCodesForMachine(compiledCodes: TCompiledCodes) {
-        return {
-            dspName: compiledCodes.dspName,
-            dsp: {
-                strCode: ab2str(compiledCodes.dsp.ui8Code),
-                code: compiledCodes.dsp.code,
-                helpersCode: compiledCodes.dsp.helpersCode
-            },
-            effectName : compiledCodes.effectName,
-            effect: {
-                strCode: ab2str(compiledCodes.effect.ui8Code),
-                code: compiledCodes.effect.code,
-                helpersCode: compiledCodes.effect.helpersCode
-            }
-        } as TCompiledStrCodes;
-    }
-    private async getCompiledCodeFromMachine(compiledStrCodes: TCompiledStrCodes) {
-        const shaKey = sha1.hash(compiledStrCodes.dsp.code, { msgFormat: "string" });
-        const compiledDsp = this.dspTable[shaKey];
-        if (compiledDsp) {
-            this.log("Existing library : " + compiledDsp.codes.dspName);
-            // Existing factory, do not create it...
-            return compiledDsp;
+    /**
+     * Stringify current storaged DSP Table.
+     *
+     * @returns {string}
+     * @memberof Faust
+     */
+    stringifyDspTable(): string {
+        const strTable = {} as { [shaKey: string]: TCompiledStrCodes };
+        for (const key in this.dspTable) {
+            const codes = this.dspTable[key].codes;
+            strTable[key] = {
+                dspName: codes.dspName,
+                dsp: {
+                    strCode: ab2str(codes.dsp.ui8Code),
+                    code: codes.dsp.code,
+                    helpersCode: codes.dsp.helpersCode
+                },
+                effectName: codes.effectName,
+                effect: {
+                    strCode: ab2str(codes.effect.ui8Code),
+                    code: codes.effect.code,
+                    helpersCode: codes.effect.helpersCode
+                }
+            };
         }
-        const compiledCodes = {
-            dspName: compiledStrCodes.dspName,
-            effectName: compiledStrCodes.effectName,
-            dsp: {
-                ui8Code: str2ab(compiledStrCodes.dsp.strCode),
-                code: compiledStrCodes.dsp.code,
-                helpersCode: compiledStrCodes.dsp.helpersCode
-            },
-            effect: {
-                ui8Code: str2ab(compiledStrCodes.effect.strCode),
-                code: compiledStrCodes.effect.code,
-                helpersCode: compiledStrCodes.effect.helpersCode
-            }
-        } as TCompiledCodes;
-        return this.compileDsp(compiledCodes, shaKey);
+        return JSON.stringify(strTable);
+    }
+    /**
+     * parse and store a stringified DSP Table.
+     *
+     * @param {string} str
+     * @memberof Faust
+     */
+    async parseDspTable(str: string) {
+        const strTable = JSON.parse(str) as { [shaKey: string]: TCompiledStrCodes };
+        for (const shaKey in strTable) {
+            if (this.dspTable[shaKey]) continue;
+            const strCodes = strTable[shaKey];
+            const compiledCodes = {
+                dspName: strCodes.dspName,
+                effectName: strCodes.effectName,
+                dsp: {
+                    ui8Code: str2ab(strCodes.dsp.strCode),
+                    code: strCodes.dsp.code,
+                    helpersCode: strCodes.dsp.helpersCode
+                },
+                effect: {
+                    ui8Code: str2ab(strCodes.effect.strCode),
+                    code: strCodes.effect.code,
+                    helpersCode: strCodes.effect.helpersCode
+                }
+            } as TCompiledCodes;
+            this.dspTable[shaKey] = await this.compileDsp(compiledCodes, shaKey);
+        }
     }
     // deleteDSPWorkletInstance() {}
     /**
