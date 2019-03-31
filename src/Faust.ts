@@ -520,7 +520,7 @@ const faustData = ${JSON.stringify({
             await audioCtx.audioWorklet.addModule(url);
             compiledDsp.polyphony.push(voices || 0);
         }
-        return new FaustAudioWorkletNode(audioCtx, compiledDsp);
+        return new FaustAudioWorkletNode(audioCtx, compiledDsp, voices);
     }
     /**
      * Remove a DSP from registry
