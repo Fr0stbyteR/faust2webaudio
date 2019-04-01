@@ -636,13 +636,13 @@ const faustData = ${JSON.stringify({
     }
     log(...args: any[]) {
         if (this.debug) console.log(...args);
-        const msg = JSON.stringify(args.length !== 1 ? args : args[0]);
+        const msg = args.length === 1 && typeof args[0] === "string" ? args[0] : JSON.stringify(args.length !== 1 ? args : args[0]);
         this._log.push(msg);
         if (typeof this.logHandler === "function") this.logHandler(msg, 0);
     }
     error(...args: any[]) {
         console.error(...args);
-        const msg = JSON.stringify(args.length !== 1 ? args : args[0]);
+        const msg = args.length === 1 && typeof args[0] === "string" ? args[0] : JSON.stringify(args.length !== 1 ? args : args[0]);
         this._log.push(msg);
         if (typeof this.logHandler === "function") this.logHandler(msg, 1);
     }
