@@ -548,13 +548,13 @@ const faustData = ${JSON.stringify({
             strTable[key] = {
                 dspName: codes.dspName,
                 dsp: {
-                    strCode: ab2str(codes.dsp.ui8Code),
+                    strCode: btoa(ab2str(codes.dsp.ui8Code)),
                     code: codes.dsp.code,
                     helpersCode: codes.dsp.helpersCode
                 },
                 effectName: codes.effectName,
                 effect: {
-                    strCode: ab2str(codes.effect.ui8Code),
+                    strCode: btoa(ab2str(codes.effect.ui8Code)),
                     code: codes.effect.code,
                     helpersCode: codes.effect.helpersCode
                 }
@@ -577,12 +577,12 @@ const faustData = ${JSON.stringify({
                 dspName: strCodes.dspName,
                 effectName: strCodes.effectName,
                 dsp: {
-                    ui8Code: str2ab(strCodes.dsp.strCode),
+                    ui8Code: str2ab(atob(strCodes.dsp.strCode)),
                     code: strCodes.dsp.code,
                     helpersCode: strCodes.dsp.helpersCode
                 },
                 effect: {
-                    ui8Code: str2ab(strCodes.effect.strCode),
+                    ui8Code: str2ab(atob(strCodes.effect.strCode)),
                     code: strCodes.effect.code,
                     helpersCode: strCodes.effect.helpersCode
                 }
