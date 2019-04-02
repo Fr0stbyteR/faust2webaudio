@@ -553,11 +553,11 @@ const faustData = ${JSON.stringify({
                     helpersCode: codes.dsp.helpersCode
                 },
                 effectName: codes.effectName,
-                effect: {
+                effect: codes.effect ? {
                     strCode: btoa(ab2str(codes.effect.ui8Code)),
                     code: codes.effect.code,
                     helpersCode: codes.effect.helpersCode
-                }
+                } : undefined
             };
         }
         return JSON.stringify(strTable);
@@ -581,11 +581,11 @@ const faustData = ${JSON.stringify({
                     code: strCodes.dsp.code,
                     helpersCode: strCodes.dsp.helpersCode
                 },
-                effect: {
+                effect: strCodes.effect ? {
                     ui8Code: str2ab(atob(strCodes.effect.strCode)),
                     code: strCodes.effect.code,
                     helpersCode: strCodes.effect.helpersCode
-                }
+                } : undefined
             } as TCompiledCodes;
             this.dspTable[shaKey] = await this.compileDsp(compiledCodes, shaKey);
         }
