@@ -59,14 +59,6 @@ export class Faust {
      */
     debug: boolean = false;
     /**
-     * Current compiled dsp count
-     *
-     * @private
-     * @type {number}
-     * @memberof Faust
-     */
-    private dspCount: number = 0;
-    /**
      * An object to storage compiled dsp with it's sha1
      *
      * @private
@@ -318,8 +310,8 @@ export class Faust {
         }
         this.log("libfaust.js version : " + this.getLibFaustVersion());
         // Factory name for DSP and effect
-        const dspName = "mydsp" + this.dspCount;
-        const effectName = "effect" + this.dspCount++;
+        const dspName = shaKey + "_d";
+        const effectName = shaKey + "_e";
         // Create 'effect' expression
         const effectCode = `adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _;
 adaptor(F,G) = adapt(outputs(F),inputs(G));
