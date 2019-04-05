@@ -61,6 +61,8 @@ export class FaustWasmToScriptProcessor {
                 _log: Math.log, _log10: Math.log10, _max_: Math.max, _min_: Math.min,
                 _remainder: (x: number, y: number) => x - Math.round(x / y) * y,
                 _pow: Math.pow, _round: Math.fround, _sin: Math.sin, _sqrt: Math.sqrt, _tan: Math.tan,
+                _acosh: Math.acosh, _asinh: Math.asinh, _atanh: Math.atanh, 
+                _cosh: Math.cosh, _sinh: Math.sinh, _tanh: Math.tanh,
                 table: new WebAssembly.Table({ initial: 0, element: "anyfunc" })
             }
         };
