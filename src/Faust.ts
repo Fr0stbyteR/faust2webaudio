@@ -613,7 +613,25 @@ const faustData = ${JSON.stringify({
             this.libFaust.stringToUTF8(argv[i], $arg, $arg_size);
             argvBuffer$[i] = $arg;
         }
-        this.generateCAuxFilesFromString($name, $code, argv.length, $argv, $errorMsg);
+        try {
+            this.generateCAuxFilesFromString($name, $code, argv.length, $argv, $errorMsg);
+            // Free strings
+            this.libFaust._free($code);
+            this.libFaust._free($name);
+            this.libFaust._free($errorMsg);
+            // Free 'argv' C side array
+            for (let i = 0; i < argv.length; i++) {
+                this.libFaust._free(argvBuffer$[i]);
+            }
+            this.libFaust._free($argv);
+        } catch (e) {
+            // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
+            let errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
+            // Report the Emscripten error
+            if (!errorMsg) errorMsg = e;
+            this.cleanupAfterException();
+            throw errorMsg;
+        }
         return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", { encoding: "utf8" });
     }
     /**
