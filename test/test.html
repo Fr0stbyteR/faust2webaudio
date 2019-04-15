@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="../dist/index.js"></script>
+    </head>
+    <body style="position: absolute; width: 100%; height: 100%; margin: 0px">
+    </body>
+    <script>
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const faust = new Faust2WebAudio.Faust();
+        window.faust = faust;
+        faust.ready
+        .then(() => {
+            code = `import("stdfaust.lib");
+process = 0 : dm.fft_spectral_level_demo(32) <: _,_;`;
+            faust.getNode(code, { audioCtx, useWorklet: false, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" } })
+            .then(node => {
+                window.node = node;
+                node.connect(audioCtx.destination);
+            });
+        })
+        const unlockAudioContext = (audioCtx) => {
+            if (audioCtx.state !== "suspended") return;
+            const b = document.body;
+            const events = ["touchstart", "touchend", "mousedown", "keydown"];
+            const unlock = () => audioCtx.resume().then(clean);
+            const clean = () => events.forEach(e => b.removeEventListener(e, unlock));
+            events.forEach(e => b.addEventListener(e, unlock, false));
+        }
+        unlockAudioContext(audioCtx);
+    </script>
+</html>

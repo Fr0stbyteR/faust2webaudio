@@ -435,7 +435,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         // factory.getJSON = eval("getJSON" + dspName);
         // factory.getBase64Code = eval("getBase64Code" + dspName);
         try {
-            const json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1];
+            const json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/, "'");
             const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
             const meta = JSON.parse(json);
             compiledDsp.dspHelpers = { json, base64Code, meta };
@@ -454,7 +454,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
             // factory.getJSONeffect = eval("getJSON" + factory_name2);
             // factory.getBase64Codeeffect = eval("getBase64Code" + factory_name2);
             try {
-                const json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1];
+                const json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/, "'");
                 const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
                 const meta = JSON.parse(json);
                 compiledDsp.effectHelpers = { json, base64Code, meta };
