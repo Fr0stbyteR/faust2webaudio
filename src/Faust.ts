@@ -359,12 +359,12 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         // Prepare 'argv' array for C side
         const ptrSize = 4;
         const $argv = this.libFaust._malloc(argv.length * ptrSize);  // Get buffer from emscripten.
-        let $argv_buffer = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);  // Get a integer view on the newly allocated buffer.
+        let argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);  // Get a integer view on the newly allocated buffer.
         for (let i = 0; i < argv.length; i++) {
             const $arg_size = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
             const $arg = this.libFaust._malloc($arg_size);
             this.libFaust.stringToUTF8(argv[i], $arg, $arg_size);
-            $argv_buffer[i] = $arg;
+            argvBuffer$[i] = $arg;
         }
         try {
             const $expandedCode = this.expandCDSPFromString($name, $code, argv.length, $argv, $shaKey, $errorMsg);
@@ -380,10 +380,10 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
             // Free C allocated expanded string
             this.freeCMemory($expandedCode);
             // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
-            $argv_buffer = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);
+            argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);
             // Free 'argv' C side array
             for (let i = 0; i < argv.length; i++) {
-                this.libFaust._free($argv_buffer[i]);
+                this.libFaust._free(argvBuffer$[i]);
             }
             this.libFaust._free($argv);
             return expandedCode;
@@ -606,7 +606,7 @@ const faustData = ${JSON.stringify({
         // Prepare 'argv' array for C side
         const ptrSize = 4;
         const $argv = this.libFaust._malloc(argv.length * ptrSize);  // Get buffer from emscripten.
-        const argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);  // Get a integer view on the newly allocated buffer.
+        let argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);  // Get a integer view on the newly allocated buffer.
         for (let i = 0; i < argv.length; i++) {
             const $arg_size = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
             const $arg = this.libFaust._malloc($arg_size);
@@ -619,6 +619,8 @@ const faustData = ${JSON.stringify({
             this.libFaust._free($code);
             this.libFaust._free($name);
             this.libFaust._free($errorMsg);
+            // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
+            argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);
             // Free 'argv' C side array
             for (let i = 0; i < argv.length; i++) {
                 this.libFaust._free(argvBuffer$[i]);
