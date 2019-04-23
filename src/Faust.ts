@@ -1,6 +1,6 @@
 import { LibFaustLoader, LibFaust } from "./LibFaustLoader";
 import sha1 from "crypto-libraries/sha1";
-import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes, FaustCompileOptions } from "./types";
+import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes, FaustCompileOptions, TAudioNodeOptions } from "./types";
 import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
 import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
 import { FaustAudioWorkletProcessorWrapper, FaustData } from "./FaustAudioWorkletProcessor";
@@ -125,23 +125,21 @@ export class Faust {
      * Create a AudioNode from dsp source code with options.
      *
      * @param {string} code - the source code
-     * @param {FaustCompileOptions} options - options with audioCtx, bufferSize, voices, useWorklet and args
+     * @param {FaustCompileOptions} optionsIn - options with audioCtx, bufferSize, voices, useWorklet, args, plot and plotHandler
      * @returns {Promise<FaustAudioWorkletNode | FaustScriptProcessorNode>}
      * @memberof Faust
      */
-    async getNode(code: string, options: FaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
-        const audioCtx = options.audioCtx;
-        const voices = options.voices;
-        const useWorklet = options.useWorklet;
-        const bufferSize = options.bufferSize;
+    async getNode(code: string, optionsIn: FaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
+        const { audioCtx, voices, useWorklet, bufferSize, plot, plotHandler } = optionsIn;
         const argv = [] as string[];
-        for (const key in options.args) {
+        for (const key in optionsIn.args) {
             argv.push(key);
-            argv.push(options.args[key]);
+            argv.push(optionsIn.args[key]);
         }
         const compiledDsp = await this.compileCodes(code, argv, voices ? false : true);
         if (!compiledDsp) return null;
-        const node = await this[useWorklet ? "getAudioWorkletNode" : "getScriptProcessorNode"](compiledDsp, audioCtx, useWorklet ? 128 : bufferSize, voices);
+        const options = { compiledDsp, audioCtx, voices, plot, plotHandler, bufferSize: useWorklet ? 128 : bufferSize };
+        const node = await useWorklet ? this.getAudioWorkletNode(options) : this.getScriptProcessorNode(options);
         return node;
     }
     /**
@@ -472,39 +470,36 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      *
      * @private
      * @param {TCompiledDsp} compiledDsp - DSP compiled by libfaust
-     * @param {AudioContext} audioCtx
-     * @param {number} [bufferSize] - By default 512
-     * @param {number} [voices] - Polyphony voices, 0 or undefined for mono DSP
+     * @param {TAudioNodeOptions} optionsIn
      * @returns {Promise<FaustScriptProcessorNode>}
      * @memberof Faust
      */
-    private async getScriptProcessorNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number): Promise<FaustScriptProcessorNode> {
-        return await new FaustWasmToScriptProcessor(this).getNode(compiledDsp, audioCtx, bufferSize, voices);
+    private async getScriptProcessorNode(optionsIn: TAudioNodeOptions): Promise<FaustScriptProcessorNode> {
+        return await new FaustWasmToScriptProcessor(this).getNode(optionsIn);
     }
     // deleteDSPInstance() {}
     /**
      * Get a AudioWorkletNode from compiled dsp
      *
      * @private
-     * @param {TCompiledDsp} compiledDsp - DSP compiled by libfaust
-     * @param {AudioContext} audioCtx
-     * @param {number} [bufferSize] - By default 128 (and it should be)
-     * @param {number} [voices] - Polyphony voices, 0 or undefined for mono DSP
+     * @param {TAudioNodeOptions} optionsIn
      * @returns {Promise<FaustAudioWorkletNode>}
      * @memberof Faust
      */
-    private async getAudioWorkletNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSize?: number, voices?: number): Promise<FaustAudioWorkletNode> {
+    private async getAudioWorkletNode(optionsIn: TAudioNodeOptions): Promise<FaustAudioWorkletNode> {
+        const { compiledDsp, audioCtx, bufferSize, voices, plot, plotHandler } = optionsIn;
         if (compiledDsp.polyphony.indexOf(voices || 0) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
     bufferSize,
     voices,
+    plot,
     name: compiledDsp.codes.dspName,
     dspMeta: compiledDsp.dspHelpers.meta,
     dspBase64Code: compiledDsp.dspHelpers.base64Code,
     effectMeta: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : undefined,
     effectBase64Code: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.base64Code : undefined,
-    mixerBase64Code: mixer32Base64Code
+    mixerBase64Code: mixer32Base64Code,
 } as FaustData)};
 (${FaustAudioWorkletProcessorWrapper.toString()})();
 `;
@@ -512,7 +507,7 @@ const faustData = ${JSON.stringify({
             await audioCtx.audioWorklet.addModule(url);
             compiledDsp.polyphony.push(voices || 0);
         }
-        return new FaustAudioWorkletNode(audioCtx, compiledDsp, voices);
+        return new FaustAudioWorkletNode(audioCtx, compiledDsp, voices, plotHandler);
     }
     /**
      * Remove a DSP from registry

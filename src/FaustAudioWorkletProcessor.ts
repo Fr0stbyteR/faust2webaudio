@@ -32,7 +32,8 @@ export type FaustData = {
     effectBase64Code?: string,
     mixerBase64Code?: string,
     bufferSize?: number,
-    voices?: number
+    voices?: number,
+    plot?: number
 };
 declare const faustData: FaustData;
 
@@ -142,6 +143,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         static bufferSize = faustData.bufferSize || 128;
         static voices = faustData.voices;
         static memory = FaustConst.voices ? FaustConst.createMemory() : undefined;
+        static plot = faustData.plot;
         private static dspBase64Code = faustData.dspBase64Code;
         private static dspModule = new WebAssembly.Module(FaustConst.atob(FaustConst.dspBase64Code));
         static dspInstance = new WebAssembly.Instance(FaustConst.dspModule, FaustConst.importObject);
@@ -263,6 +265,9 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         kReleaseVoice?: number;
         kNoVoice?: number;
 
+        plot: number;
+        plotted: number[][];
+
         outputHandler: (address: string, value: number) => any;
         computeHandler: (bufferSize: number) => any;
 
@@ -289,7 +294,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.voices = FaustConst.voices;
             this.dspMeta = FaustConst.dspMeta;
 
-            this.outputHandler = (path, value) => this.port.postMessage({ path, value });
+            this.outputHandler = (path, value) => this.port.postMessage({ path, value, type: "param" });
             this.computeHandler = null;
 
             this.$ins = null;
@@ -385,6 +390,9 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             }
 
             this.pathTable$ = {};
+
+            this.plot = FaustConst.plot;
+            this.plotted = new Array(this.numOut).fill(null).map(() => []); // tslint:disable-line: prefer-array-literal
 
             // Init resulting DSP
             this.setup();
@@ -625,9 +633,13 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.updateOutputs();
             // Copy outputs
             if (output !== undefined) {
-                for (let chan = 0; chan < Math.min(this.numOut, output.length); ++chan) {
-                    const dspOutput = this.dspOutChannnels[chan];
-                    output[chan].set(dspOutput);
+                for (let i = 0; i < Math.min(this.numOut, output.length); ++i) {
+                    const dspOutput = this.dspOutChannnels[i];
+                    output[i].set(dspOutput);
+                    if (this.plot && this.plotted[i].length < this.plot) {
+                        this.plotted[i] = this.plotted[i].concat(...dspOutput);
+                        if (this.plotted[i].length >= this.plot && i === this.numOut - 1) this.port.postMessage({ type: "plot", value: this.plotted });
+                    }
                 }
             }
             return true;

@@ -1,7 +1,7 @@
 import { Faust, mixer32Base64Code } from "./Faust";
 import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
 import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
-import { TCompiledDsp } from "./types";
+import { TCompiledDsp, TAudioNodeOptions } from "./types";
 const b64ToUint6 = (nChr: number) => {
     return nChr > 64 && nChr < 91
         ? nChr - 65
@@ -73,7 +73,7 @@ export class FaustWasmToScriptProcessor {
     constructor(faust: Faust) {
         this.faust = faust;
     }
-    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number) {
+    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plot?: number, plotHandler?: (plotted: number[][]) => any) {
         let node: FaustScriptProcessorNode;
         const dspMeta = compiledDsp.dspHelpers.meta;
         const inputs = parseInt(dspMeta.inputs);
@@ -187,6 +187,10 @@ export class FaustWasmToScriptProcessor {
         }
 
         node.pathTable$ = {};
+
+        node.plot = plot;
+        node.plotted = new Array(node.numOut).fill(null).map(() => []); // tslint:disable-line: prefer-array-literal
+        node.plotHandler = plotHandler;
 
         node.updateOutputs = () => {
             if (node.outputsItems.length > 0 && node.outputHandler && node.outputsTimer-- === 0) {
@@ -362,6 +366,10 @@ export class FaustWasmToScriptProcessor {
                 const output = e.outputBuffer.getChannelData(i);
                 const dspOutput = node.dspOutChannnels[i];
                 output.set(dspOutput);
+                if (node.plot && node.plotHandler && node.plotted[i].length < node.plot) { // Plot
+                    node.plotted[i] = node.plotted[i].concat(...dspOutput);
+                    if (node.plotted[i].length >= node.plot && i === node.numOut - 1) node.plotHandler(node.plotted);
+                }
             }
         };
         node.setup = () => { // Setup web audio context
@@ -493,14 +501,11 @@ export class FaustWasmToScriptProcessor {
      * Create a ScriptProcessorNode Web Audio object
      * by loading and compiling the Faust wasm file
      *
-     * @param {TCompiledDsp} compiledDsp - DSP Module compiled by libfaust
-     * @param {AudioContext} audioCtx - the Web Audio context
-     * @param {number} bufferSize - the bufferSize in frames
-     * @param {string} [mixerPath] - the path of polyphony mixer
-     * @param {number} [voices] - polyphony voices
-     * @returns {Promise<ScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
+     * @param {TAudioNodeOptions} optionsIn
+     * @returns {Promise<FaustScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
      */
-    async getNode(compiledDsp: TCompiledDsp, audioCtx: AudioContext, bufferSizeIn: number, voices?: number) {
+    async getNode(optionsIn: TAudioNodeOptions): Promise<FaustScriptProcessorNode> {
+        const { compiledDsp, audioCtx, bufferSize: bufferSizeIn, voices, plot, plotHandler } = optionsIn;
         const bufferSize = bufferSizeIn || 512;
         let node: FaustScriptProcessorNode;
         const importObject = FaustWasmToScriptProcessor.importObject;
@@ -519,7 +524,7 @@ export class FaustWasmToScriptProcessor {
                 } catch (e) {}
             }
             const dspInstance = await WebAssembly.instantiate(compiledDsp.dspModule, importObject);
-            node = this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices);
+            node = this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plot, plotHandler);
         } catch (e) {
             this.faust.error("Faust " + compiledDsp.codes.dspName + " cannot be loaded or compiled");
             throw(e);

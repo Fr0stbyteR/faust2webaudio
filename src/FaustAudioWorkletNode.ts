@@ -47,7 +47,9 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
     inputsItems: string[];
     outputsItems: string[];
 
-    constructor(audioCtx: AudioContext, compiledDsp: TCompiledDsp, voices?: number) {
+    plotHandler: (plotted: number[][]) => any;
+
+    constructor(audioCtx: AudioContext, compiledDsp: TCompiledDsp, voices?: number, plotHandler?: (plotted: number[][]) => any) {
         super(audioCtx, compiledDsp.codes.dspName, {
             numberOfInputs: parseInt(compiledDsp.dspHelpers.meta.inputs) > 0 ? 1 : 0,
             numberOfOutputs: parseInt(compiledDsp.dspHelpers.meta.outputs) > 0 ? 1 : 0,
@@ -58,7 +60,8 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
         });
         // Patch it with additional functions
         this.port.onmessage = (e: MessageEvent) => {
-            if (this.outputHandler) this.outputHandler(e.data.path, e.data.value);
+            if (e.data.type === "param" && this.outputHandler) this.outputHandler(e.data.path, e.data.value);
+            else if (e.data.type === "plot" && this.plotHandler) this.plotHandler(e.data.value);
         };
         this.voices = voices;
         this.dspMeta = compiledDsp.dspHelpers.meta;
@@ -66,6 +69,7 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
         this.outputHandler = null;
         this.inputsItems = [];
         this.outputsItems = [];
+        this.plotHandler = plotHandler;
         this.parseUI(this.dspMeta.ui);
     }
     parseUI(ui: TFaustUI) {

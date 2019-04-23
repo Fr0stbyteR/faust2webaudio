@@ -57,10 +57,10 @@ export type TCompiledDsp = {
     codes: TCompiledCodes
 }
 export type FaustCompileOptions = {
-    audioCtx: AudioContext;
-    useWorklet?: boolean;
-    voices?: number;
-    bufferSize?: 128 | 256 | 512 | 1024 | 2048 | 4096;
+    audioCtx: AudioContext,
+    useWorklet?: boolean,
+    voices?: number,
+    bufferSize?: 128 | 256 | 512 | 1024 | 2048 | 4096,
     args?: {
         /**
          * Flush to zero the code added to recursive signals [0:no (default), 1:fabs based, 2:mask based (fastest)]
@@ -76,4 +76,49 @@ export type FaustCompileOptions = {
         "-I"?: string;
         [key: string]: any;
     }
+    /**
+     * first samples to get
+     *
+     * @type {number}
+     */
+    plot?: number,
+    /**
+     * handler for plotted samples
+     *
+     * @type {(plotted: number[][]) => any}
+     */
+    plotHandler?: (plotted: number[][]) => any;
+}
+export type TAudioNodeOptions = {
+    /**
+     * DSP compiled by libfaust
+     *
+     * @type {TCompiledDsp}
+     */
+    compiledDsp: TCompiledDsp,
+    audioCtx: AudioContext,
+    /**
+     * Polyphony voices, 0 or undefined for mono DSP
+     *
+     * @type {number}
+     */
+    voices?: number,
+    /**
+     * - the bufferSize in frames
+     *
+     * @type {(128 | 256 | 512 | 1024 | 2048 | 4096)}
+     */
+    bufferSize?: 128 | 256 | 512 | 1024 | 2048 | 4096,
+    /**
+     * first samples to get
+     *
+     * @type {number}
+     */
+    plot?: number,
+    /**
+     * handler for plotted samples
+     *
+     * @type {(plotted: number[][]) => any}
+     */
+    plotHandler?: (plotted: number[][]) => any;
 }

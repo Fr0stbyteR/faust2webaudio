@@ -53,6 +53,10 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode implements IFa
     kReleaseVoice?: number;
     kNoVoice?: number;
 
+    plot: number;
+    plotted: number[][];
+    plotHandler: (plotted: number[][]) => any;
+
     outputHandler: (address: string, value: number) => any;
     computeHandler: (bufferSize: number) => any;
     updateOutputs: () => void;
