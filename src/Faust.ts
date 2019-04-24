@@ -66,6 +66,14 @@ export class Faust {
      * @memberof Faust
      */
     private dspTable: { [shaKey: string]: TCompiledDsp; } = {};
+    /**
+     * Registered WorkletProcessor names
+     *
+     * @private
+     * @type {string[]}
+     * @memberof Faust
+     */
+    private workletProcessors: string[] = [];
     private _log: string[] = [];
     /**
      * Creates an instance of Faust
@@ -302,25 +310,22 @@ export class Faust {
         const shaKey = sha1.hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
         const compiledDsp = this.dspTable[shaKey];
         if (compiledDsp) {
-            this.log("Existing library : " + compiledDsp.codes.dspName);
+            this.log("Existing library : " + shaKey);
             // Existing factory, do not create it...
             return compiledDsp;
         }
         this.log("libfaust.js version : " + this.getLibFaustVersion());
-        // Factory name for DSP and effect
-        const dspName = shaKey + "_d";
-        const effectName = shaKey + "_e";
         // Create 'effect' expression
         const effectCode = `adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _;
 adaptor(F,G) = adapt(outputs(F),inputs(G));
 dsp_code = environment{${code}};
 process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
-        const dspCompiledCode = this.compileCode(dspName, code, argv, internalMemory);
+        const dspCompiledCode = this.compileCode(shaKey, code, argv, internalMemory);
         let effectCompiledCode: TCompiledCode;
         try {
-            effectCompiledCode = this.compileCode(effectName, effectCode, argv, internalMemory);
+            effectCompiledCode = this.compileCode(shaKey + "_", effectCode, argv, internalMemory);
         } catch (e) {}
-        const compiledCodes = { dspName, effectName, dsp: dspCompiledCode, effect: effectCompiledCode } as TCompiledCodes;
+        const compiledCodes = { dsp: dspCompiledCode, effect: effectCompiledCode } as TCompiledCodes;
         return this.compileDsp(compiledCodes, shaKey);
     }
     /**
@@ -427,7 +432,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         }
         const time2 = performance.now();
         this.log("WASM compilation duration : " + (time2 - time1));
-        const compiledDsp = { shaKey, codes, dspModule, polyphony: [] as number[] } as TCompiledDsp; // Default mode
+        const compiledDsp = { shaKey, codes, dspModule } as TCompiledDsp; // Default mode
         // 'libfaust.js' wasm backend generates UI methods, then we compile the code
         // eval(helpers_code1);
         // factory.getJSON = eval("getJSON" + dspName);
@@ -443,7 +448,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         }
         this.dspTable[shaKey] = compiledDsp;
         // Possibly compile effect
-        if (!codes.effectName || !codes.effect) return compiledDsp;
+        if (!codes.effect) return compiledDsp;
         try {
             const effectModule = await WebAssembly.compile(codes.effect.ui8Code);
             compiledDsp.effectModule = effectModule;
@@ -488,13 +493,14 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      */
     private async getAudioWorkletNode(optionsIn: TAudioNodeOptions): Promise<FaustAudioWorkletNode> {
         const { compiledDsp, audioCtx, bufferSize, voices, plot, plotHandler } = optionsIn;
-        if (compiledDsp.polyphony.indexOf((voices || 0) + (plot || 0) * 128) === -1) {
+        const id = compiledDsp.shaKey + "_" + voices + "_" + plot;
+        if (this.workletProcessors.indexOf(id) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
+    id,
     bufferSize,
     voices,
     plot,
-    name: compiledDsp.codes.dspName,
     dspMeta: compiledDsp.dspHelpers.meta,
     dspBase64Code: compiledDsp.dspHelpers.base64Code,
     effectMeta: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : undefined,
@@ -505,9 +511,9 @@ const faustData = ${JSON.stringify({
 `;
             const url = window.URL.createObjectURL(new Blob([strProcessor], { type: "text/javascript" }));
             await audioCtx.audioWorklet.addModule(url);
-            compiledDsp.polyphony.push((voices || 0) + (plot || 0) * 128);
+            this.workletProcessors.push(id);
         }
-        return new FaustAudioWorkletNode(audioCtx, compiledDsp, voices, plotHandler);
+        return new FaustAudioWorkletNode(audioCtx, id, compiledDsp, voices, plotHandler);
     }
     /**
      * Remove a DSP from registry
@@ -533,13 +539,11 @@ const faustData = ${JSON.stringify({
         for (const key in this.dspTable) {
             const codes = this.dspTable[key].codes;
             strTable[key] = {
-                dspName: codes.dspName,
                 dsp: {
                     strCode: btoa(ab2str(codes.dsp.ui8Code)),
                     code: codes.dsp.code,
                     helpersCode: codes.dsp.helpersCode
                 },
-                effectName: codes.effectName,
                 effect: codes.effect ? {
                     strCode: btoa(ab2str(codes.effect.ui8Code)),
                     code: codes.effect.code,
@@ -561,8 +565,6 @@ const faustData = ${JSON.stringify({
             if (this.dspTable[shaKey]) continue;
             const strCodes = strTable[shaKey];
             const compiledCodes = {
-                dspName: strCodes.dspName,
-                effectName: strCodes.effectName,
                 dsp: {
                     ui8Code: str2ab(atob(strCodes.dsp.strCode)),
                     code: strCodes.dsp.code,

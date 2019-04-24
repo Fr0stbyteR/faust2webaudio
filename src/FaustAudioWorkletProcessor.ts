@@ -25,7 +25,7 @@ interface AudioParamDescriptor {
 
 // Injected by Faust
 export type FaustData = {
-    name: string,
+    id: string,
     dspMeta: TDspMeta,
     dspBase64Code: string,
     effectMeta?: TDspMeta,
@@ -137,7 +137,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             memorySize = Math.max(2, memorySize); // As least 2
             return new WebAssembly.Memory({ initial: memorySize, maximum: memorySize });
         }
-        static dspName = faustData.name;
+        static id = faustData.id;
         static dspMeta = faustData.dspMeta;
         static effectMeta = faustData.effectMeta;
         static bufferSize = faustData.bufferSize || 128;
@@ -663,10 +663,5 @@ export const FaustAudioWorkletProcessorWrapper = () => {
 
     // Globals
     // Synchronously compile and instantiate the WASM module
-    try {
-        registerProcessor(FaustConst.dspName || "mydsp", FaustAudioWorkletProcessor);
-    } catch (e) {
-        console.error("Faust " + (FaustConst.dspName || "mydsp") + " cannot be loaded or compiled");
-        throw e;
-    }
+    registerProcessor(FaustConst.id || "mydsp", FaustAudioWorkletProcessor);
 };

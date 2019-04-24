@@ -44,12 +44,11 @@ export type TFaustUIGroup = {
 export type TFaustUIType = TFaustUIGroupType | TFaustUIOutputType | TFaustUIInputType;
 export type TCompiledCode = { ui8Code: Uint8Array, code: string, helpersCode: string };
 export type TCompiledStrCode = { strCode: string, code: string, helpersCode: string };
-export type TCompiledCodes = { dspName: string, dsp: TCompiledCode, effectName?: string, effect?: TCompiledCode};
-export type TCompiledStrCodes = { dspName: string, dsp: TCompiledStrCode, effectName?: string, effect?: TCompiledStrCode};
+export type TCompiledCodes = { dsp: TCompiledCode, effect?: TCompiledCode};
+export type TCompiledStrCodes = { dsp: TCompiledStrCode, effect?: TCompiledStrCode};
 export type THelpers = { json: string, base64Code: string, meta: TDspMeta };
 export type TCompiledDsp = {
     shaKey: string,
-    polyphony: number[],
     dspModule: WebAssembly.Module,
     dspHelpers: THelpers,
     effectModule?: WebAssembly.Module,

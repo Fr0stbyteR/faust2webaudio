@@ -526,7 +526,7 @@ export class FaustWasmToScriptProcessor {
             const dspInstance = await WebAssembly.instantiate(compiledDsp.dspModule, importObject);
             node = this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plot, plotHandler);
         } catch (e) {
-            this.faust.error("Faust " + compiledDsp.codes.dspName + " cannot be loaded or compiled");
+            this.faust.error("Faust " + compiledDsp.shaKey + " cannot be loaded or compiled");
             throw(e);
         }
         return node;

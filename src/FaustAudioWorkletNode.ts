@@ -49,8 +49,8 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
 
     plotHandler: (plotted: number[][]) => any;
 
-    constructor(audioCtx: AudioContext, compiledDsp: TCompiledDsp, voices?: number, plotHandler?: (plotted: number[][]) => any) {
-        super(audioCtx, compiledDsp.codes.dspName, {
+    constructor(audioCtx: AudioContext, id: string, compiledDsp: TCompiledDsp, voices?: number, plotHandler?: (plotted: number[][]) => any) {
+        super(audioCtx, id, {
             numberOfInputs: parseInt(compiledDsp.dspHelpers.meta.inputs) > 0 ? 1 : 0,
             numberOfOutputs: parseInt(compiledDsp.dspHelpers.meta.outputs) > 0 ? 1 : 0,
             channelCount: Math.max(1, parseInt(compiledDsp.dspHelpers.meta.inputs)),
