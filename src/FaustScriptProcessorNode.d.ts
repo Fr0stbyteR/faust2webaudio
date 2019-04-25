@@ -53,10 +53,6 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode implements IFa
     kReleaseVoice?: number;
     kNoVoice?: number;
 
-    plot: number;
-    plotted: number[][];
-    plotHandler: (plotted: number[][]) => any;
-
     outputHandler: (address: string, value: number) => any;
     computeHandler: (bufferSize: number) => any;
     updateOutputs: () => void;
@@ -190,4 +186,16 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode implements IFa
      * @memberof FaustScriptProcessorNode
      */
     getJSON: () => string;
+
+    plot: number;
+    plotted: number[][];
+    plotHandler: (plotted: number[][]) => any;
+    /**
+     * Request plot
+     *
+     * @param {number} count - amount of samples need to be plotted
+     * @returns {Promise<number[][]>}
+     * @memberof IFaustDspNode
+     */
+    replot(count: number): Promise<number[][]>;
 }

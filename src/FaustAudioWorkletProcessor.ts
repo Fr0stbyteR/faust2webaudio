@@ -284,6 +284,10 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 // Generic data message
                 case "param": this.setParamValue(msg.key, msg.value); break;
                 // case "patch": this.onpatch(msg.data); break;
+                case "replot":
+                    this.plot = msg.count;
+                    this.plotted = new Array(this.numOut).fill(null).map(() => []); // tslint:disable-line: prefer-array-literal
+                    break;
             }
         }
         constructor(options: AudioWorkletNodeOptions) {

@@ -174,5 +174,18 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
         }
         return JSON.stringify(this.dspMeta);
     }
+    /**
+     * Request plot
+     *
+     * @param {number} count - amount of samples need to be plotted
+     * @returns {Promise<number[][]>}
+     * @memberof IFaustDspNode
+     */
+    replot(count: number): Promise<number[][]> {
+        return new Promise((resolve: (plotted: number[][]) => any, reject) => {
+            this.port.postMessage({ count, type: "replot" });
+            this.plotHandler = resolve;
+        });
+    }
 }
 export { FaustAudioWorkletNode };

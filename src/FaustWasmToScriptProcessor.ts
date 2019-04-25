@@ -495,6 +495,13 @@ export class FaustWasmToScriptProcessor {
         };
         // Init resulting DSP
         node.setup();
+        node.replot = (count: number) => {
+            return new Promise((resolve: (plotted: number[][]) => any, reject) => {
+                node.plot = count;
+                node.plotted = new Array(node.numOut).fill(null).map(() => []); // tslint:disable-line: prefer-array-literal
+                node.plotHandler = resolve;
+            });
+        };
         return node;
     }
     /**
