@@ -7,20 +7,12 @@ import FaustAudioWorkletNode from "./FaustAudioWorkletNode";
 
 import * as libFaustDataURI from "./wasm/libfaust-wasm.wasm";
 import * as mixer32DataURI from "./wasm/mixer32.wasm";
+import { ab2str, str2ab } from "./Utils";
+import FaustOfflineProcessor from "./FaustOfflineProcessor";
 
 export const mixer32Base64Code: string = (mixer32DataURI as unknown as string).split(",")[1];
 // import * as Binaryen from "binaryen";
 
-const ab2str = (buf: ArrayBuffer): string => (buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null);
-const str2ab = (str: string): ArrayBuffer => {
-    if (!str) return null;
-    const buf = new ArrayBuffer(str.length);
-    const bufView = new Uint8Array(buf);
-    for (let i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
-    }
-    return buf;
-};
 /**
  * Main Faust class,
  * usage: `new Faust().ready.then(faust => any);`
@@ -74,6 +66,15 @@ export class Faust {
      */
     private workletProcessors: string[] = [];
     private _log: string[] = [];
+    /**
+     * Offline processor used to plot
+     *
+     * @private
+     * @type {FaustOfflineProcessor}
+     * @memberof Faust
+     */
+    private offlineProcessor: FaustOfflineProcessor = new FaustOfflineProcessor();
+
     /**
      * Creates an instance of Faust
      * usage: `new Faust().ready.then(faust => any);`
@@ -132,11 +133,11 @@ export class Faust {
      * Create a AudioNode from dsp source code with options.
      *
      * @param {string} code - the source code
-     * @param {FaustCompileOptions} optionsIn - options with audioCtx, bufferSize, voices, useWorklet, args, plot and plotHandler
+     * @param {TFaustCompileOptions} optionsIn - options with audioCtx, bufferSize, voices, useWorklet, args, plot and plotHandler
      * @returns {Promise<FaustAudioWorkletNode | FaustScriptProcessorNode>}
      * @memberof Faust
      */
-    async getNode(code: string, optionsIn: FaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
+    async getNode(code: string, optionsIn: TFaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
         const { audioCtx, voices, useWorklet, bufferSize, plot, plotHandler } = optionsIn;
         const argv = [] as string[];
         for (const key in optionsIn.args) {
@@ -148,6 +149,27 @@ export class Faust {
         const options = { compiledDsp, audioCtx, voices, plot, plotHandler, bufferSize: useWorklet ? 128 : bufferSize };
         const node = await useWorklet ? this.getAudioWorkletNode(options) : this.getScriptProcessorNode(options);
         return node;
+    }
+    /**
+     * Plot a dsp offline.
+     *
+     * @param {string} code
+     * @param {{ size?: number; sampleRate?: number }} [options]
+     * @returns {Promise<Float32Array[]>}
+     * @memberof Faust
+     */
+    async plot(options?: { code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }): Promise<Float32Array[]> {
+        let compiledDsp;
+        const argv = [] as string[];
+        for (const key in options.args) {
+            argv.push(key);
+            argv.push(options.args[key]);
+        }
+        if (options.code) {
+            compiledDsp = await this.compileCodes(options.code, argv, true);
+            if (!compiledDsp) return null;
+        }
+        return this.offlineProcessor.plot({ compiledDsp, ...options });
     }
     /**
      * Generate Uint8Array and helpersCode from a dsp source code

@@ -40,15 +40,14 @@ declare const faustData: FaustData;
 
 const FaustAudioWorkletProcessorWrapper = () => {
     class FaustConst {
-        static atob(sBase64: string, nBlocksSize?: number) {
-            // if (typeof atob === "function") return atob(sBase64); It does not return an ArrayBuffer
+        static atoab(sBase64: string, nBlocksSize?: number) {
             const sB64Enc = sBase64.replace(/[^A-Za-z0-9+/]/g, "");
             const nInLen = sB64Enc.length;
             const nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2;
             const taBytes = new Uint8Array(nOutLen);
             for (let nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
                 nMod4 = nInIdx & 3;
-                nUint24 |= this.b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
+                nUint24 |= this.atoUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
                 if (nMod4 === 3 || nInLen - nInIdx === 1) {
                     for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
                         taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
@@ -58,7 +57,7 @@ const FaustAudioWorkletProcessorWrapper = () => {
             }
             return taBytes.buffer;
         }
-        static b64ToUint6(nChr: number) {
+        static atoUint6(nChr: number) {
             return nChr > 64 && nChr < 91
                 ? nChr - 65
                 : nChr > 96 && nChr < 123
@@ -145,13 +144,13 @@ const FaustAudioWorkletProcessorWrapper = () => {
         static memory = FaustConst.voices ? FaustConst.createMemory() : undefined;
         static plot = faustData.plot;
         private static dspBase64Code = faustData.dspBase64Code;
-        private static dspModule = new WebAssembly.Module(FaustConst.atob(FaustConst.dspBase64Code));
+        private static dspModule = new WebAssembly.Module(FaustConst.atoab(FaustConst.dspBase64Code));
         static dspInstance = new WebAssembly.Instance(FaustConst.dspModule, FaustConst.importObject);
         private static effectBase64Code = faustData.effectBase64Code;
-        private static effectModule = FaustConst.effectBase64Code ? new WebAssembly.Module(FaustConst.atob(FaustConst.effectBase64Code)) : undefined;
+        private static effectModule = FaustConst.effectBase64Code ? new WebAssembly.Module(FaustConst.atoab(FaustConst.effectBase64Code)) : undefined;
         static effectInstance = FaustConst.effectModule ? new WebAssembly.Instance(FaustConst.effectModule, FaustConst.importObject) : undefined;
         private static mixerBase64Code = faustData.mixerBase64Code;
-        private static mixerModule = FaustConst.voices ? new WebAssembly.Module(FaustConst.atob(FaustConst.mixerBase64Code)) : undefined;
+        private static mixerModule = FaustConst.voices ? new WebAssembly.Module(FaustConst.atoab(FaustConst.mixerBase64Code)) : undefined;
         private static mixerObject = FaustConst.voices ? { imports: { print: console.log }, memory: { memory: FaustConst.memory } } : undefined;
         static mixerInstance = FaustConst.voices ? new WebAssembly.Instance(FaustConst.mixerModule, FaustConst.mixerObject) : undefined;
     }
@@ -319,7 +318,7 @@ const FaustAudioWorkletProcessorWrapper = () => {
             this.sampleSize = 4;
 
             // Create the WASM instance
-            this.factory = FaustConst.dspInstance.exports as FaustWebAssemblyExports;
+            this.factory = FaustConst.dspInstance.exports;
             this.HEAP = this.voices ? FaustConst.memory.buffer : this.factory.memory.buffer;
             this.HEAP32 = new Int32Array(this.HEAP);
             this.HEAPF32 = new Float32Array(this.HEAP);
@@ -636,7 +635,7 @@ const FaustAudioWorkletProcessorWrapper = () => {
             this.updateOutputs();
             // Copy outputs
             if (output !== undefined) {
-                for (let i = 0; i < Math.min(this.numOut, output.length); ++i) {
+                for (let i = 0; i < Math.min(this.numOut, output.length); i++) {
                     const dspOutput = this.dspOutChannnels[i];
                     output[i].set(dspOutput);
                     if (this.plot && this.plotted[i].length < this.plot) {

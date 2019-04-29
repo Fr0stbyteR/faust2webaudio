@@ -13,12 +13,21 @@
         faust.ready
         .then(() => {
             code = `
-phasor(f)=f/48000:(+,1:fmod)~_;
+import("stdfaust.lib");
+phasor(f) = f/ma.SR:(+,1:fmod)~_;
 process = phasor(100);`;
             faust.getNode(code, { audioCtx, useWorklet: true, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" }, plot: 500, plotHandler: console.log })
             .then(node => {
                 window.node = node;
                 node.connect(audioCtx.destination);
+            });
+            faust.plot({ code, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" }, size: 128, sampleRate: 48000 }).then((a) => {
+                console.log(48000);
+                console.log(a);
+                faust.plot({ size: 1024, sampleRate: 192000 }).then((a) => {
+                    console.log(192000);
+                    console.log(a);
+                });
             });
         })
         const unlockAudioContext = (audioCtx) => {

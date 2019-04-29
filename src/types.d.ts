@@ -56,26 +56,27 @@ type TCompiledDsp = {
     effectHelpers?: THelpers;
     codes: TCompiledCodes;
 }
-type FaustCompileOptions = {
+type TFaustCompileArgs = {
+    /**
+     * Flush to zero the code added to recursive signals [0:no (default), 1:fabs based, 2:mask based (fastest)]
+     *
+     * @type {(0 | 1 | 2)}
+     */
+    "-ftz"?: 0 | 1 | 2;
+    /**
+     * Add the directory to the import search path
+     *
+     * @type {string}
+     */
+    "-I"?: string;
+    [key: string]: any;
+}
+type TFaustCompileOptions = {
     audioCtx: AudioContext;
     useWorklet?: boolean;
     voices?: number;
     bufferSize?: 128 | 256 | 512 | 1024 | 2048 | 4096;
-    args?: {
-        /**
-         * Flush to zero the code added to recursive signals [0:no (default), 1:fabs based, 2:mask based (fastest)]
-         *
-         * @type {(0 | 1 | 2)}
-         */
-        "-ftz"?: 0 | 1 | 2;
-        /**
-         * Add the directory to the import search path
-         *
-         * @type {string}
-         */
-        "-I"?: string;
-        [key: string]: any;
-    };
+    args?: TFaustCompileArgs;
     /**
      * first samples to get
      *
@@ -197,7 +198,7 @@ declare interface FaustDspNode {
     parseGroup(group: TFaustUIGroup): void;
     parseItems(items: TFaustUIItem[]): void;
     parseItem(ui: TFaustUIItem): void;
-    
+
     /**
      * Set control value.
      *
@@ -250,7 +251,7 @@ declare interface FaustDspNode {
      */
     allNotesOff?(): void;
     /**
-     * Handle Raw MIDI Messages 
+     * Handle Raw MIDI Messages
      *
      * @param {number[]} data - MIDI message as array
      * @memberof IFaustDspNode
