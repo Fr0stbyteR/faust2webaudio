@@ -1,4 +1,5 @@
-import { TFaustUI, TFaustUIGroup, TFaustUIItem, TCompiledDsp, TDspMeta } from "./types";
+/* eslint-disable object-curly-newline */
+/* eslint-disable object-property-newline */
 declare global {
     interface Window {
         AudioWorkletNode: AudioWorkletNode;
@@ -6,7 +7,7 @@ declare global {
 }
 class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode : null) {
     onprocessorerror = (e: Event) => {
-        console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: ");
+        console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: "); // eslint-disable-line no-console
         throw e;
     }
     /* WAP ??
@@ -132,7 +133,7 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
     midiMessage(data: number[] | Uint8Array) {
         this.port.postMessage({ data, type: "midi" });
     }
-    metadata() {}
+    metadata() {} // eslint-disable-line class-methods-use-this
     setParamValue(path: string, val: number) {
         this.port.postMessage({ type: "param", key: path, value: val });
         this.parameters.get(path).setValueAtTime(val, 0);
@@ -182,10 +183,10 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
      * @memberof IFaustDspNode
      */
     replot(count: number): Promise<number[][]> {
-        return new Promise((resolve: (plotted: number[][]) => any, reject) => {
+        return new Promise((resolve: (plotted: number[][]) => any) => {
             this.port.postMessage({ count, type: "replot" });
             this.plotHandler = resolve;
         });
     }
 }
-export { FaustAudioWorkletNode };
+export default FaustAudioWorkletNode;

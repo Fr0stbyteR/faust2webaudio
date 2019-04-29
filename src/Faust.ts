@@ -1,10 +1,9 @@
-import { LibFaustLoader, LibFaust } from "./LibFaustLoader";
+/* eslint-disable no-console */
 import sha1 from "crypto-libraries/sha1";
-import { TCompiledDsp, TCompiledCode, TCompiledCodes, TCompiledStrCodes, FaustCompileOptions, TAudioNodeOptions } from "./types";
-import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
-import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
-import { FaustAudioWorkletProcessorWrapper, FaustData } from "./FaustAudioWorkletProcessor";
-import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
+import { LibFaustLoader, LibFaust } from "./LibFaustLoader";
+import FaustWasmToScriptProcessor from "./FaustWasmToScriptProcessor";
+import FaustAudioWorkletProcessorWrapper from "./FaustAudioWorkletProcessor";
+import FaustAudioWorkletNode from "./FaustAudioWorkletNode";
 
 import * as libFaustDataURI from "./wasm/libfaust-wasm.wasm";
 import * as mixer32DataURI from "./wasm/mixer32.wasm";
@@ -12,7 +11,7 @@ import * as mixer32DataURI from "./wasm/mixer32.wasm";
 export const mixer32Base64Code: string = (mixer32DataURI as unknown as string).split(",")[1];
 // import * as Binaryen from "binaryen";
 
-const ab2str = (buf: ArrayBuffer): string => buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null;
+const ab2str = (buf: ArrayBuffer): string => (buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null);
 const str2ab = (str: string): ArrayBuffer => {
     if (!str) return null;
     const buf = new ArrayBuffer(str.length);
@@ -65,7 +64,7 @@ export class Faust {
      * @type {{ [shaKey: string]: TCompiledDsp }}
      * @memberof Faust
      */
-    private dspTable: { [shaKey: string]: TCompiledDsp; } = {};
+    private dspTable: { [shaKey: string]: TCompiledDsp } = {};
     /**
      * Registered WorkletProcessor names
      *
@@ -83,7 +82,7 @@ export class Faust {
      * @memberof Faust
      */
     constructor(options?: { debug: boolean; libFaust: LibFaust }) {
-        this.debug = options && options.debug ? true : false;
+        this.debug = !!(options && options.debug);
         if (options && options.libFaust) {
             this.libFaust = options.libFaust;
             this.importLibFaustFunctions();
@@ -144,7 +143,7 @@ export class Faust {
             argv.push(key);
             argv.push(optionsIn.args[key]);
         }
-        const compiledDsp = await this.compileCodes(code, argv, voices ? false : true);
+        const compiledDsp = await this.compileCodes(code, argv, !voices);
         if (!compiledDsp) return null;
         const options = { compiledDsp, audioCtx, voices, plot, plotHandler, bufferSize: useWorklet ? 128 : bufferSize };
         const node = await useWorklet ? this.getAudioWorkletNode(options) : this.getScriptProcessorNode(options);
@@ -178,12 +177,12 @@ export class Faust {
 
         // Prepare 'argv_aux' array for C side
         const ptrSize = 4;
-        const $argv = this.libFaust._malloc(argv.length * ptrSize);  // Get buffer from emscripten.
-        let argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);  // Get a integer view on the newly allocated buffer.
+        const $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
+        let argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
         for (let i = 0; i < argv.length; i++) {
-            const $arg_size = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
-            const $arg = this.libFaust._malloc($arg_size);
-            this.libFaust.stringToUTF8(argv[i], $arg, $arg_size);
+            const size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
+            const $arg = this.libFaust._malloc(size$arg);
+            this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
             argvBuffer$[i] = $arg;
         }
         try {
@@ -283,7 +282,7 @@ export class Faust {
                 this.libFaust._free(argvBuffer$[i]);
             }
             this.libFaust._free($argv);
-            return { ui8Code, code, helpersCode } as TCompiledCode;
+            return { ui8Code, code, helpersCode };
         } catch (e) {
             // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
             let errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
@@ -324,8 +323,8 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         let effectCompiledCode: TCompiledCode;
         try {
             effectCompiledCode = this.compileCode(shaKey + "_", effectCode, argv, internalMemory);
-        } catch (e) {}
-        const compiledCodes = { dsp: dspCompiledCode, effect: effectCompiledCode } as TCompiledCodes;
+        } catch (e) {} // eslint-disable-line no-empty
+        const compiledCodes = { dsp: dspCompiledCode, effect: effectCompiledCode };
         return this.compileDsp(compiledCodes, shaKey);
     }
     /**
@@ -361,18 +360,17 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
 
         // Prepare 'argv' array for C side
         const ptrSize = 4;
-        const $argv = this.libFaust._malloc(argv.length * ptrSize);  // Get buffer from emscripten.
-        let argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);  // Get a integer view on the newly allocated buffer.
+        const $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
+        let argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
         for (let i = 0; i < argv.length; i++) {
-            const $arg_size = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
-            const $arg = this.libFaust._malloc($arg_size);
-            this.libFaust.stringToUTF8(argv[i], $arg, $arg_size);
+            const size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
+            const $arg = this.libFaust._malloc(size$arg);
+            this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
             argvBuffer$[i] = $arg;
         }
         try {
             const $expandedCode = this.expandCDSPFromString($name, $code, argv.length, $argv, $shaKey, $errorMsg);
             const expandedCode = this.libFaust.UTF8ToString($expandedCode);
-            const shaKey = this.libFaust.UTF8ToString($shaKey);
             const errorMsg = this.libFaust.UTF8ToString($errorMsg);
             if (errorMsg) this.error(errorMsg);
             // Free strings
@@ -428,11 +426,11 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         const dspModule = await WebAssembly.compile(codes.dsp.ui8Code);
         if (!dspModule) {
             this.error("Faust DSP factory cannot be compiled");
-            throw "Faust DSP factory cannot be compiled";
+            throw new Error("Faust DSP factory cannot be compiled");
         }
         const time2 = performance.now();
         this.log("WASM compilation duration : " + (time2 - time1));
-        const compiledDsp = { shaKey, codes, dspModule } as TCompiledDsp; // Default mode
+        const compiledDsp: TCompiledDsp = { shaKey, codes, dspModule, dspHelpers: undefined }; // Default mode
         // 'libfaust.js' wasm backend generates UI methods, then we compile the code
         // eval(helpers_code1);
         // factory.getJSON = eval("getJSON" + dspName);
@@ -480,7 +478,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * @memberof Faust
      */
     private async getScriptProcessorNode(optionsIn: TAudioNodeOptions): Promise<FaustScriptProcessorNode> {
-        return await new FaustWasmToScriptProcessor(this).getNode(optionsIn);
+        return new FaustWasmToScriptProcessor(this).getNode(optionsIn);
     }
     // deleteDSPInstance() {}
     /**
@@ -497,16 +495,16 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         if (this.workletProcessors.indexOf(id) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
-    id,
-    bufferSize,
-    voices,
-    plot,
-    dspMeta: compiledDsp.dspHelpers.meta,
-    dspBase64Code: compiledDsp.dspHelpers.base64Code,
-    effectMeta: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : undefined,
-    effectBase64Code: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.base64Code : undefined,
-    mixerBase64Code: mixer32Base64Code,
-} as FaustData)};
+        id,
+        bufferSize,
+        voices,
+        plot,
+        dspMeta: compiledDsp.dspHelpers.meta,
+        dspBase64Code: compiledDsp.dspHelpers.base64Code,
+        effectMeta: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : undefined,
+        effectBase64Code: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.base64Code : undefined,
+        mixerBase64Code: mixer32Base64Code
+    })};
 (${FaustAudioWorkletProcessorWrapper.toString()})();
 `;
             const url = window.URL.createObjectURL(new Blob([strProcessor], { type: "text/javascript" }));
@@ -535,9 +533,9 @@ const faustData = ${JSON.stringify({
      * @memberof Faust
      */
     stringifyDspTable(): string {
-        const strTable = {} as { [shaKey: string]: TCompiledStrCodes };
+        const strTable: { [shaKey: string]: TCompiledStrCodes } = {};
         for (const key in this.dspTable) {
-            const codes = this.dspTable[key].codes;
+            const { codes } = this.dspTable[key];
             strTable[key] = {
                 dsp: {
                     strCode: btoa(ab2str(codes.dsp.ui8Code)),
@@ -559,12 +557,12 @@ const faustData = ${JSON.stringify({
      * @param {string} str
      * @memberof Faust
      */
-    async parseDspTable(str: string) {
+    parseDspTable(str: string) {
         const strTable = JSON.parse(str) as { [shaKey: string]: TCompiledStrCodes };
         for (const shaKey in strTable) {
             if (this.dspTable[shaKey]) continue;
             const strCodes = strTable[shaKey];
-            const compiledCodes = {
+            const compiledCodes: TCompiledCodes = {
                 dsp: {
                     ui8Code: str2ab(atob(strCodes.dsp.strCode)),
                     code: strCodes.dsp.code,
@@ -575,8 +573,8 @@ const faustData = ${JSON.stringify({
                     code: strCodes.effect.code,
                     helpersCode: strCodes.effect.helpersCode
                 } : undefined
-            } as TCompiledCodes;
-            this.dspTable[shaKey] = await this.compileDsp(compiledCodes, shaKey);
+            };
+            this.compileDsp(compiledCodes, shaKey).then(dsp => this.dspTable[shaKey] = dsp);
         }
     }
     // deleteDSPWorkletInstance() {}
@@ -602,12 +600,12 @@ const faustData = ${JSON.stringify({
 
         // Prepare 'argv' array for C side
         const ptrSize = 4;
-        const $argv = this.libFaust._malloc(argv.length * ptrSize);  // Get buffer from emscripten.
-        let argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length);  // Get a integer view on the newly allocated buffer.
+        const $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
+        let argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
         for (let i = 0; i < argv.length; i++) {
-            const $arg_size = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
-            const $arg = this.libFaust._malloc($arg_size);
-            this.libFaust.stringToUTF8(argv[i], $arg, $arg_size);
+            const size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
+            const $arg = this.libFaust._malloc(size$arg);
+            this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
             argvBuffer$[i] = $arg;
         }
         try {

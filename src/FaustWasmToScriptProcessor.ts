@@ -1,23 +1,25 @@
+/* eslint-disable no-restricted-properties */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable object-property-newline */
+/* eslint-disable object-curly-newline */
 import { Faust, mixer32Base64Code } from "./Faust";
-import { FaustScriptProcessorNode } from "./FaustScriptProcessorNode";
-import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
-import { TCompiledDsp, TAudioNodeOptions } from "./types";
-const b64ToUint6 = (nChr: number) => {
+
+const b64ToUint6 = (nChr: number) => { // eslint-disable-line arrow-body-style
     return nChr > 64 && nChr < 91
         ? nChr - 65
         : nChr > 96 && nChr < 123
-        ? nChr - 71
-        : nChr > 47 && nChr < 58
-        ? nChr + 4
-        : nChr === 43
-        ? 62
-        : nChr === 47
-        ? 63
-        : 0;
+            ? nChr - 71
+            : nChr > 47 && nChr < 58
+                ? nChr + 4
+                : nChr === 43
+                    ? 62
+                    : nChr === 47
+                        ? 63
+                        : 0;
 };
 const atoAB = (sBase64: string, nBlocksSize?: number) => {
     // if (typeof atob === "function") return atob(sBase64); It does not return an ArrayBuffer
-    const sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, "");
+    const sB64Enc = sBase64.replace(/[^A-Za-z0-9+/]/g, "");
     const nInLen = sB64Enc.length;
     const nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2;
     const taBytes = new Uint8Array(nOutLen);
@@ -33,7 +35,7 @@ const atoAB = (sBase64: string, nBlocksSize?: number) => {
     }
     return taBytes.buffer;
 };
-export class FaustWasmToScriptProcessor {
+export default class FaustWasmToScriptProcessor {
     private static heap2Str = (buf: number[]) => {
         let str = "";
         let i = 0;
@@ -82,7 +84,7 @@ export class FaustWasmToScriptProcessor {
             node = audioCtx.createScriptProcessor(bufferSize, inputs, outputs) as FaustScriptProcessorNode;
         } catch (e) {
             this.faust.error("Error in createScriptProcessor: " + e);
-            throw(e);
+            throw e;
         }
         node.voices = voices;
         node.dspMeta = dspMeta;
@@ -96,7 +98,6 @@ export class FaustWasmToScriptProcessor {
         node.dspOutChannnels = [];
 
         node.fPitchwheelLabel = [];
-        // tslint:disable-next-line: prefer-array-literal
         node.fCtrlLabel = new Array(128).fill(null).map(() => []);
 
         node.numIn = inputs;
@@ -189,7 +190,7 @@ export class FaustWasmToScriptProcessor {
         node.pathTable$ = {};
 
         node.plot = plot;
-        node.plotted = new Array(node.numOut).fill(null).map(() => []); // tslint:disable-line: prefer-array-literal
+        node.plotted = new Array(node.numOut).fill(null).map(() => []);
         node.plotHandler = plotHandler;
 
         node.updateOutputs = () => {
@@ -201,7 +202,7 @@ export class FaustWasmToScriptProcessor {
 
         // JSON parsing
         node.parseUI = ui => ui.forEach(group => node.parseGroup(group));
-        node.parseGroup = group => group.items ? node.parseItems(group.items) : null;
+        node.parseGroup = group => (group.items ? node.parseItems(group.items) : null);
         node.parseItems = items => items.forEach(item => node.parseItem(item));
         node.parseItem = (item) => {
             if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
@@ -216,7 +217,7 @@ export class FaustWasmToScriptProcessor {
                 node.pathTable$[item.address] = parseInt(item.index);
                 if (!item.meta) return;
                 item.meta.forEach((meta) => {
-                    const midi = meta.midi;
+                    const { midi } = meta;
                     if (!midi) return;
                     const strMidi = midi.trim();
                     if (strMidi === "pitchwheel") {
@@ -269,11 +270,9 @@ export class FaustWasmToScriptProcessor {
                             oldestDateRelease = node.dspVoicesDate[i];
                             voiceRelease = i;
                         }
-                    } else {
-                        if (node.dspVoicesDate[i] < oldestDatePlaying) {
-                            oldestDatePlaying = node.dspVoicesDate[i];
-                            voicePlaying = i;
-                        }
+                    } else if (node.dspVoicesDate[i] < oldestDatePlaying) {
+                        oldestDatePlaying = node.dspVoicesDate[i];
+                        voicePlaying = i;
                     }
                 }
                 // Then decide which one to steal
@@ -296,12 +295,12 @@ export class FaustWasmToScriptProcessor {
                 node.fGainLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, velocity / 127));
                 node.dspVoicesState[voice] = pitch;
             };
-            node.keyOff = (channel, pitch, velocity) => {
+            node.keyOff = (channel, pitch, velocity) => { // eslint-disable-line @typescript-eslint/no-unused-vars
                 const voice = node.getPlayingVoice(pitch);
                 if (voice === node.kNoVoice) return this.faust.log("Playing voice not found...");
-                this.faust.log("keyOff voice " + voice);
                 node.fGateLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, 0)); // No use of velocity for now...
                 node.dspVoicesState[voice] = node.kReleaseVoice; // Release voice
+                return this.faust.log("keyOff voice " + voice);
             };
             node.allNotesOff = () => {
                 for (let i = 0; i < node.voices; i++) {
@@ -315,19 +314,20 @@ export class FaustWasmToScriptProcessor {
             const channel = data[0] & 0xf;
             const data1 = data[1];
             const data2 = data[2];
-            if (channel === 9) return;
+            if (channel === 9) return undefined;
             if (node.voices) {
                 if (cmd === 8 || (cmd === 9 && data2 === 0)) return node.keyOff(channel, data1, data2);
                 if (cmd === 9) return node.keyOn(channel, data1, data2);
             }
             if (cmd === 11) return node.ctrlChange(channel, data1, data2);
             if (cmd === 14) return node.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
+            return undefined;
         };
         const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
         node.ctrlChange = (channel, ctrl, value) => {
             if (!node.fCtrlLabel[ctrl].length) return;
             node.fCtrlLabel[ctrl].forEach((ctrl) => {
-                const path = ctrl.path;
+                const { path } = ctrl;
                 node.setParamValue(path, remap(value, 0, 127, ctrl.min, ctrl.max));
                 if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
             });
@@ -442,7 +442,7 @@ export class FaustWasmToScriptProcessor {
             if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceClear($voice));
             else node.factory.instanceClear(node.$dsp);
         };
-        node.metadata = handler => node.dspMeta.meta ? node.dspMeta.meta.forEach(meta => handler.declare(Object.keys(meta)[0], meta[Object.keys(meta)[0]])) : undefined;
+        node.metadata = handler => (node.dspMeta.meta ? node.dspMeta.meta.forEach(meta => handler.declare(Object.keys(meta)[0], meta[Object.keys(meta)[0]])) : undefined);
         node.setOutputParamHandler = handler => node.outputHandler = handler;
         node.getOutputParamHandler = () => node.outputHandler;
         node.setComputeHandler = handler => node.computeHandler = handler;
@@ -495,13 +495,11 @@ export class FaustWasmToScriptProcessor {
         };
         // Init resulting DSP
         node.setup();
-        node.replot = (count: number) => {
-            return new Promise((resolve: (plotted: number[][]) => any, reject) => {
-                node.plot = count;
-                node.plotted = new Array(node.numOut).fill(null).map(() => []); // tslint:disable-line: prefer-array-literal
-                node.plotHandler = resolve;
-            });
-        };
+        node.replot = (count: number) => new Promise((resolve: (plotted: number[][]) => any) => {
+            node.plot = count;
+            node.plotted = new Array(node.numOut).fill(null).map(() => []);
+            node.plotHandler = resolve;
+        });
         return node;
     }
     /**
@@ -515,7 +513,7 @@ export class FaustWasmToScriptProcessor {
         const { compiledDsp, audioCtx, bufferSize: bufferSizeIn, voices, plot, plotHandler } = optionsIn;
         const bufferSize = bufferSizeIn || 512;
         let node: FaustScriptProcessorNode;
-        const importObject = FaustWasmToScriptProcessor.importObject;
+        const { importObject } = FaustWasmToScriptProcessor;
         try {
             let effectInstance: WebAssembly.Instance;
             let mixerInstance: WebAssembly.Instance;
@@ -523,18 +521,18 @@ export class FaustWasmToScriptProcessor {
             if (voices) {
                 memory = FaustWasmToScriptProcessor.createMemory(compiledDsp, bufferSize, voices);
                 importObject.env.memory = memory;
-                const mixerObject = { imports: { print: console.log }, memory: { memory } };
+                const mixerObject = { imports: { print: console.log }, memory: { memory } }; // eslint-disable-line no-console
                 const mixerModule = new WebAssembly.Module(atoAB(mixer32Base64Code));
                 mixerInstance = new WebAssembly.Instance(mixerModule, mixerObject);
                 try {
                     effectInstance = await WebAssembly.instantiate(compiledDsp.effectModule, importObject);
-                } catch (e) {}
+                } catch (e) {} // eslint-disable-line no-empty
             }
             const dspInstance = await WebAssembly.instantiate(compiledDsp.dspModule, importObject);
             node = this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plot, plotHandler);
         } catch (e) {
             this.faust.error("Faust " + compiledDsp.shaKey + " cannot be loaded or compiled");
-            throw(e);
+            throw e;
         }
         return node;
     }
@@ -544,7 +542,7 @@ export class FaustWasmToScriptProcessor {
         const sampleSize = 4;
         const pow2limit = (x: number) => {
             let n = 65536; // Minimum = 64 kB
-            while (n < x) { n = 2 * n; }
+            while (n < x) { n *= 2; }
             return n;
         };
         const dspMeta = compiledDsp.dspHelpers.meta;

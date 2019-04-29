@@ -1,12 +1,13 @@
-import { TFaustUI, TFaustUIGroup, TFaustUIItem, TDspMeta } from "./types";
-import { FaustWebAssemblyExports } from "./FaustWebAssemblyExports";
-import { FaustWebAssemblyMixerExports } from "./FaustWebAssemblyMixerExports";
-import { IFaustDspNode } from "./IFaustDspNode";
+/* eslint-disable no-console */
+/* eslint-disable no-restricted-properties */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable object-property-newline */
+/* eslint-env worker */
 // AudioWorklet Globals
 declare class AudioWorkletProcessor {
     public port: MessagePort;
-    constructor(options: AudioWorkletNodeOptions);
     public process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: any): boolean;
+    constructor(options: AudioWorkletNodeOptions);
 }
 type AudioWorkletProcessorConstructor<T extends AudioWorkletProcessor> = {
     new (options: AudioWorkletNodeOptions): T;
@@ -24,24 +25,24 @@ interface AudioParamDescriptor {
 }
 
 // Injected by Faust
-export type FaustData = {
-    id: string,
-    dspMeta: TDspMeta,
-    dspBase64Code: string,
-    effectMeta?: TDspMeta,
-    effectBase64Code?: string,
-    mixerBase64Code?: string,
-    bufferSize?: number,
-    voices?: number,
-    plot?: number
+type FaustData = {
+    id: string;
+    dspMeta: TDspMeta;
+    dspBase64Code: string;
+    effectMeta?: TDspMeta;
+    effectBase64Code?: string;
+    mixerBase64Code?: string;
+    bufferSize?: number;
+    voices?: number;
+    plot?: number;
 };
 declare const faustData: FaustData;
 
-export const FaustAudioWorkletProcessorWrapper = () => {
+const FaustAudioWorkletProcessorWrapper = () => {
     class FaustConst {
         static atob(sBase64: string, nBlocksSize?: number) {
             // if (typeof atob === "function") return atob(sBase64); It does not return an ArrayBuffer
-            const sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, "");
+            const sB64Enc = sBase64.replace(/[^A-Za-z0-9+/]/g, "");
             const nInLen = sB64Enc.length;
             const nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2;
             const taBytes = new Uint8Array(nOutLen);
@@ -61,17 +62,17 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             return nChr > 64 && nChr < 91
                 ? nChr - 65
                 : nChr > 96 && nChr < 123
-                ? nChr - 71
-                : nChr > 47 && nChr < 58
-                ? nChr + 4
-                : nChr === 43
-                ? 62
-                : nChr === 47
-                ? 63
-                : 0;
+                    ? nChr - 71
+                    : nChr > 47 && nChr < 58
+                        ? nChr + 4
+                        : nChr === 43
+                            ? 62
+                            : nChr === 47
+                                ? 63
+                                : 0;
         }
         static midiToFreq(note: number) {
-            return 440.0 * Math.pow(2.0, (note - 69.0) / 12.0);
+            return 440.0 * 2 ** ((note - 69) / 12);
         }
         static remap(v: number, mn0: number, mx0: number, mn1: number, mx1: number) {
             return (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
@@ -122,11 +123,10 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             const sampleSize = 4;
             const pow2limit = (x: number) => {
                 let n = 65536; // Minimum = 64 kB
-                while (n < x) { n = 2 * n; }
+                while (n < x) { n *= 2; }
                 return n;
             };
-            const dspMeta = this.dspMeta;
-            const effectMeta = this.effectMeta;
+            const { dspMeta, effectMeta } = this;
             const effectSize = effectMeta ? parseInt(effectMeta.size) : 0;
             let memorySize = pow2limit(
                 effectSize
@@ -155,7 +155,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         private static mixerObject = FaustConst.voices ? { imports: { print: console.log }, memory: { memory: FaustConst.memory } } : undefined;
         static mixerInstance = FaustConst.voices ? new WebAssembly.Instance(FaustConst.mixerModule, FaustConst.mixerObject) : undefined;
     }
-    class FaustAudioWorkletProcessor extends AudioWorkletProcessor implements IFaustDspNode {
+    class FaustAudioWorkletProcessor extends AudioWorkletProcessor implements FaustDspNode {
         static bufferSize = FaustConst.bufferSize;
         // JSON parsing functions
         static parseUI(ui: TFaustUI, obj: AudioParamDescriptor[] | FaustAudioWorkletProcessor, callback: (...args: any[]) => any) {
@@ -190,14 +190,14 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Keep bargraph adresses
                 obj.outputsItems.push(item.address);
-                obj.pathTable$[item.address] = parseInt(item.index);
+                obj.pathTable$[item.address] = parseInt(item.index); // eslint-disable-line no-param-reassign
             } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
                 // Keep inputs adresses
                 obj.inputsItems.push(item.address);
-                obj.pathTable$[item.address] = parseInt(item.index);
+                obj.pathTable$[item.address] = parseInt(item.index); // eslint-disable-line no-param-reassign
                 if (!item.meta) return;
                 item.meta.forEach((meta) => {
-                    const midi = meta.midi;
+                    const { midi } = meta;
                     if (!midi) return;
                     const strMidi = midi.trim();
                     if (strMidi === "pitchwheel") {
@@ -225,7 +225,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         dspInChannnels: Float32Array[];
         dspOutChannnels: Float32Array[];
         fPitchwheelLabel: string[];
-        fCtrlLabel: { path: string, min: number, max: number }[][];
+        fCtrlLabel: { path: string; min: number; max: number }[][];
         numIn: number;
         numOut: number;
         ptrSize: number;
@@ -286,8 +286,9 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 // case "patch": this.onpatch(msg.data); break;
                 case "replot":
                     this.plot = msg.count;
-                    this.plotted = new Array(this.numOut).fill(null).map(() => []); // tslint:disable-line: prefer-array-literal
+                    this.plotted = new Array(this.numOut).fill(null).map(() => []);
                     break;
+                default:
             }
         }
         constructor(options: AudioWorkletNodeOptions) {
@@ -308,7 +309,6 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.dspOutChannnels = [];
 
             this.fPitchwheelLabel = [];
-            // tslint:disable-next-line: prefer-array-literal
             this.fCtrlLabel = new Array(128).fill(null).map(() => []);
 
             this.numIn = parseInt(this.dspMeta.inputs);
@@ -396,7 +396,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.pathTable$ = {};
 
             this.plot = FaustConst.plot;
-            this.plotted = new Array(this.numOut).fill(null).map(() => []); // tslint:disable-line: prefer-array-literal
+            this.plotted = new Array(this.numOut).fill(null).map(() => []);
 
             // Init resulting DSP
             this.setup();
@@ -418,7 +418,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             return FaustAudioWorkletProcessor.parseItems(items, this, FaustAudioWorkletProcessor.parseItem2);
         }
         parseItem(item: TFaustUIItem) {
-            return  FaustAudioWorkletProcessor.parseItem2(item, this, FaustAudioWorkletProcessor.parseItem2);
+            return FaustAudioWorkletProcessor.parseItem2(item, this, FaustAudioWorkletProcessor.parseItem2);
         }
 
         setParamValue(path: string, val: number) {
@@ -522,11 +522,9 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                         oldestDateRelease = this.dspVoicesDate[i];
                         voiceRelease = i;
                     }
-                } else {
-                    if (this.dspVoicesDate[i] < oldestDatePlaying) {
-                        oldestDatePlaying = this.dspVoicesDate[i];
-                        voicePlaying = i;
-                    }
+                } else if (this.dspVoicesDate[i] < oldestDatePlaying) {
+                    oldestDatePlaying = this.dspVoicesDate[i];
+                    voicePlaying = i;
                 }
             }
             // Then decide which one to steal
@@ -549,7 +547,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.fGainLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, velocity / 127));
             this.dspVoicesState[voice] = pitch;
         }
-        keyOff(channel: number, pitch: number, velocity: number) {
+        keyOff(channel: number, pitch: number, velocity: number) { // eslint-disable-line @typescript-eslint/no-unused-vars
             if (!this.voices) return;
             const voice = this.getPlayingVoice(pitch);
             if (voice === this.kNoVoice) return; // console.log("Playing voice not found...");
@@ -570,16 +568,17 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             const channel = data[0] & 0xf;
             const data1 = data[1];
             const data2 = data[2];
-            if (channel === 9) return;
+            if (channel === 9) return undefined;
             if (cmd === 8 || (cmd === 9 && data2 === 0)) return this.keyOff(channel, data1, data2);
             if (cmd === 9) return this.keyOn(channel, data1, data2);
             if (cmd === 11) return this.ctrlChange(channel, data1, data2);
             if (cmd === 14) return this.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
+            return undefined;
         }
         ctrlChange(channel: number, ctrl: number, value: number) {
             if (!this.fCtrlLabel[ctrl].length) return;
             this.fCtrlLabel[ctrl].forEach((ctrl) => {
-                const path = ctrl.path;
+                const { path } = ctrl;
                 this.setParamValue(path, FaustConst.remap(value, 0, 127, ctrl.min, ctrl.max));
                 if (this.outputHandler) this.outputHandler(path, this.getParamValue(path));
             });
@@ -590,7 +589,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 if (this.outputHandler) this.outputHandler(path, this.getParamValue(path));
             });
         }
-        process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: any) {
+        process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: any) { // eslint-disable-line @typescript-eslint/no-unused-vars
             const input = inputs[0];
             const output = outputs[0];
             // Check inputs
@@ -669,3 +668,4 @@ export const FaustAudioWorkletProcessorWrapper = () => {
     // Synchronously compile and instantiate the WASM module
     registerProcessor(FaustConst.id || "mydsp", FaustAudioWorkletProcessor);
 };
+export default FaustAudioWorkletProcessorWrapper;
