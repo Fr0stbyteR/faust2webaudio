@@ -45,7 +45,7 @@ export default class FaustWasmToScriptProcessor {
     constructor(faust: Faust) {
         this.faust = faust;
     }
-    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plot?: number, plotHandler?: (plotted: number[][]) => any) {
+    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plot?: number, plotHandler?: (plotted: Float32Array[]) => any) {
         let node: FaustScriptProcessorNode;
         const dspMeta = compiledDsp.dspHelpers.meta;
         const inputs = parseInt(dspMeta.inputs);
@@ -160,7 +160,8 @@ export default class FaustWasmToScriptProcessor {
         node.pathTable$ = {};
 
         node.plot = plot;
-        node.plotted = new Array(node.numOut).fill(null).map(() => []);
+        node.$plot = 0;
+        node.plotted = new Array(node.numOut).fill(null).map(() => new Float32Array(node.plot));
         node.plotHandler = plotHandler;
 
         node.updateOutputs = () => {
@@ -336,9 +337,10 @@ export default class FaustWasmToScriptProcessor {
                 const output = e.outputBuffer.getChannelData(i);
                 const dspOutput = node.dspOutChannnels[i];
                 output.set(dspOutput);
-                if (node.plot && node.plotHandler && node.plotted[i].length < node.plot) { // Plot
-                    node.plotted[i] = node.plotted[i].concat(...dspOutput);
-                    if (node.plotted[i].length >= node.plot && i === node.numOut - 1) node.plotHandler(node.plotted);
+                if (node.plot && node.plotHandler && node.$plot < node.plot) { // Plot
+                    node.plotted[i].set(node.plot - node.$plot >= node.bufferSize ? output : output.subarray(0, node.plot - node.$plot), node.$plot);
+                    if (node.plot - node.$plot <= node.bufferSize && i === node.numOut - 1) node.plotHandler(node.plotted);
+                    node.$plot += node.bufferSize;
                 }
             }
         };
@@ -465,9 +467,10 @@ export default class FaustWasmToScriptProcessor {
         };
         // Init resulting DSP
         node.setup();
-        node.replot = (count: number) => new Promise((resolve: (plotted: number[][]) => any) => {
+        node.replot = (count: number) => new Promise((resolve: (plotted: Float32Array[]) => any) => {
             node.plot = count;
-            node.plotted = new Array(node.numOut).fill(null).map(() => []);
+            node.$plot = 0;
+            node.plotted = new Array(node.numOut).fill(null).map(() => new Float32Array(node.plot));
             node.plotHandler = resolve;
         });
         return node;

@@ -86,9 +86,9 @@ type TFaustCompileOptions = {
     /**
      * handler for plotted samples
      *
-     * @type {(plotted: number[][]) => any}
+     * @type {(plotted: Float32Array[]) => any}
      */
-    plotHandler?: (plotted: number[][]) => any;
+    plotHandler?: (plotted: Float32Array[]) => any;
 }
 type TAudioNodeOptions = {
     /**
@@ -119,9 +119,9 @@ type TAudioNodeOptions = {
     /**
      * handler for plotted samples
      *
-     * @type {(plotted: number[][]) => any}
+     * @type {(plotted: Float32Array[]) => any}
      */
-    plotHandler?: (plotted: number[][]) => any;
+    plotHandler?: (plotted: Float32Array[]) => any;
 }
 
 declare interface FaustWebAssemblyExports {
@@ -461,14 +461,15 @@ declare class FaustScriptProcessorNode extends ScriptProcessorNode implements Fa
     getJSON: () => string;
 
     plot: number;
-    plotted: number[][];
-    plotHandler: (plotted: number[][]) => any;
+    $plot: number;
+    plotted: Float32Array[];
+    plotHandler: (plotted: Float32Array[]) => any;
     /**
      * Request plot
      *
      * @param {number} count - amount of samples need to be plotted
-     * @returns {Promise<number[][]>}
+     * @returns {Promise<Float32Array[]>}
      * @memberof IFaustDspNode
      */
-    replot(count: number): Promise<number[][]>;
+    replot(count: number): Promise<Float32Array[]>;
 }

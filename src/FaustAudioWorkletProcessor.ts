@@ -265,7 +265,8 @@ const FaustAudioWorkletProcessorWrapper = () => {
         kNoVoice?: number;
 
         plot: number;
-        plotted: number[][];
+        $plot: number;
+        plotted: Float32Array[];
 
         outputHandler: (address: string, value: number) => any;
         computeHandler: (bufferSize: number) => any;
@@ -285,7 +286,8 @@ const FaustAudioWorkletProcessorWrapper = () => {
                 // case "patch": this.onpatch(msg.data); break;
                 case "replot":
                     this.plot = msg.count;
-                    this.plotted = new Array(this.numOut).fill(null).map(() => []);
+                    this.$plot = 0;
+                    this.plotted = new Array(this.numOut).fill(null).map(() => new Float32Array(this.plot));
                     break;
                 default:
             }
@@ -395,7 +397,8 @@ const FaustAudioWorkletProcessorWrapper = () => {
             this.pathTable$ = {};
 
             this.plot = FaustConst.plot;
-            this.plotted = new Array(this.numOut).fill(null).map(() => []);
+            this.$plot = 0;
+            this.plotted = new Array(this.numOut).fill(null).map(() => new Float32Array(this.plot));
 
             // Init resulting DSP
             this.setup();
@@ -638,9 +641,10 @@ const FaustAudioWorkletProcessorWrapper = () => {
                 for (let i = 0; i < Math.min(this.numOut, output.length); i++) {
                     const dspOutput = this.dspOutChannnels[i];
                     output[i].set(dspOutput);
-                    if (this.plot && this.plotted[i].length < this.plot) {
-                        this.plotted[i] = this.plotted[i].concat(...dspOutput);
-                        if (this.plotted[i].length >= this.plot && i === this.numOut - 1) this.port.postMessage({ type: "plot", value: this.plotted });
+                    if (this.plot && this.$plot < this.plot) { // Plot
+                        this.plotted[i].set(this.plot - this.$plot >= this.bufferSize ? dspOutput : dspOutput.subarray(0, this.plot - this.$plot), this.$plot);
+                        if (this.plot - this.$plot <= this.bufferSize && i === this.numOut - 1) this.port.postMessage({ type: "plot", value: this.plotted });
+                        this.$plot += this.bufferSize;
                     }
                 }
             }

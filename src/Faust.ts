@@ -153,8 +153,7 @@ export class Faust {
     /**
      * Plot a dsp offline.
      *
-     * @param {string} code
-     * @param {{ size?: number; sampleRate?: number }} [options]
+     * @param {{ code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }} [options]
      * @returns {Promise<Float32Array[]>}
      * @memberof Faust
      */

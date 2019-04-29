@@ -48,9 +48,9 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
     inputsItems: string[];
     outputsItems: string[];
 
-    plotHandler: (plotted: number[][]) => any;
+    plotHandler: (plotted: Float32Array[]) => any;
 
-    constructor(audioCtx: AudioContext, id: string, compiledDsp: TCompiledDsp, voices?: number, plotHandler?: (plotted: number[][]) => any) {
+    constructor(audioCtx: AudioContext, id: string, compiledDsp: TCompiledDsp, voices?: number, plotHandler?: (plotted: Float32Array[]) => any) {
         super(audioCtx, id, {
             numberOfInputs: parseInt(compiledDsp.dspHelpers.meta.inputs) > 0 ? 1 : 0,
             numberOfOutputs: parseInt(compiledDsp.dspHelpers.meta.outputs) > 0 ? 1 : 0,
@@ -179,11 +179,11 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
      * Request plot
      *
      * @param {number} count - amount of samples need to be plotted
-     * @returns {Promise<number[][]>}
+     * @returns {Promise<Float32Array[]>}
      * @memberof IFaustDspNode
      */
-    replot(count: number): Promise<number[][]> {
-        return new Promise((resolve: (plotted: number[][]) => any) => {
+    replot(count: number): Promise<Float32Array[]> {
+        return new Promise((resolve: (plotted: Float32Array[]) => any) => {
             this.port.postMessage({ count, type: "replot" });
             this.plotHandler = resolve;
         });

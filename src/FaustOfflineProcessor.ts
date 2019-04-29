@@ -3,8 +3,8 @@
 /* eslint-disable object-property-newline */
 
 export default class FaustOfflineProcessor {
+    private bufferSize = 1024;
     private sampleRate: number;
-    private bufferSize: number;
     private dspMeta: TDspMeta;
     private $ins: number;
     private $outs: number;
@@ -24,6 +24,7 @@ export default class FaustOfflineProcessor {
     private HEAP: ArrayBuffer;
     private HEAP32: Int32Array;
     private HEAPF32: Float32Array;
+    private output: Float32Array[];
 
     static get importObject() {
         return {
@@ -52,7 +53,7 @@ export default class FaustOfflineProcessor {
             }
         };
     }
-    async init(options: { compiledDsp?: TCompiledDsp; size?: number; sampleRate?: number }) {
+    async init(options: { compiledDsp?: TCompiledDsp; sampleRate?: number }) {
         const { compiledDsp } = options;
         if (!compiledDsp) throw new Error("No Dsp input");
 
@@ -77,11 +78,11 @@ export default class FaustOfflineProcessor {
         this.HEAP32 = new Int32Array(this.HEAP);
         this.HEAPF32 = new Float32Array(this.HEAP);
 
+        this.output = new Array(this.numOut).fill(null).map(() => new Float32Array(this.bufferSize));
         this.setup(options);
     }
-    setup(options?: { size?: number; sampleRate?: number }) {
-        if (options && options.size === this.bufferSize && options.sampleRate === this.sampleRate) return;
-        this.bufferSize = options && options.size || 256;
+    setup(options?: { sampleRate?: number }) {
+        if (options && options.sampleRate === this.sampleRate) return;
         this.sampleRate = options && options.sampleRate || 48000;
 
         // DSP is placed first with index 0. Audio buffer start at the end of DSP.
@@ -123,20 +124,27 @@ export default class FaustOfflineProcessor {
         this.factory.init(this.$dsp, this.sampleRate);
     }
     compute() {
-        const output = new Array(this.numOut).fill(null).map(() => new Float32Array(this.bufferSize));
-        if (!this.factory) return output;
+        if (!this.factory) return this.output;
         this.factory.compute(this.$dsp, this.bufferSize, this.$ins, this.$outs); // Compute
         // Copy outputs
-        if (output !== undefined) {
+        if (this.output !== undefined) {
             for (let i = 0; i < this.numOut; i++) {
-                output[i].set(this.dspOutChannnels[i]);
+                this.output[i].set(this.dspOutChannnels[i]);
             }
         }
-        return output;
+        return this.output;
     }
     async plot(options?: { compiledDsp?: TCompiledDsp; size?: number; sampleRate?: number }) {
-        if (options.compiledDsp) await this.init(options);
-        else if (options.size || options.sampleRate) this.setup(options);
-        return this.compute();
+        if (options && options.compiledDsp) await this.init(options);
+        else if (options && options.sampleRate) this.setup(options);
+        const size = options && options.size || 128;
+        const plotted = new Array(this.numOut).fill(null).map(() => new Float32Array(size));
+        for (let i = 0; i < size; i += this.bufferSize) {
+            const computed = this.compute();
+            for (let j = 0; j < plotted.length; j++) {
+                plotted[j].set(size - i > this.bufferSize ? computed[j] : computed[j].subarray(0, size - i), i);
+            }
+        }
+        return plotted;
     }
 }

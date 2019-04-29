@@ -21,10 +21,10 @@ process = phasor(100);`;
                 window.node = node;
                 node.connect(audioCtx.destination);
             });
-            faust.plot({ code, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" }, size: 128, sampleRate: 48000 }).then((a) => {
+            faust.plot({ code, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" }, size: 129, sampleRate: 48000 }).then((a) => {
                 console.log(48000);
                 console.log(a);
-                faust.plot({ size: 1024, sampleRate: 192000 }).then((a) => {
+                faust.plot({ size: 1023, sampleRate: 192000 }).then((a) => {
                     console.log(192000);
                     console.log(a);
                 });
