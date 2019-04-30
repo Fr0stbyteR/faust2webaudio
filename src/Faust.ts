@@ -1,14 +1,15 @@
 /* eslint-disable no-console */
 import sha1 from "crypto-libraries/sha1";
 import { LibFaustLoader, LibFaust } from "./LibFaustLoader";
-import FaustWasmToScriptProcessor from "./FaustWasmToScriptProcessor";
-import FaustAudioWorkletProcessorWrapper from "./FaustAudioWorkletProcessor";
-import FaustAudioWorkletNode from "./FaustAudioWorkletNode";
+import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
+import { FaustAudioWorkletProcessorWrapper } from "./FaustAudioWorkletProcessor";
+import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
 
 import * as libFaustDataURI from "./wasm/libfaust-wasm.wasm";
 import * as mixer32DataURI from "./wasm/mixer32.wasm";
 import { ab2str, str2ab } from "./Utils";
-import FaustOfflineProcessor from "./FaustOfflineProcessor";
+import { FaustOfflineProcessor } from "./FaustOfflineProcessor";
+import { TCompiledDsp, TFaustCompileOptions, FaustScriptProcessorNode, TFaustCompileArgs, TCompiledCode, TCompiledCodes, TAudioNodeOptions, TCompiledStrCodes } from "./types";
 
 export const mixer32Base64Code: string = (mixer32DataURI as unknown as string).split(",")[1];
 // import * as Binaryen from "binaryen";

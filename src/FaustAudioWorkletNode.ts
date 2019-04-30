@@ -1,11 +1,8 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable object-property-newline */
-declare global {
-    interface Window {
-        AudioWorkletNode: AudioWorkletNode;
-    }
-}
-class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode : null) {
+import { TDspMeta, TCompiledDsp, TFaustUI, TFaustUIGroup, TFaustUIItem } from "./types";
+
+export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode : null) {
     onprocessorerror = (e: Event) => {
         console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: "); // eslint-disable-line no-console
         throw e;
@@ -189,4 +186,3 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
         });
     }
 }
-export default FaustAudioWorkletNode;

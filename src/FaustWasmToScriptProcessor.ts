@@ -4,8 +4,9 @@
 /* eslint-disable object-curly-newline */
 import { Faust, mixer32Base64Code } from "./Faust";
 import { atoab } from "./Utils";
+import { TCompiledDsp, FaustScriptProcessorNode, TAudioNodeOptions } from "./types";
 
-export default class FaustWasmToScriptProcessor {
+export class FaustWasmToScriptProcessor {
     private static heap2Str = (buf: number[]) => {
         let str = "";
         let i = 0;

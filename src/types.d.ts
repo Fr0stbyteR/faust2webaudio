@@ -1,6 +1,11 @@
 /// <reference types="webassembly-js-api" />
 
-type TDspMeta = {
+declare global {
+    interface Window {
+        AudioWorkletNode?: AudioWorkletNode;
+    }
+}
+export type TDspMeta = {
     name: string;
     filename: string;
     compile_options: string;
@@ -13,9 +18,9 @@ type TDspMeta = {
     meta: { [key: string]: string }[];
     ui: TFaustUI;
 };
-type TFaustUI = TFaustUIGroup[];
-type TFaustUIItem = TFaustUIInputItem | TFaustUIOutputItem | TFaustUIGroup;
-type TFaustUIInputItem = {
+export type TFaustUI = TFaustUIGroup[];
+export type TFaustUIItem = TFaustUIInputItem | TFaustUIOutputItem | TFaustUIGroup;
+export type TFaustUIInputItem = {
     type: TFaustUIInputType;
     label: string;
     address: string;
@@ -26,7 +31,7 @@ type TFaustUIInputItem = {
     step?: string;
     meta?: any[];
 };
-type TFaustUIOutputItem = {
+export type TFaustUIOutputItem = {
     type: TFaustUIOutputType;
     label: string;
     address: string;
@@ -34,21 +39,21 @@ type TFaustUIOutputItem = {
     min?: string;
     max?: string;
 };
-type TFaustUIGroupType = "vgroup" | "hgroup" | "tgroup";
-type TFaustUIOutputType = "hbargraph" | "vbargraph";
-type TFaustUIInputType = "vslider" | "hslider" | "button" | "checkbox" | "nentry";
-type TFaustUIGroup = {
+export type TFaustUIGroupType = "vgroup" | "hgroup" | "tgroup";
+export type TFaustUIOutputType = "hbargraph" | "vbargraph";
+export type TFaustUIInputType = "vslider" | "hslider" | "button" | "checkbox" | "nentry";
+export type TFaustUIGroup = {
     type: TFaustUIGroupType;
     label: string;
     items: TFaustUIItem[];
 }
-type TFaustUIType = TFaustUIGroupType | TFaustUIOutputType | TFaustUIInputType;
-type TCompiledCode = { ui8Code: ArrayBuffer; code: string; helpersCode: string };
-type TCompiledStrCode = { strCode: string; code: string; helpersCode: string };
-type TCompiledCodes = { dsp: TCompiledCode; effect?: TCompiledCode};
-type TCompiledStrCodes = { dsp: TCompiledStrCode; effect?: TCompiledStrCode};
-type THelpers = { json: string; base64Code: string; meta: TDspMeta };
-type TCompiledDsp = {
+export type TFaustUIType = TFaustUIGroupType | TFaustUIOutputType | TFaustUIInputType;
+export type TCompiledCode = { ui8Code: ArrayBuffer; code: string; helpersCode: string };
+export type TCompiledStrCode = { strCode: string; code: string; helpersCode: string };
+export type TCompiledCodes = { dsp: TCompiledCode; effect?: TCompiledCode};
+export type TCompiledStrCodes = { dsp: TCompiledStrCode; effect?: TCompiledStrCode};
+export type THelpers = { json: string; base64Code: string; meta: TDspMeta };
+export type TCompiledDsp = {
     shaKey: string;
     dspModule: WebAssembly.Module;
     dspHelpers: THelpers;
@@ -56,7 +61,7 @@ type TCompiledDsp = {
     effectHelpers?: THelpers;
     codes: TCompiledCodes;
 }
-type TFaustCompileArgs = {
+export type TFaustCompileArgs = {
     /**
      * Flush to zero the code added to recursive signals [0:no (default), 1:fabs based, 2:mask based (fastest)]
      *
@@ -71,7 +76,7 @@ type TFaustCompileArgs = {
     "-I"?: string;
     [key: string]: any;
 }
-type TFaustCompileOptions = {
+export type TFaustCompileOptions = {
     audioCtx: AudioContext;
     useWorklet?: boolean;
     voices?: number;
@@ -90,7 +95,7 @@ type TFaustCompileOptions = {
      */
     plotHandler?: (plotted: Float32Array[]) => any;
 }
-type TAudioNodeOptions = {
+export type TAudioNodeOptions = {
     /**
      * DSP compiled by libfaust
      *
@@ -124,7 +129,7 @@ type TAudioNodeOptions = {
     plotHandler?: (plotted: Float32Array[]) => any;
 }
 
-declare interface FaustWebAssemblyExports {
+export interface FaustWebAssemblyExports {
     getParamValue($dsp: number, $param: number): number;
     setParamValue($dsp: number, $param: number, val: number): void;
     instanceClear($dsp: number): any;
@@ -136,12 +141,12 @@ declare interface FaustWebAssemblyExports {
     memory: WebAssembly.Memory;
 }
 
-declare interface FaustWebAssemblyMixerExports {
+export interface FaustWebAssemblyMixerExports {
     clearOutput(count: number, channels: number, $outputs: number): void;
     mixVoice(count: number, channels: number, $inputs: number, $outputs: number): number;
 }
 
-declare interface FaustDspNode {
+export interface FaustDspNode {
     bufferSize: number;
     voices?: number;
     dspMeta: TDspMeta;
@@ -276,7 +281,7 @@ declare interface FaustDspNode {
     pitchWheel(channel: number, wheel: number): void;
 }
 
-declare class FaustScriptProcessorNode extends ScriptProcessorNode implements FaustDspNode {
+export class FaustScriptProcessorNode extends ScriptProcessorNode implements FaustDspNode {
     // From FaustDSPNode interface
     bufferSize: number;
     voices: number;

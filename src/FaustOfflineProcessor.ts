@@ -1,8 +1,9 @@
 /* eslint-disable no-restricted-properties */
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable object-property-newline */
+import { TDspMeta, FaustWebAssemblyExports, TCompiledDsp } from "./types";
 
-export default class FaustOfflineProcessor {
+export class FaustOfflineProcessor {
     private bufferSize = 1024;
     private sampleRate: number;
     private dspMeta: TDspMeta;

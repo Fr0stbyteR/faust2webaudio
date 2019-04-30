@@ -3,6 +3,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable object-property-newline */
 /* eslint-env worker */
+import { TDspMeta, FaustDspNode, TFaustUI, TFaustUIGroup, TFaustUIItem, FaustWebAssemblyExports, FaustWebAssemblyMixerExports } from "./types";
+
 // AudioWorklet Globals
 declare class AudioWorkletProcessor {
     public port: MessagePort;
@@ -38,7 +40,7 @@ type FaustData = {
 };
 declare const faustData: FaustData;
 
-const FaustAudioWorkletProcessorWrapper = () => {
+export const FaustAudioWorkletProcessorWrapper = () => {
     class FaustConst {
         static atoab(sBase64: string, nBlocksSize?: number) {
             const sB64Enc = sBase64.replace(/[^A-Za-z0-9+/]/g, "");
@@ -671,4 +673,3 @@ const FaustAudioWorkletProcessorWrapper = () => {
     // Synchronously compile and instantiate the WASM module
     registerProcessor(FaustConst.id || "mydsp", FaustAudioWorkletProcessor);
 };
-export default FaustAudioWorkletProcessorWrapper;
