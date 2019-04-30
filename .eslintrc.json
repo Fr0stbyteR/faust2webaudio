@@ -4,11 +4,11 @@
         "es6": true
     },
     "settings": {
-      "import/resolver": {
+    "import/resolver": {
         "node": {
-          "extensions": [".js", ".jsx", ".ts", ".tsx"]
+            "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
         }
-      }
+    }
     },
     "extends": [
         "airbnb-base",
@@ -37,24 +37,27 @@
         "no-continue": "off",
         "no-dupe-class-members": "off",
         "no-empty": "warn",
+        "no-loop-func": "off",
         "no-mixed-operators": "off",
         "no-nested-ternary": "off",
+        "no-param-reassign": ["error", { "props": false }],
         "no-plusplus": "off",
+        "no-prototype-builtins": "off",
         "no-restricted-globals": "off",
         "no-restricted-syntax": [
-          "error",
-          {
-            "selector": "ForOfStatement",
-            "message": "iterators/generators require regenerator-runtime, which is too heavyweight for this guide to allow them. Separately, loops should be avoided in favor of array iterations."
-          },
-          {
-            "selector": "LabeledStatement",
-            "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
-          },
-          {
-            "selector": "WithStatement",
-            "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
-          }
+            "error",
+            {
+                "selector": "ForOfStatement",
+                "message": "iterators/generators require regenerator-runtime, which is too heavyweight for this guide to allow them. Separately, loops should be avoided in favor of array iterations."
+            },
+            {
+                "selector": "LabeledStatement",
+                "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+            },
+            {
+                "selector": "WithStatement",
+                "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+            }
         ],
         "no-return-assign": "off",
         "no-shadow": "off",
@@ -62,20 +65,22 @@
         "no-underscore-dangle": "off",
         "no-useless-constructor":"off",
         "object-curly-newline": ["error", {
-            "ObjectExpression": { "multiline": true, "consistent": true },
-            "ObjectPattern": { "multiline": true, "consistent": true },
-            "ImportDeclaration": { "multiline": true, "consistent": true },
-            "ExportDeclaration": { "multiline": true, "consistent": true }
-          }],
+        "ObjectExpression": { "multiline": true, "consistent": true },
+        "ObjectPattern": { "multiline": true, "consistent": true },
+        "ImportDeclaration": { "multiline": true, "consistent": true },
+        "ExportDeclaration": { "multiline": true, "consistent": true }
+        }],
+        "prefer-destructuring": "off",
         "prefer-template":"off",
         "quotes": ["error", "double", { "avoidEscape": true }],
         "semi": "warn",
         "spaced-comment": [2, "always", { "markers": ["/"] }],
         "radix": "off",
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/prefer-interface": "off",
+        "@typescript-eslint/camelcase": "warn",
         "@typescript-eslint/explicit-function-return-type": "off",
-        "@typescript-eslint/explicit-member-accessibility": "off"
+        "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/prefer-interface": "off"
     },
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint"]

@@ -1,3 +1,6 @@
-export { Faust } from "../src/Faust";
-export { FaustScriptProcessorNode } from "../src/FaustScriptProcessorNode";
-export { FaustAudioWorkletNode } from "../src/FaustAudioWorkletNode";
+/// <reference types="../src/types" />
+
+import { Faust } from "../src/Faust";
+type FaustScriptProcessorNode = typeof FaustScriptProcessorNode;
+import FaustAudioWorkletNode from "../src/FaustAudioWorkletNode";
+export { Faust, FaustScriptProcessorNode, FaustAudioWorkletNode }

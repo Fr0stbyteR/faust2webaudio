@@ -79,10 +79,9 @@ export default class FaustOfflineProcessor {
         this.HEAPF32 = new Float32Array(this.HEAP);
 
         this.output = new Array(this.numOut).fill(null).map(() => new Float32Array(this.bufferSize));
-        this.setup(options);
     }
     setup(options?: { sampleRate?: number }) {
-        if (options && options.sampleRate === this.sampleRate) return;
+        if (!this.dspMeta) throw Error("No Dsp");
         this.sampleRate = options && options.sampleRate || 48000;
 
         // DSP is placed first with index 0. Audio buffer start at the end of DSP.
@@ -136,7 +135,7 @@ export default class FaustOfflineProcessor {
     }
     async plot(options?: { compiledDsp?: TCompiledDsp; size?: number; sampleRate?: number }) {
         if (options && options.compiledDsp) await this.init(options);
-        else if (options && options.sampleRate) this.setup(options);
+        this.setup(options);
         const size = options && options.size || 128;
         const plotted = new Array(this.numOut).fill(null).map(() => new Float32Array(size));
         for (let i = 0; i < size; i += this.bufferSize) {
