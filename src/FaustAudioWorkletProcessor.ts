@@ -645,8 +645,10 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                     output[i].set(dspOutput);
                     if (this.plot && this.$plot < this.plot) { // Plot
                         this.plotted[i].set(this.plot - this.$plot >= this.bufferSize ? dspOutput : dspOutput.subarray(0, this.plot - this.$plot), this.$plot);
-                        if (this.plot - this.$plot <= this.bufferSize && i === this.numOut - 1) this.port.postMessage({ type: "plot", value: this.plotted });
-                        this.$plot += this.bufferSize;
+                        if (i === Math.min(this.numOut, output.length) - 1) { // Last channel
+                            this.$plot += this.bufferSize;
+                            if (this.plot - this.$plot <= this.bufferSize) this.port.postMessage({ type: "plot", value: this.plotted }); // Last buffer
+                        }
                     }
                 }
             }
