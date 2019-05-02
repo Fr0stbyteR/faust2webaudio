@@ -341,8 +341,8 @@ export class FaustWasmToScriptProcessor {
                 if (node.plot && node.plotHandler && node.$plot < node.plot) { // Plot
                     node.plotted[i].set(node.plot - node.$plot >= node.bufferSize ? output : output.subarray(0, node.plot - node.$plot), node.$plot);
                     if (i === node.numOut - 1) { // Last channel
-                        node.$plot += node.bufferSize;
                         if (node.plot - node.$plot <= node.bufferSize) node.plotHandler(node.plotted); // Last buffer
+                        node.$plot += node.bufferSize;
                     }
                 }
             }
