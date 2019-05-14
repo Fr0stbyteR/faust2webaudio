@@ -125,6 +125,9 @@ export class FaustOfflineProcessor {
     }
     compute() {
         if (!this.factory) return this.output;
+        for (let i = 0; i < this.numIn; i++) {
+            this.dspInChannnels[i].fill(0);
+        }
         this.factory.compute(this.$dsp, this.bufferSize, this.$ins, this.$outs); // Compute
         // Copy outputs
         if (this.output !== undefined) {
