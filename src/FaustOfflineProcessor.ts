@@ -58,7 +58,7 @@ export class FaustOfflineProcessor {
         const { compiledDsp } = options;
         if (!compiledDsp) throw new Error("No Dsp input");
 
-        this.dspMeta = compiledDsp.dspHelpers.meta;
+        this.dspMeta = compiledDsp.dspMeta;
 
         this.$ins = null;
         this.$outs = null;

@@ -6,12 +6,11 @@ import { FaustAudioWorkletProcessorWrapper } from "./FaustAudioWorkletProcessor"
 import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
 
 import * as libFaustDataURI from "./wasm/libfaust-wasm.wasm";
-import * as mixer32DataURI from "./wasm/mixer32.wasm";
-import { ab2str, str2ab } from "./Utils";
+import * as utils from "./utils";
 import { FaustOfflineProcessor } from "./FaustOfflineProcessor";
 import { TCompiledDsp, TFaustCompileOptions, FaustScriptProcessorNode, TFaustCompileArgs, TCompiledCode, TCompiledCodes, TAudioNodeOptions, TCompiledStrCodes } from "./types";
+import * as mixer32DataURI from "./wasm/mixer32.wasm";
 
-export const mixer32Base64Code: string = (mixer32DataURI as unknown as string).split(",")[1];
 // import * as Binaryen from "binaryen";
 
 /**
@@ -452,7 +451,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         }
         const time2 = performance.now();
         this.log("WASM compilation duration : " + (time2 - time1));
-        const compiledDsp: TCompiledDsp = { shaKey, codes, dspModule, dspHelpers: undefined }; // Default mode
+        const compiledDsp: TCompiledDsp = { shaKey, codes, dspModule, dspMeta: undefined }; // Default mode
         // 'libfaust.js' wasm backend generates UI methods, then we compile the code
         // eval(helpers_code1);
         // factory.getJSON = eval("getJSON" + dspName);
@@ -461,7 +460,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
             const json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'");
             const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
             const meta = JSON.parse(json);
-            compiledDsp.dspHelpers = { json, base64Code, meta };
+            compiledDsp.dspMeta = meta;
         } catch (e) {
             this.error("Error in JSON.parse: " + e);
             throw e;
@@ -480,7 +479,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
                 const json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'");
                 const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
                 const meta = JSON.parse(json);
-                compiledDsp.effectHelpers = { json, base64Code, meta };
+                compiledDsp.effectMeta = meta;
             } catch (e) {
                 this.error("Error in JSON.parse: " + e);
                 throw e;
@@ -512,20 +511,16 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * @memberof Faust
      */
     private async getAudioWorkletNode(optionsIn: TAudioNodeOptions): Promise<FaustAudioWorkletNode> {
-        const { compiledDsp, audioCtx, bufferSize, voices, plot, plotHandler } = optionsIn;
+        const { compiledDsp: compiledDspWithCodes, audioCtx, voices, plot, plotHandler } = optionsIn;
+        const compiledDsp = { ...compiledDspWithCodes };
+        delete compiledDsp.codes;
         const id = compiledDsp.shaKey + "_" + voices + "_" + plot;
         if (this.workletProcessors.indexOf(id) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
         id,
-        bufferSize,
-        voices,
-        plot,
-        dspMeta: compiledDsp.dspHelpers.meta,
-        dspBase64Code: compiledDsp.dspHelpers.base64Code,
-        effectMeta: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : undefined,
-        effectBase64Code: compiledDsp.effectHelpers ? compiledDsp.effectHelpers.base64Code : undefined,
-        mixerBase64Code: mixer32Base64Code
+        dspMeta: compiledDsp.dspMeta,
+        effectMeta: compiledDsp.effectMeta
     })};
 (${FaustAudioWorkletProcessorWrapper.toString()})();
 `;
@@ -533,7 +528,7 @@ const faustData = ${JSON.stringify({
             await audioCtx.audioWorklet.addModule(url);
             this.workletProcessors.push(id);
         }
-        return new FaustAudioWorkletNode(audioCtx, id, compiledDsp, voices, plotHandler);
+        return new FaustAudioWorkletNode({ audioCtx, id, voices, compiledDsp, plot, plotHandler, mixer32Module: utils.mixer32Module });
     }
     /**
      * Remove a DSP from registry
@@ -560,12 +555,12 @@ const faustData = ${JSON.stringify({
             const { codes } = this.dspTable[key];
             strTable[key] = {
                 dsp: {
-                    strCode: btoa(ab2str(codes.dsp.ui8Code)),
+                    strCode: btoa(utils.ab2str(codes.dsp.ui8Code)),
                     code: codes.dsp.code,
                     helpersCode: codes.dsp.helpersCode
                 },
                 effect: codes.effect ? {
-                    strCode: btoa(ab2str(codes.effect.ui8Code)),
+                    strCode: btoa(utils.ab2str(codes.effect.ui8Code)),
                     code: codes.effect.code,
                     helpersCode: codes.effect.helpersCode
                 } : undefined
@@ -586,12 +581,12 @@ const faustData = ${JSON.stringify({
             const strCodes = strTable[shaKey];
             const compiledCodes: TCompiledCodes = {
                 dsp: {
-                    ui8Code: str2ab(atob(strCodes.dsp.strCode)),
+                    ui8Code: utils.str2ab(atob(strCodes.dsp.strCode)),
                     code: strCodes.dsp.code,
                     helpersCode: strCodes.dsp.helpersCode
                 },
                 effect: strCodes.effect ? {
-                    ui8Code: str2ab(atob(strCodes.effect.strCode)),
+                    ui8Code: utils.str2ab(atob(strCodes.effect.strCode)),
                     code: strCodes.effect.code,
                     helpersCode: strCodes.effect.helpersCode
                 } : undefined

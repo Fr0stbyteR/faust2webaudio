@@ -47,27 +47,28 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
 
     plotHandler: (plotted: Float32Array[]) => any;
 
-    constructor(audioCtx: AudioContext, id: string, compiledDsp: TCompiledDsp, voices?: number, plotHandler?: (plotted: Float32Array[]) => any) {
-        super(audioCtx, id, {
-            numberOfInputs: parseInt(compiledDsp.dspHelpers.meta.inputs) > 0 ? 1 : 0,
-            numberOfOutputs: parseInt(compiledDsp.dspHelpers.meta.outputs) > 0 ? 1 : 0,
-            channelCount: Math.max(1, parseInt(compiledDsp.dspHelpers.meta.inputs)),
-            outputChannelCount: [parseInt(compiledDsp.dspHelpers.meta.outputs)],
+    constructor(options: { audioCtx: AudioContext; id: string; compiledDsp: TCompiledDsp; voices?: number; plot: number; plotHandler?: (plotted: Float32Array[]) => any; mixer32Module: WebAssembly.Module }) {
+        super(options.audioCtx, options.id, {
+            numberOfInputs: parseInt(options.compiledDsp.dspMeta.inputs) > 0 ? 1 : 0,
+            numberOfOutputs: parseInt(options.compiledDsp.dspMeta.outputs) > 0 ? 1 : 0,
+            channelCount: Math.max(1, parseInt(options.compiledDsp.dspMeta.inputs)),
+            outputChannelCount: [parseInt(options.compiledDsp.dspMeta.outputs)],
             channelCountMode: "explicit",
-            channelInterpretation: "speakers"
+            channelInterpretation: "speakers",
+            processorOptions: { id: options.id, voices: options.voices, plot: options.plot, compiledDsp: options.compiledDsp, mixer32Module: options.mixer32Module }
         });
         // Patch it with additional functions
         this.port.onmessage = (e: MessageEvent) => {
             if (e.data.type === "param" && this.outputHandler) this.outputHandler(e.data.path, e.data.value);
             else if (e.data.type === "plot" && this.plotHandler) this.plotHandler(e.data.value);
         };
-        this.voices = voices;
-        this.dspMeta = compiledDsp.dspHelpers.meta;
-        if (compiledDsp.effectHelpers) this.effectMeta = compiledDsp.effectHelpers.meta;
+        this.voices = options.voices;
+        this.dspMeta = options.compiledDsp.dspMeta;
+        this.effectMeta = options.compiledDsp.effectMeta;
         this.outputHandler = null;
         this.inputsItems = [];
         this.outputsItems = [];
-        this.plotHandler = plotHandler;
+        this.plotHandler = options.plotHandler;
         this.parseUI(this.dspMeta.ui);
     }
     parseUI(ui: TFaustUI) {

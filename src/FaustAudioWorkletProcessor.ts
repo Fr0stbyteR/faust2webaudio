@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable object-property-newline */
 /* eslint-env worker */
-import { TDspMeta, FaustDspNode, TFaustUI, TFaustUIGroup, TFaustUIItem, FaustWebAssemblyExports, FaustWebAssemblyMixerExports } from "./types";
+import { TDspMeta, FaustDspNode, TFaustUI, TFaustUIGroup, TFaustUIItem, FaustWebAssemblyExports, FaustWebAssemblyMixerExports, TCompiledDsp } from "./types";
 
 // AudioWorklet Globals
 declare class AudioWorkletProcessor {
@@ -41,123 +41,72 @@ type FaustData = {
 declare const faustData: FaustData;
 
 export const FaustAudioWorkletProcessorWrapper = () => {
-    class FaustConst {
-        static atoab(sBase64: string, nBlocksSize?: number) {
-            const sB64Enc = sBase64.replace(/[^A-Za-z0-9+/]/g, "");
-            const nInLen = sB64Enc.length;
-            const nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2;
-            const taBytes = new Uint8Array(nOutLen);
-            for (let nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
-                nMod4 = nInIdx & 3;
-                nUint24 |= this.atoUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
-                if (nMod4 === 3 || nInLen - nInIdx === 1) {
-                    for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
-                        taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
-                    }
-                    nUint24 = 0;
-                }
-            }
-            return taBytes.buffer;
-        }
-        static atoUint6(nChr: number) {
-            return nChr > 64 && nChr < 91
-                ? nChr - 65
-                : nChr > 96 && nChr < 123
-                    ? nChr - 71
-                    : nChr > 47 && nChr < 58
-                        ? nChr + 4
-                        : nChr === 43
-                            ? 62
-                            : nChr === 47
-                                ? 63
-                                : 0;
-        }
-        static midiToFreq(note: number) {
-            return 440.0 * 2 ** ((note - 69) / 12);
-        }
-        static remap(v: number, mn0: number, mx0: number, mn1: number, mx1: number) {
-            return (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
-        }
-        static findPath(o: any, p: string) {
-            if (typeof o !== "object") return false;
-            if (o.address) {
-                if (o.address === p) return true;
-                return false;
-            }
-            for (const k in o) {
-                if (this.findPath(o[k], p)) return true;
-            }
+    const midiToFreq = (note: number) => 440.0 * 2 ** ((note - 69) / 12);
+    const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
+    const findPath = (o: any, p: string) => {
+        if (typeof o !== "object") return false;
+        if (o.address) {
+            if (o.address === p) return true;
             return false;
         }
-        static get importObject() {
-            return {
-                env: {
-                    memory: this.voices ? this.memory : undefined, memoryBase: 0, tableBase: 0,
-                    _abs: Math.abs,
-                    // Float version
-                    _acosf: Math.acos, _asinf: Math.asin, _atanf: Math.atan, _atan2f: Math.atan2,
-                    _ceilf: Math.ceil, _cosf: Math.cos, _expf: Math.exp, _floorf: Math.floor,
-                    _fmodf: (x: number, y: number) => x % y,
-                    _logf: Math.log, _log10f: Math.log10, _max_f: Math.max, _min_f: Math.min,
-                    _remainderf: (x: number, y: number) => x - Math.round(x / y) * y,
-                    _powf: Math.pow, _roundf: Math.fround, _sinf: Math.sin, _sqrtf: Math.sqrt, _tanf: Math.tan,
-                    _acosfh: Math.acosh, _asinfh: Math.asinh, _atanfh: Math.atanh,
-                    _cosfh: Math.cosh, _sinfh: Math.sinh, _tanfh: Math.tanh,
-                    // Double version
-                    _acos: Math.acos, _asin: Math.asin, _atan: Math.atan, _atan2: Math.atan2,
-                    _ceil: Math.ceil, _cos: Math.cos, _exp: Math.exp, _floor: Math.floor,
-                    _fmod: (x: number, y: number) => x % y,
-                    _log: Math.log, _log10: Math.log10, _max_: Math.max, _min_: Math.min,
-                    _remainder: (x: number, y: number) => x - Math.round(x / y) * y,
-                    _pow: Math.pow, _round: Math.fround, _sin: Math.sin, _sqrt: Math.sqrt, _tan: Math.tan,
-                    _acosh: Math.acosh, _asinh: Math.asinh, _atanh: Math.atanh,
-                    _cosh: Math.cosh, _sinh: Math.sinh, _tanh: Math.tanh,
-                    table: new WebAssembly.Table({ initial: 0, element: "anyfunc" })
-                }
-            };
+        for (const k in o) {
+            if (findPath(o[k], p)) return true;
         }
-        static createMemory() {
-            // Hack : at least 4 voices (to avoid weird wasm memory bug?)
-            const voices = Math.max(4, this.voices);
-            // Memory allocator
-            const ptrSize = 4;
-            const sampleSize = 4;
-            const pow2limit = (x: number) => {
-                let n = 65536; // Minimum = 64 kB
-                while (n < x) { n *= 2; }
-                return n;
-            };
-            const { dspMeta, effectMeta } = this;
-            const effectSize = effectMeta ? parseInt(effectMeta.size) : 0;
-            let memorySize = pow2limit(
-                effectSize
-                + parseInt(dspMeta.size) * voices
-                + (parseInt(dspMeta.inputs) + parseInt(dspMeta.outputs) * 2)
-                * (ptrSize + this.bufferSize * sampleSize)
-            ) / 65536;
-            memorySize = Math.max(2, memorySize); // As least 2
-            return new WebAssembly.Memory({ initial: memorySize, maximum: memorySize });
+        return false;
+    };
+    const createWasmImport = (voices: number, memory: WebAssembly.Memory) => ({
+        env: {
+            memory: voices ? memory : undefined, memoryBase: 0, tableBase: 0,
+            _abs: Math.abs,
+            // Float version
+            _acosf: Math.acos, _asinf: Math.asin, _atanf: Math.atan, _atan2f: Math.atan2,
+            _ceilf: Math.ceil, _cosf: Math.cos, _expf: Math.exp, _floorf: Math.floor,
+            _fmodf: (x: number, y: number) => x % y,
+            _logf: Math.log, _log10f: Math.log10, _max_f: Math.max, _min_f: Math.min,
+            _remainderf: (x: number, y: number) => x - Math.round(x / y) * y,
+            _powf: Math.pow, _roundf: Math.fround, _sinf: Math.sin, _sqrtf: Math.sqrt, _tanf: Math.tan,
+            _acosfh: Math.acosh, _asinfh: Math.asinh, _atanfh: Math.atanh,
+            _cosfh: Math.cosh, _sinfh: Math.sinh, _tanfh: Math.tanh,
+            // Double version
+            _acos: Math.acos, _asin: Math.asin, _atan: Math.atan, _atan2: Math.atan2,
+            _ceil: Math.ceil, _cos: Math.cos, _exp: Math.exp, _floor: Math.floor,
+            _fmod: (x: number, y: number) => x % y,
+            _log: Math.log, _log10: Math.log10, _max_: Math.max, _min_: Math.min,
+            _remainder: (x: number, y: number) => x - Math.round(x / y) * y,
+            _pow: Math.pow, _round: Math.fround, _sin: Math.sin, _sqrt: Math.sqrt, _tan: Math.tan,
+            _acosh: Math.acosh, _asinh: Math.asinh, _atanh: Math.atanh,
+            _cosh: Math.cosh, _sinh: Math.sinh, _tanh: Math.tanh,
+            table: new WebAssembly.Table({ initial: 0, element: "anyfunc" })
         }
+    });
+    const createWasmMemory = (voicesIn: number, dspMeta: TDspMeta, effectMeta: TDspMeta, bufferSize: number) => {
+        // Hack : at least 4 voices (to avoid weird wasm memory bug?)
+        const voices = Math.max(4, voicesIn);
+        // Memory allocator
+        const ptrSize = 4;
+        const sampleSize = 4;
+        const pow2limit = (x: number) => {
+            let n = 65536; // Minimum = 64 kB
+            while (n < x) { n *= 2; }
+            return n;
+        };
+        const effectSize = effectMeta ? parseInt(effectMeta.size) : 0;
+        let memorySize = pow2limit(
+            effectSize
+            + parseInt(dspMeta.size) * voices
+            + (parseInt(dspMeta.inputs) + parseInt(dspMeta.outputs) * 2)
+            * (ptrSize + bufferSize * sampleSize)
+        ) / 65536;
+        memorySize = Math.max(2, memorySize); // As least 2
+        return new WebAssembly.Memory({ initial: memorySize, maximum: memorySize });
+    };
+    class FaustConst {
         static id = faustData.id;
         static dspMeta = faustData.dspMeta;
         static effectMeta = faustData.effectMeta;
-        static bufferSize = faustData.bufferSize || 128;
-        static voices = faustData.voices;
-        static memory = FaustConst.voices ? FaustConst.createMemory() : undefined;
-        static plot = faustData.plot;
-        private static dspBase64Code = faustData.dspBase64Code;
-        private static dspModule = new WebAssembly.Module(FaustConst.atoab(FaustConst.dspBase64Code));
-        static dspInstance = new WebAssembly.Instance(FaustConst.dspModule, FaustConst.importObject);
-        private static effectBase64Code = faustData.effectBase64Code;
-        private static effectModule = FaustConst.effectBase64Code ? new WebAssembly.Module(FaustConst.atoab(FaustConst.effectBase64Code)) : undefined;
-        static effectInstance = FaustConst.effectModule ? new WebAssembly.Instance(FaustConst.effectModule, FaustConst.importObject) : undefined;
-        private static mixerBase64Code = faustData.mixerBase64Code;
-        private static mixerModule = FaustConst.voices ? new WebAssembly.Module(FaustConst.atoab(FaustConst.mixerBase64Code)) : undefined;
-        private static mixerObject = FaustConst.voices ? { imports: { print: console.log }, memory: { memory: FaustConst.memory } } : undefined;
-        static mixerInstance = FaustConst.voices ? new WebAssembly.Instance(FaustConst.mixerModule, FaustConst.mixerObject) : undefined;
     }
     class FaustAudioWorkletProcessor extends AudioWorkletProcessor implements FaustDspNode {
-        static bufferSize = FaustConst.bufferSize;
+        static bufferSize = 128;
         // JSON parsing functions
         static parseUI(ui: TFaustUI, obj: AudioParamDescriptor[] | FaustAudioWorkletProcessor, callback: (...args: any[]) => any) {
             for (let i = 0; i < ui.length; i++) {
@@ -218,6 +167,11 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             if (FaustConst.effectMeta) this.parseUI(FaustConst.effectMeta.ui, params, this.parseItem);
             return params;
         }
+        dspInstance: WebAssembly.Instance;
+        effectInstance?: WebAssembly.Instance;
+        mixerInstance?: WebAssembly.Instance;
+        memory?: WebAssembly.Memory;
+
         bufferSize: number;
         voices: number;
         dspMeta: TDspMeta;
@@ -296,11 +250,13 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         }
         constructor(options: AudioWorkletNodeOptions) {
             super(options);
+            const processorOptions: { id: string; voices: number; plot: number; compiledDsp: TCompiledDsp; mixer32Module: WebAssembly.Module } = options.processorOptions;
+            this.instantiateWasm(processorOptions);
             this.port.onmessage = this.handleMessage; // Naturally binded with arrow function property
 
-            this.bufferSize = FaustConst.bufferSize;
-            this.voices = FaustConst.voices;
-            this.dspMeta = FaustConst.dspMeta;
+            this.bufferSize = 128;
+            this.voices = processorOptions.voices;
+            this.dspMeta = processorOptions.compiledDsp.dspMeta;
 
             this.outputHandler = (path, value) => this.port.postMessage({ path, value, type: "param" });
             this.computeHandler = null;
@@ -322,8 +278,8 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.sampleSize = 4;
 
             // Create the WASM instance
-            this.factory = FaustConst.dspInstance.exports;
-            this.HEAP = this.voices ? FaustConst.memory.buffer : this.factory.memory.buffer;
+            this.factory = this.dspInstance.exports;
+            this.HEAP = this.voices ? this.memory.buffer : this.factory.memory.buffer;
             this.HEAP32 = new Int32Array(this.HEAP);
             this.HEAPF32 = new Float32Array(this.HEAP);
 
@@ -372,8 +328,8 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 this.fGainLabel$ = [];
                 this.fDate = 0;
 
-                this.mixer = FaustConst.mixerInstance.exports;
-                this.effect = FaustConst.effectInstance ? FaustConst.effectInstance.exports : null;
+                this.mixer = this.mixerInstance.exports;
+                this.effect = this.effectInstance ? this.effectInstance.exports : null;
 
                 // Start of DSP memory ('polyphony' DSP voices)
                 this.dspVoices$ = [];
@@ -398,12 +354,25 @@ export const FaustAudioWorkletProcessorWrapper = () => {
 
             this.pathTable$ = {};
 
-            this.plot = FaustConst.plot;
+            this.plot = processorOptions.plot;
             this.$plot = 0;
             this.plotted = new Array(this.numOut).fill(null).map(() => new Float32Array(this.plot));
 
             // Init resulting DSP
             this.setup();
+        }
+        instantiateWasm(options: { id: string; voices: number; plot: number; compiledDsp: TCompiledDsp; mixer32Module: WebAssembly.Module }) {
+            const memory = createWasmMemory(options.voices, options.compiledDsp.dspMeta, options.compiledDsp.effectMeta, 128);
+            this.memory = memory;
+            const imports = createWasmImport(options.voices, memory);
+            this.dspInstance = new WebAssembly.Instance(options.compiledDsp.dspModule, imports);
+            if (options.compiledDsp.effectModule) {
+                this.effectInstance = new WebAssembly.Instance(options.compiledDsp.effectModule, imports);
+            }
+            if (options.voices) {
+                const mixerImports = { imports: { print: console.log }, memory: { memory } };
+                this.mixerInstance = new WebAssembly.Instance(options.mixer32Module, mixerImports);
+            }
         }
         updateOutputs() {
             if (this.outputsItems.length > 0 && this.outputHandler && this.outputsTimer-- === 0) {
@@ -427,7 +396,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
 
         setParamValue(path: string, val: number) {
             if (this.voices) {
-                if (this.effect && FaustConst.findPath(this.effectMeta.ui, path)) this.effect.setParamValue(this.$effect, this.pathTable$[path], val);
+                if (this.effect && findPath(this.effectMeta.ui, path)) this.effect.setParamValue(this.$effect, this.pathTable$[path], val);
                 else this.dspVoices$.forEach($voice => this.factory.setParamValue($voice, this.pathTable$[path], val));
             } else {
                 this.factory.setParamValue(this.$dsp, this.pathTable$[path], val);
@@ -435,7 +404,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         }
         getParamValue(path: string) {
             if (this.voices) {
-                if (this.effect && FaustConst.findPath(this.effectMeta.ui, path)) return this.effect.getParamValue(this.$effect, this.pathTable$[path]);
+                if (this.effect && findPath(this.effectMeta.ui, path)) return this.effect.getParamValue(this.$effect, this.pathTable$[path]);
                 return this.factory.getParamValue(this.dspVoices$[0], this.pathTable$[path]);
             }
             return this.factory.getParamValue(this.$dsp, this.pathTable$[path]);
@@ -546,7 +515,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             if (!this.voices) return;
             const voice = this.getFreeVoice();
             // console.log("keyOn voice " + voice);
-            this.fFreqLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, FaustConst.midiToFreq(pitch)));
+            this.fFreqLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, midiToFreq(pitch)));
             this.fGateLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, 1));
             this.fGainLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, velocity / 127));
             this.dspVoicesState[voice] = pitch;
@@ -583,7 +552,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             if (!this.fCtrlLabel[ctrl].length) return;
             this.fCtrlLabel[ctrl].forEach((ctrl) => {
                 const { path } = ctrl;
-                this.setParamValue(path, FaustConst.remap(value, 0, 127, ctrl.min, ctrl.max));
+                this.setParamValue(path, remap(value, 0, 127, ctrl.min, ctrl.max));
                 if (this.outputHandler) this.outputHandler(path, this.getParamValue(path));
             });
         }

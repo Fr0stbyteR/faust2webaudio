@@ -56,9 +56,9 @@ export type THelpers = { json: string; base64Code: string; meta: TDspMeta };
 export type TCompiledDsp = {
     shaKey: string;
     dspModule: WebAssembly.Module;
-    dspHelpers: THelpers;
+    dspMeta: TDspMeta;
     effectModule?: WebAssembly.Module;
-    effectHelpers?: THelpers;
+    effectMeta?: TDspMeta;
     codes: TCompiledCodes;
 }
 export type TFaustCompileArgs = {

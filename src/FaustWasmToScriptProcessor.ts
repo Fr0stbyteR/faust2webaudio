@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable object-property-newline */
 /* eslint-disable object-curly-newline */
-import { Faust, mixer32Base64Code } from "./Faust";
-import { atoab } from "./Utils";
+import { Faust } from "./Faust";
+import { atoab, mixer32Module } from "./utils";
 import { TCompiledDsp, FaustScriptProcessorNode, TAudioNodeOptions } from "./types";
 
 export class FaustWasmToScriptProcessor {
@@ -48,7 +48,7 @@ export class FaustWasmToScriptProcessor {
     }
     private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plot?: number, plotHandler?: (plotted: Float32Array[]) => any) {
         let node: FaustScriptProcessorNode;
-        const dspMeta = compiledDsp.dspHelpers.meta;
+        const dspMeta = compiledDsp.dspMeta;
         const inputs = parseInt(dspMeta.inputs);
         const outputs = parseInt(dspMeta.outputs);
         try {
@@ -125,7 +125,7 @@ export class FaustWasmToScriptProcessor {
         }
 
         if (node.voices) {
-            node.effectMeta = compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : null;
+            node.effectMeta = compiledDsp.effectMeta;
             node.$mixing = null;
             node.fFreqLabel$ = [];
             node.fGateLabel$ = [];
@@ -498,8 +498,7 @@ export class FaustWasmToScriptProcessor {
                 memory = FaustWasmToScriptProcessor.createMemory(compiledDsp, bufferSize, voices);
                 importObject.env.memory = memory;
                 const mixerObject = { imports: { print: console.log }, memory: { memory } }; // eslint-disable-line no-console
-                const mixerModule = new WebAssembly.Module(atoab(mixer32Base64Code));
-                mixerInstance = new WebAssembly.Instance(mixerModule, mixerObject);
+                mixerInstance = new WebAssembly.Instance(mixer32Module, mixerObject);
                 try {
                     effectInstance = await WebAssembly.instantiate(compiledDsp.effectModule, importObject);
                 } catch (e) {} // eslint-disable-line no-empty
@@ -521,8 +520,8 @@ export class FaustWasmToScriptProcessor {
             while (n < x) { n *= 2; }
             return n;
         };
-        const dspMeta = compiledDsp.dspHelpers.meta;
-        const effectMeta = compiledDsp.effectHelpers ? compiledDsp.effectHelpers.meta : null;
+        const dspMeta = compiledDsp.dspMeta;
+        const effectMeta = compiledDsp.effectMeta;
         const effectSize = effectMeta ? parseInt(effectMeta.size) : 0;
         let memorySize = pow2limit(
             effectSize
