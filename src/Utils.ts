@@ -45,6 +45,14 @@ export const atoab = (sBase64: string, nBlocksSize?: number) => {
     }
     return taBytes.buffer;
 };
+export const heap2Str = (buf: number[]) => {
+    let str = "";
+    let i = 0;
+    while (buf[i] !== 0) {
+        str += String.fromCharCode(buf[i++]);
+    }
+    return str;
+};
 export const mixer32Module = new WebAssembly.Module(atoab((mixer32DataURI as unknown as string).split(",")[1]));
 export const midiToFreq = (note: number) => 440.0 * 2 ** ((note - 69) / 12);
 export const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
