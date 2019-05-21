@@ -45,9 +45,9 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     inputsItems: string[];
     outputsItems: string[];
 
-    plotHandler: (plotted: Float32Array[]) => any;
+    plotHandler: (plotted: Float32Array[], index: number) => any;
 
-    constructor(options: { audioCtx: AudioContext; id: string; compiledDsp: TCompiledDsp; voices?: number; plot: number; plotHandler?: (plotted: Float32Array[]) => any; mixer32Module: WebAssembly.Module }) {
+    constructor(options: { audioCtx: AudioContext; id: string; compiledDsp: TCompiledDsp; voices?: number; plotHandler?: (plotted: Float32Array[]) => any; mixer32Module: WebAssembly.Module }) {
         super(options.audioCtx, options.id, {
             numberOfInputs: parseInt(options.compiledDsp.dspMeta.inputs) > 0 ? 1 : 0,
             numberOfOutputs: parseInt(options.compiledDsp.dspMeta.outputs) > 0 ? 1 : 0,
@@ -55,12 +55,12 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
             outputChannelCount: [parseInt(options.compiledDsp.dspMeta.outputs)],
             channelCountMode: "explicit",
             channelInterpretation: "speakers",
-            processorOptions: { id: options.id, voices: options.voices, plot: options.plot, compiledDsp: options.compiledDsp, mixer32Module: options.mixer32Module }
+            processorOptions: { id: options.id, voices: options.voices, compiledDsp: options.compiledDsp, mixer32Module: options.mixer32Module }
         });
         // Patch it with additional functions
         this.port.onmessage = (e: MessageEvent) => {
             if (e.data.type === "param" && this.outputHandler) this.outputHandler(e.data.path, e.data.value);
-            else if (e.data.type === "plot" && this.plotHandler) this.plotHandler(e.data.value);
+            else if (e.data.type === "plot" && this.plotHandler) this.plotHandler(e.data.value, e.data.index);
         };
         this.voices = options.voices;
         this.dspMeta = options.compiledDsp.dspMeta;
@@ -172,18 +172,5 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
             return JSON.stringify(r);
         }
         return JSON.stringify(this.dspMeta);
-    }
-    /**
-     * Request plot
-     *
-     * @param {number} count - amount of samples need to be plotted
-     * @returns {Promise<Float32Array[]>}
-     * @memberof IFaustDspNode
-     */
-    replot(count: number): Promise<Float32Array[]> {
-        return new Promise((resolve: (plotted: Float32Array[]) => any) => {
-            this.port.postMessage({ count, type: "replot" });
-            this.plotHandler = resolve;
-        });
     }
 }

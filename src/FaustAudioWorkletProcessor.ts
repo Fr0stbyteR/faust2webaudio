@@ -30,13 +30,7 @@ interface AudioParamDescriptor {
 type FaustData = {
     id: string;
     dspMeta: TDspMeta;
-    dspBase64Code: string;
     effectMeta?: TDspMeta;
-    effectBase64Code?: string;
-    mixerBase64Code?: string;
-    bufferSize?: number;
-    voices?: number;
-    plot?: number;
 };
 declare const faustData: FaustData;
 
@@ -220,9 +214,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         kReleaseVoice?: number;
         kNoVoice?: number;
 
-        plot: number;
-        $plot: number;
-        plotted: Float32Array[];
+        $buffer: number;
 
         outputHandler: (address: string, value: number) => any;
         computeHandler: (bufferSize: number) => any;
@@ -240,17 +232,12 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 // Generic data message
                 case "param": this.setParamValue(msg.key, msg.value); break;
                 // case "patch": this.onpatch(msg.data); break;
-                case "replot":
-                    this.plot = msg.count;
-                    this.$plot = 0;
-                    this.plotted = new Array(this.numOut).fill(null).map(() => new Float32Array(this.plot));
-                    break;
                 default:
             }
         }
         constructor(options: AudioWorkletNodeOptions) {
             super(options);
-            const processorOptions: { id: string; voices: number; plot: number; compiledDsp: TCompiledDsp; mixer32Module: WebAssembly.Module } = options.processorOptions;
+            const processorOptions: { id: string; voices: number; compiledDsp: TCompiledDsp; mixer32Module: WebAssembly.Module } = options.processorOptions;
             this.instantiateWasm(processorOptions);
             this.port.onmessage = this.handleMessage; // Naturally binded with arrow function property
 
@@ -354,14 +341,12 @@ export const FaustAudioWorkletProcessorWrapper = () => {
 
             this.pathTable$ = {};
 
-            this.plot = processorOptions.plot;
-            this.$plot = 0;
-            this.plotted = new Array(this.numOut).fill(null).map(() => new Float32Array(this.plot));
+            this.$buffer = 0;
 
             // Init resulting DSP
             this.setup();
         }
-        instantiateWasm(options: { id: string; voices: number; plot: number; compiledDsp: TCompiledDsp; mixer32Module: WebAssembly.Module }) {
+        instantiateWasm(options: { id: string; voices: number; compiledDsp: TCompiledDsp; mixer32Module: WebAssembly.Module }) {
             const memory = createWasmMemory(options.voices, options.compiledDsp.dspMeta, options.compiledDsp.effectMeta, 128);
             this.memory = memory;
             const imports = createWasmImport(options.voices, memory);
@@ -612,14 +597,8 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 for (let i = 0; i < Math.min(this.numOut, output.length); i++) {
                     const dspOutput = this.dspOutChannnels[i];
                     output[i].set(dspOutput);
-                    if (this.plot && this.$plot < this.plot) { // Plot
-                        this.plotted[i].set(this.plot - this.$plot >= this.bufferSize ? dspOutput : dspOutput.subarray(0, this.plot - this.$plot), this.$plot);
-                        if (i === Math.min(this.numOut, output.length) - 1) { // Last channel
-                            if (this.plot - this.$plot <= this.bufferSize) this.port.postMessage({ type: "plot", value: this.plotted }); // Last buffer
-                            this.$plot += this.bufferSize;
-                        }
-                    }
                 }
+                this.port.postMessage({ type: "plot", value: output, index: this.$buffer++ });
             }
             return true;
         }

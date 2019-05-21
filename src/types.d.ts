@@ -83,12 +83,6 @@ export type TFaustCompileOptions = {
     bufferSize?: 128 | 256 | 512 | 1024 | 2048 | 4096;
     args?: TFaustCompileArgs;
     /**
-     * first samples to get
-     *
-     * @type {number}
-     */
-    plot?: number;
-    /**
      * handler for plotted samples
      *
      * @type {(plotted: Float32Array[]) => any}
@@ -115,12 +109,6 @@ export type TAudioNodeOptions = {
      * @type {(128 | 256 | 512 | 1024 | 2048 | 4096)}
      */
     bufferSize?: 128 | 256 | 512 | 1024 | 2048 | 4096;
-    /**
-     * first samples to get
-     *
-     * @type {number}
-     */
-    plot?: number;
     /**
      * handler for plotted samples
      *
@@ -465,16 +453,6 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode implements Fau
      */
     getJSON: () => string;
 
-    plot: number;
-    $plot: number;
-    plotted: Float32Array[];
-    plotHandler: (plotted: Float32Array[]) => any;
-    /**
-     * Request plot
-     *
-     * @param {number} count - amount of samples need to be plotted
-     * @returns {Promise<Float32Array[]>}
-     * @memberof IFaustDspNode
-     */
-    replot(count: number): Promise<Float32Array[]>;
+    $buffer: number;
+    plotHandler: (plotted: Float32Array[], index: number) => any;
 }

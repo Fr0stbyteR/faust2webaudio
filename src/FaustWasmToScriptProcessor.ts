@@ -3,7 +3,7 @@
 /* eslint-disable object-property-newline */
 /* eslint-disable object-curly-newline */
 import { Faust } from "./Faust";
-import { atoab, mixer32Module, createWasmMemory, createWasmImport } from "./utils";
+import { mixer32Module, createWasmMemory, createWasmImport, midiToFreq } from "./utils";
 import { TCompiledDsp, FaustScriptProcessorNode, TAudioNodeOptions } from "./types";
 
 export class FaustWasmToScriptProcessor {
@@ -11,7 +11,7 @@ export class FaustWasmToScriptProcessor {
     constructor(faust: Faust) {
         this.faust = faust;
     }
-    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plot?: number, plotHandler?: (plotted: Float32Array[]) => any) {
+    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plotHandler?: (plotted: Float32Array[]) => any) {
         let node: FaustScriptProcessorNode;
         const dspMeta = compiledDsp.dspMeta;
         const inputs = parseInt(dspMeta.inputs);
@@ -125,9 +125,7 @@ export class FaustWasmToScriptProcessor {
 
         node.pathTable$ = {};
 
-        node.plot = plot;
-        node.$plot = 0;
-        node.plotted = new Array(node.numOut).fill(null).map(() => new Float32Array(node.plot));
+        node.$buffer = 0;
         node.plotHandler = plotHandler;
 
         node.updateOutputs = () => {
@@ -223,7 +221,6 @@ export class FaustWasmToScriptProcessor {
                 }
                 return node.kNoVoice;
             };
-            const midiToFreq = (note: number) => 440.0 * Math.pow(2.0, (note - 69.0) / 12.0);
             node.keyOn = (channel, pitch, velocity) => {
                 const voice = node.getFreeVoice();
                 this.faust.log("keyOn voice " + voice);
@@ -299,17 +296,13 @@ export class FaustWasmToScriptProcessor {
                 node.factory.compute(node.$dsp, node.bufferSize, node.$ins, node.$outs); // Compute
             }
             node.updateOutputs(); // Update bargraph
+            const outputs = new Array(node.numOut).fill(null).map(() => new Float32Array(node.bufferSize));
             for (let i = 0; i < node.numOut; i++) { // Write outputs
                 const output = e.outputBuffer.getChannelData(i);
                 const dspOutput = node.dspOutChannnels[i];
                 output.set(dspOutput);
-                if (node.plot && node.plotHandler && node.$plot < node.plot) { // Plot
-                    node.plotted[i].set(node.plot - node.$plot >= node.bufferSize ? output : output.subarray(0, node.plot - node.$plot), node.$plot);
-                    if (i === node.numOut - 1) { // Last channel
-                        if (node.plot - node.$plot <= node.bufferSize) node.plotHandler(node.plotted); // Last buffer
-                        node.$plot += node.bufferSize;
-                    }
-                }
+                outputs[i].set(dspOutput);
+                if (node.plotHandler) node.plotHandler(outputs, node.$buffer++);
             }
         };
         node.setup = () => { // Setup web audio context
@@ -435,12 +428,6 @@ export class FaustWasmToScriptProcessor {
         };
         // Init resulting DSP
         node.setup();
-        node.replot = (count: number) => new Promise((resolve: (plotted: Float32Array[]) => any) => {
-            node.plot = count;
-            node.$plot = 0;
-            node.plotted = new Array(node.numOut).fill(null).map(() => new Float32Array(node.plot));
-            node.plotHandler = resolve;
-        });
         return node;
     }
     /**
@@ -451,7 +438,7 @@ export class FaustWasmToScriptProcessor {
      * @returns {Promise<FaustScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
      */
     async getNode(optionsIn: TAudioNodeOptions): Promise<FaustScriptProcessorNode> {
-        const { compiledDsp, audioCtx, bufferSize: bufferSizeIn, voices, plot, plotHandler } = optionsIn;
+        const { compiledDsp, audioCtx, bufferSize: bufferSizeIn, voices, plotHandler } = optionsIn;
         const bufferSize = bufferSizeIn || 512;
         let node: FaustScriptProcessorNode;
         try {
@@ -467,7 +454,7 @@ export class FaustWasmToScriptProcessor {
                 } catch (e) {} // eslint-disable-line no-empty
             }
             const dspInstance = await WebAssembly.instantiate(compiledDsp.dspModule, importObject);
-            node = this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plot, plotHandler);
+            node = this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plotHandler);
         } catch (e) {
             this.faust.error("Faust " + compiledDsp.shaKey + " cannot be loaded or compiled");
             throw e;

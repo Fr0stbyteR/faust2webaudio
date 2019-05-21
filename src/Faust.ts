@@ -9,7 +9,6 @@ import * as libFaustDataURI from "./wasm/libfaust-wasm.wasm";
 import * as utils from "./utils";
 import { FaustOfflineProcessor } from "./FaustOfflineProcessor";
 import { TCompiledDsp, TFaustCompileOptions, FaustScriptProcessorNode, TFaustCompileArgs, TCompiledCode, TCompiledCodes, TAudioNodeOptions, TCompiledStrCodes } from "./types";
-import * as mixer32DataURI from "./wasm/mixer32.wasm";
 
 // import * as Binaryen from "binaryen";
 
@@ -138,7 +137,7 @@ export class Faust {
      * @memberof Faust
      */
     async getNode(code: string, optionsIn: TFaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
-        const { audioCtx, voices, useWorklet, bufferSize, plot, plotHandler } = optionsIn;
+        const { audioCtx, voices, useWorklet, bufferSize, plotHandler } = optionsIn;
         const argv = [] as string[];
         for (const key in optionsIn.args) {
             argv.push(key);
@@ -146,7 +145,7 @@ export class Faust {
         }
         const compiledDsp = await this.compileCodes(code, argv, !voices);
         if (!compiledDsp) return null;
-        const options = { compiledDsp, audioCtx, voices, plot, plotHandler, bufferSize: useWorklet ? 128 : bufferSize };
+        const options = { compiledDsp, audioCtx, voices, plotHandler, bufferSize: useWorklet ? 128 : bufferSize };
         const node = await useWorklet ? this.getAudioWorkletNode(options) : this.getScriptProcessorNode(options);
         return node;
     }
@@ -458,7 +457,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         // factory.getBase64Code = eval("getBase64Code" + dspName);
         try {
             const json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'");
-            const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
+            // const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
             const meta = JSON.parse(json);
             compiledDsp.dspMeta = meta;
         } catch (e) {
@@ -477,7 +476,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
             // factory.getBase64Codeeffect = eval("getBase64Code" + factory_name2);
             try {
                 const json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'");
-                const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
+                // const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
                 const meta = JSON.parse(json);
                 compiledDsp.effectMeta = meta;
             } catch (e) {
@@ -511,10 +510,10 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * @memberof Faust
      */
     private async getAudioWorkletNode(optionsIn: TAudioNodeOptions): Promise<FaustAudioWorkletNode> {
-        const { compiledDsp: compiledDspWithCodes, audioCtx, voices, plot, plotHandler } = optionsIn;
+        const { compiledDsp: compiledDspWithCodes, audioCtx, voices, plotHandler } = optionsIn;
         const compiledDsp = { ...compiledDspWithCodes };
         delete compiledDsp.codes;
-        const id = compiledDsp.shaKey + "_" + voices + "_" + plot;
+        const id = compiledDsp.shaKey + "_" + voices;
         if (this.workletProcessors.indexOf(id) === -1) {
             const strProcessor = `
 const faustData = ${JSON.stringify({
@@ -528,7 +527,7 @@ const faustData = ${JSON.stringify({
             await audioCtx.audioWorklet.addModule(url);
             this.workletProcessors.push(id);
         }
-        return new FaustAudioWorkletNode({ audioCtx, id, voices, compiledDsp, plot, plotHandler, mixer32Module: utils.mixer32Module });
+        return new FaustAudioWorkletNode({ audioCtx, id, voices, compiledDsp, plotHandler, mixer32Module: utils.mixer32Module });
     }
     /**
      * Remove a DSP from registry
