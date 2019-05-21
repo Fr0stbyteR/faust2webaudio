@@ -45,7 +45,8 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     inputsItems: string[];
     outputsItems: string[];
 
-    plotHandler: (plotted: Float32Array[], index: number) => any;
+    cachedEvents: { type: string; data: any }[] = [];
+    plotHandler: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
 
     constructor(options: { audioCtx: AudioContext; id: string; compiledDsp: TCompiledDsp; voices?: number; plotHandler?: (plotted: Float32Array[]) => any; mixer32Module: WebAssembly.Module }) {
         super(options.audioCtx, options.id, {
@@ -59,8 +60,12 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
         });
         // Patch it with additional functions
         this.port.onmessage = (e: MessageEvent) => {
-            if (e.data.type === "param" && this.outputHandler) this.outputHandler(e.data.path, e.data.value);
-            else if (e.data.type === "plot" && this.plotHandler) this.plotHandler(e.data.value, e.data.index);
+            if (e.data.type === "param" && this.outputHandler) {
+                this.outputHandler(e.data.path, e.data.value);
+            } else if (e.data.type === "plot") {
+                if (this.plotHandler) this.plotHandler(e.data.value, e.data.index, this.cachedEvents.length ? this.cachedEvents : undefined);
+                this.cachedEvents = [];
+            }
         };
         this.voices = options.voices;
         this.dspMeta = options.compiledDsp.dspMeta;
@@ -101,7 +106,9 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
      * @memberof FaustAudioWorkletNode
      */
     keyOn(channel: number, pitch: number, velocity: number) {
-        this.port.postMessage({ type: "keyOn", data: [channel, pitch, velocity] });
+        const e = { type: "keyOn", data: [channel, pitch, velocity] };
+        this.port.postMessage(e);
+        this.cachedEvents.push(e);
     }
     /**
      * De-instantiates a polyphonic voice.
@@ -112,7 +119,9 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
      * @memberof FaustAudioWorkletNode
      */
     keyOff(channel: number, pitch: number, velocity: number) {
-        this.port.postMessage({ type: "keyOff", data: [channel, pitch, velocity] });
+        const e = { type: "keyOff", data: [channel, pitch, velocity] };
+        this.port.postMessage(e);
+        this.cachedEvents.push(e);
     }
     /**
      * Gently terminates all the active voices.
@@ -120,21 +129,31 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
      * @memberof FaustAudioWorkletNode
      */
     allNotesOff() {
-        this.port.postMessage({ type: "ctrlChange", data: [0, 123, 0] });
+        const e = { type: "ctrlChange", data: [0, 123, 0] };
+        this.port.postMessage(e);
+        this.cachedEvents.push(e);
     }
     ctrlChange(channel: number, ctrl: number, value: any) {
-        this.port.postMessage({ type: "ctrlChange", data: [channel, ctrl, value] });
+        const e = { type: "ctrlChange", data: [channel, ctrl, value] };
+        this.port.postMessage(e);
+        this.cachedEvents.push(e);
     }
     pitchWheel(channel: number, wheel: number) {
-        this.port.postMessage({ type: "pitchWheel", data: [channel, wheel] });
+        const e = { type: "pitchWheel", data: [channel, wheel] };
+        this.port.postMessage(e);
+        this.cachedEvents.push(e);
     }
     midiMessage(data: number[] | Uint8Array) {
-        this.port.postMessage({ data, type: "midi" });
+        const e = { data, type: "midi" };
+        this.port.postMessage(e);
+        this.cachedEvents.push(e);
     }
     metadata() {} // eslint-disable-line class-methods-use-this
-    setParamValue(path: string, val: number) {
-        this.port.postMessage({ type: "param", key: path, value: val });
-        this.parameters.get(path).setValueAtTime(val, 0);
+    setParamValue(path: string, value: number) {
+        const e = { type: "param", data: { path, value } };
+        this.port.postMessage(e);
+        this.cachedEvents.push(e);
+        this.parameters.get(path).setValueAtTime(value, 0);
     }
     getParamValue(path: string) {
         return this.parameters.get(path).value;

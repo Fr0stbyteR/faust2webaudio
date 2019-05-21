@@ -3,7 +3,7 @@
 /* eslint-disable object-property-newline */
 /* eslint-disable object-curly-newline */
 import { Faust } from "./Faust";
-import { mixer32Module, createWasmMemory, createWasmImport, midiToFreq } from "./utils";
+import { mixer32Module, createWasmMemory, createWasmImport, midiToFreq, remap } from "./utils";
 import { TCompiledDsp, FaustScriptProcessorNode, TAudioNodeOptions } from "./types";
 
 export class FaustWasmToScriptProcessor {
@@ -126,6 +126,7 @@ export class FaustWasmToScriptProcessor {
         node.pathTable$ = {};
 
         node.$buffer = 0;
+        node.cachedEvents = [];
         node.plotHandler = plotHandler;
 
         node.updateOutputs = () => {
@@ -222,6 +223,7 @@ export class FaustWasmToScriptProcessor {
                 return node.kNoVoice;
             };
             node.keyOn = (channel, pitch, velocity) => {
+                node.cachedEvents.push({ type: "keyOn", data: [channel, pitch, velocity] });
                 const voice = node.getFreeVoice();
                 this.faust.log("keyOn voice " + voice);
                 node.fFreqLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, midiToFreq(pitch)));
@@ -230,6 +232,7 @@ export class FaustWasmToScriptProcessor {
                 node.dspVoicesState[voice] = pitch;
             };
             node.keyOff = (channel, pitch, velocity) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+                node.cachedEvents.push({ type: "keyOff", data: [channel, pitch, velocity] });
                 const voice = node.getPlayingVoice(pitch);
                 if (voice === node.kNoVoice) return this.faust.log("Playing voice not found...");
                 node.fGateLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, 0)); // No use of velocity for now...
@@ -237,6 +240,7 @@ export class FaustWasmToScriptProcessor {
                 return this.faust.log("keyOff voice " + voice);
             };
             node.allNotesOff = () => {
+                node.cachedEvents.push({ type: "ctrlChange", data: [0, 123, 0] });
                 for (let i = 0; i < node.voices; i++) {
                     node.fGateLabel$.forEach($gate => node.factory.setParamValue(node.dspVoices$[i], $gate, 0));
                     node.dspVoicesState[i] = node.kReleaseVoice;
@@ -244,6 +248,7 @@ export class FaustWasmToScriptProcessor {
             };
         }
         node.midiMessage = (data) => {
+            node.cachedEvents.push({ data, type: "midi" });
             const cmd = data[0] >> 4;
             const channel = data[0] & 0xf;
             const data1 = data[1];
@@ -257,8 +262,8 @@ export class FaustWasmToScriptProcessor {
             if (cmd === 14) return node.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
             return undefined;
         };
-        const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
         node.ctrlChange = (channel, ctrl, value) => {
+            node.cachedEvents.push({ type: "ctrlChange", data: [channel, ctrl, value] });
             if (!node.fCtrlLabel[ctrl].length) return;
             node.fCtrlLabel[ctrl].forEach((ctrl) => {
                 const { path } = ctrl;
@@ -267,6 +272,7 @@ export class FaustWasmToScriptProcessor {
             });
         };
         node.pitchWheel = (channel, wheel) => {
+            node.cachedEvents.push({ type: "pitchWheel", data: [channel, wheel] });
             node.fPitchwheelLabel.forEach((path) => {
                 node.setParamValue(path, Math.pow(2, wheel / 12));
                 if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
@@ -302,7 +308,8 @@ export class FaustWasmToScriptProcessor {
                 const dspOutput = node.dspOutChannnels[i];
                 output.set(dspOutput);
                 outputs[i].set(dspOutput);
-                if (node.plotHandler) node.plotHandler(outputs, node.$buffer++);
+                if (node.plotHandler) node.plotHandler(outputs, node.$buffer++, node.cachedEvents.length ? node.cachedEvents : undefined);
+                node.cachedEvents = [];
             }
         };
         node.setup = () => { // Setup web audio context
@@ -391,12 +398,13 @@ export class FaustWasmToScriptProcessor {
             }
             return false;
         };
-        node.setParamValue = (path, val) => {
+        node.setParamValue = (path, value) => {
+            node.cachedEvents.push({ type: "param", data: { path, value } });
             if (node.voices) {
-                if (node.effect && findPath(node.effectMeta.ui, path)) node.effect.setParamValue(node.$effect, node.pathTable$[path], val);
-                else node.dspVoices$.forEach($voice => node.factory.setParamValue($voice, node.pathTable$[path], val));
+                if (node.effect && findPath(node.effectMeta.ui, path)) node.effect.setParamValue(node.$effect, node.pathTable$[path], value);
+                else node.dspVoices$.forEach($voice => node.factory.setParamValue($voice, node.pathTable$[path], value));
             } else {
-                node.factory.setParamValue(node.$dsp, node.pathTable$[path], val);
+                node.factory.setParamValue(node.$dsp, node.pathTable$[path], value);
             }
         };
         node.getParamValue = (path) => {

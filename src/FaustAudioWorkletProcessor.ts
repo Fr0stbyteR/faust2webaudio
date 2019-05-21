@@ -230,7 +230,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 case "ctrlChange": this.ctrlChange(msg.data[0], msg.data[1], msg.data[2]); break;
                 case "pitchWheel": this.pitchWheel(msg.data[0], msg.data[1]); break;
                 // Generic data message
-                case "param": this.setParamValue(msg.key, msg.value); break;
+                case "param": this.setParamValue(msg.data.path, msg.data.value); break;
                 // case "patch": this.onpatch(msg.data); break;
                 default:
             }

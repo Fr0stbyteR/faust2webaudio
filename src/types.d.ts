@@ -454,5 +454,6 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode implements Fau
     getJSON: () => string;
 
     $buffer: number;
-    plotHandler: (plotted: Float32Array[], index: number) => any;
+    cachedEvents: { type: string; data: any }[];
+    plotHandler: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
 }
