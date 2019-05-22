@@ -48,7 +48,7 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     cachedEvents: { type: string; data: any }[] = [];
     plotHandler: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
 
-    constructor(options: { audioCtx: AudioContext; id: string; compiledDsp: TCompiledDsp; voices?: number; plotHandler?: (plotted: Float32Array[]) => any; mixer32Module: WebAssembly.Module }) {
+    constructor(options: { audioCtx: AudioContext; id: string; compiledDsp: TCompiledDsp; voices?: number; plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any; mixer32Module: WebAssembly.Module }) {
         super(options.audioCtx, options.id, {
             numberOfInputs: parseInt(options.compiledDsp.dspMeta.inputs) > 0 ? 1 : 0,
             numberOfOutputs: parseInt(options.compiledDsp.dspMeta.outputs) > 0 ? 1 : 0,

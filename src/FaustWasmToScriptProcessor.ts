@@ -11,7 +11,7 @@ export class FaustWasmToScriptProcessor {
     constructor(faust: Faust) {
         this.faust = faust;
     }
-    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plotHandler?: (plotted: Float32Array[]) => any) {
+    private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any) {
         let node: FaustScriptProcessorNode;
         const dspMeta = compiledDsp.dspMeta;
         const inputs = parseInt(dspMeta.inputs);
