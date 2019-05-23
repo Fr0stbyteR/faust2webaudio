@@ -2,7 +2,7 @@
 /* eslint-disable no-restricted-properties */
 /* eslint-disable object-property-newline */
 import { TDspMeta } from "./types";
-import * as mixer32DataURI from "./wasm/mixer32.wasm";
+import mixer32DataURI from "./wasm/mixer32.wasm";
 
 export const ab2str = (buf: ArrayBuffer): string => (buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null);
 export const str2ab = (str: string): ArrayBuffer => {
@@ -53,7 +53,7 @@ export const heap2Str = (buf: number[]) => {
     }
     return str;
 };
-export const mixer32Module = new WebAssembly.Module(atoab((mixer32DataURI as unknown as string).split(",")[1]));
+export const mixer32Module = new WebAssembly.Module(atoab(mixer32DataURI.split(",")[1]));
 export const midiToFreq = (note: number) => 440.0 * 2 ** ((note - 69) / 12);
 export const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
 export const findPath = (o: any, p: string) => {

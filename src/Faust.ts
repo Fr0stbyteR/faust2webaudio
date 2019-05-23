@@ -646,14 +646,14 @@ const faustData = ${JSON.stringify({
         return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", { encoding: "utf8" });
     }
     /**
-     * Read a file from LibFaust Emscripten Module File System
+     * Expose LibFaust Emscripten Module File System
      *
      * @param {string} path path string
-     * @returns {string} file as string UTF-8 encoded
+     * @returns {Emscripten.FS} Emscripten Module File System
      * @memberof Faust
      */
-    readFile(path: string): string {
-        return this.libFaust.FS.readFile(path, { encoding: "utf8" });
+    get fs() {
+        return this.libFaust.FS;
     }
     log(...args: any[]) {
         if (this.debug) console.log(...args);
