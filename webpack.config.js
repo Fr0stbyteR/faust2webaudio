@@ -17,7 +17,7 @@ const config = {
     rules: [{
         test: /\.(ts|js)x?$/,
         use: "babel-loader",
-        exclude: /node_modules/,
+        exclude: /(node_modules|libfaust-wasm.js)/,
       },
       {
         test: /\.wasm$/,
@@ -27,6 +27,11 @@ const config = {
         options: {
           mimetype: 'application/wasm'
         }
+      },
+      {
+        test: /\.data$/,
+        loader: 'url-loader',
+        exclude: /node_modules/,
       }
     ]
   }

@@ -5,7 +5,6 @@ import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
 import { FaustAudioWorkletProcessorWrapper } from "./FaustAudioWorkletProcessor";
 import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
 
-import * as libFaustDataURI from "./wasm/libfaust-wasm.wasm";
 import * as utils from "./utils";
 import { FaustOfflineProcessor } from "./FaustOfflineProcessor";
 import { TCompiledDsp, TFaustCompileOptions, FaustScriptProcessorNode, TFaustCompileArgs, TCompiledCode, TCompiledCodes, TAudioNodeOptions, TCompiledStrCodes } from "./types";
@@ -89,15 +88,14 @@ export class Faust {
         }
     }
     /**
-     * Load a libfaust module from wasm url.
+     * Load a libfaust module
      *
-     * @param {string} [url] - url for libfaust wasm file
      * @returns {Promise<Faust>}
      * @memberof Faust
      */
-    async loadLibFaust(url?: string): Promise<Faust> {
+    async loadLibFaust(): Promise<Faust> {
         if (this.libFaust) return this;
-        this.libFaust = await LibFaustLoader.load(url || (libFaustDataURI as unknown as string));
+        this.libFaust = await LibFaustLoader.load();
         this.importLibFaustFunctions();
         return this;
     }

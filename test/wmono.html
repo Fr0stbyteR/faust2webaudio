@@ -15,7 +15,7 @@
             code = `
 import("stdfaust.lib");
 process = ba.pulsen(1, 10000) : pm.djembe(60, 0.3, 0.4, 1) <: dm.freeverb_demo;`;
-            faust.getNode(code, { audioCtx, useWorklet: true, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" } })
+            faust.getNode(code, { audioCtx, useWorklet: true, args: { "-I": "libraries/" } })
             .then(node => {
                 window.node = node;
                 node.connect(audioCtx.destination);

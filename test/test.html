@@ -344,7 +344,7 @@ mmg(x) = hgroup("",x); // Minimoog + Effects
       gg(x) = keys(hgroup("[0] [tooltip: Gates]",x));
       // leave slot 1 open for sustain (below)
 `;
-            faust.getNode(code, { audioCtx, useWorklet: false, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" } })
+            faust.getNode(code, { audioCtx, useWorklet: false, args: { "-I": "libraries/" } })
             .then(node => {
                 window.node = node;
                 node.connect(audioCtx.destination);

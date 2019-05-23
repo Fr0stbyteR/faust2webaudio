@@ -20,7 +20,7 @@ gain = hslider("gain", 0.5, 0, 1, 0.01);
 gate = button("gate");
 };
 effect = dm.freeverb_demo;`;
-            faust.getNode(polycode, { audioCtx, useWorklet: false, voices: 4, args: { "-I": "https://faust.grame.fr/tools/editor/libraries/" } })
+            faust.getNode(polycode, { audioCtx, useWorklet: false, voices: 4, args: { "-I": "libraries/" } })
             .then(node => {
                 window.node = node;
                 node.connect(audioCtx.destination);
