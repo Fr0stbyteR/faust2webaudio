@@ -45,7 +45,6 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     inputsItems: string[];
     outputsItems: string[];
 
-    cachedEvents: { type: string; data: any }[] = [];
     plotHandler: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
 
     constructor(options: { audioCtx: AudioContext; id: string; compiledDsp: TCompiledDsp; voices?: number; plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any; mixer32Module: WebAssembly.Module }) {
@@ -63,8 +62,7 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
             if (e.data.type === "param" && this.outputHandler) {
                 this.outputHandler(e.data.path, e.data.value);
             } else if (e.data.type === "plot") {
-                if (this.plotHandler) this.plotHandler(e.data.value, e.data.index, this.cachedEvents.length ? this.cachedEvents : undefined);
-                this.cachedEvents = [];
+                if (this.plotHandler) this.plotHandler(e.data.value, e.data.index, e.data.events);
             }
         };
         this.voices = options.voices;
@@ -108,7 +106,6 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     keyOn(channel: number, pitch: number, velocity: number) {
         const e = { type: "keyOn", data: [channel, pitch, velocity] };
         this.port.postMessage(e);
-        this.cachedEvents.push(e);
     }
     /**
      * De-instantiates a polyphonic voice.
@@ -121,7 +118,6 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     keyOff(channel: number, pitch: number, velocity: number) {
         const e = { type: "keyOff", data: [channel, pitch, velocity] };
         this.port.postMessage(e);
-        this.cachedEvents.push(e);
     }
     /**
      * Gently terminates all the active voices.
@@ -131,28 +127,23 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     allNotesOff() {
         const e = { type: "ctrlChange", data: [0, 123, 0] };
         this.port.postMessage(e);
-        this.cachedEvents.push(e);
     }
     ctrlChange(channel: number, ctrl: number, value: any) {
         const e = { type: "ctrlChange", data: [channel, ctrl, value] };
         this.port.postMessage(e);
-        this.cachedEvents.push(e);
     }
     pitchWheel(channel: number, wheel: number) {
         const e = { type: "pitchWheel", data: [channel, wheel] };
         this.port.postMessage(e);
-        this.cachedEvents.push(e);
     }
     midiMessage(data: number[] | Uint8Array) {
         const e = { data, type: "midi" };
         this.port.postMessage(e);
-        this.cachedEvents.push(e);
     }
     metadata() {} // eslint-disable-line class-methods-use-this
     setParamValue(path: string, value: number) {
         const e = { type: "param", data: { path, value } };
         this.port.postMessage(e);
-        this.cachedEvents.push(e);
         this.parameters.get(path).setValueAtTime(value, 0);
     }
     getParamValue(path: string) {
