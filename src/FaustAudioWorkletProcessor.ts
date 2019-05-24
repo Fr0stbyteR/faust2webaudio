@@ -215,14 +215,14 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         kNoVoice?: number;
 
         $buffer: number;
-        cachedEvents: { type: string; data: any }[] = [];
+        cachedEvents: { type: string; data: any }[];
 
         outputHandler: (address: string, value: number) => any;
         computeHandler: (bufferSize: number) => any;
 
         handleMessage = (e: MessageEvent) => { // use arrow function for binding
             const msg = e.data;
-            this.cachedEvents.push(e);
+            this.cachedEvents.push({ type: e.type, data: e.data });
             switch (msg.type) {
                 // Generic MIDI message
                 case "midi": this.midiMessage(msg.data); break;
@@ -344,6 +344,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.pathTable$ = {};
 
             this.$buffer = 0;
+            this.cachedEvents = [];
 
             // Init resulting DSP
             this.setup();
