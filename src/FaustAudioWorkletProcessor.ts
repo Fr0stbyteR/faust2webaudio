@@ -222,7 +222,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
 
         handleMessage = (e: MessageEvent) => { // use arrow function for binding
             const msg = e.data;
-            this.cachedEvents.push({ type: e.type, data: e.data });
+            this.cachedEvents.push({ type: e.data.type, data: e.data.data });
             switch (msg.type) {
                 // Generic MIDI message
                 case "midi": this.midiMessage(msg.data); break;
