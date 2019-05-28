@@ -308,9 +308,9 @@ export class FaustWasmToScriptProcessor {
                 const dspOutput = node.dspOutChannnels[i];
                 output.set(dspOutput);
                 outputs[i].set(dspOutput);
-                if (node.plotHandler) node.plotHandler(outputs, node.$buffer++, node.cachedEvents.length ? node.cachedEvents : undefined);
-                node.cachedEvents = [];
             }
+            if (node.plotHandler) node.plotHandler(outputs, node.$buffer++, node.cachedEvents.length ? node.cachedEvents : undefined);
+            node.cachedEvents = [];
         };
         node.setup = () => { // Setup web audio context
             this.faust.log("buffer_size " + node.bufferSize);
