@@ -9,6 +9,8 @@ import * as utils from "./utils";
 import { FaustOfflineProcessor } from "./FaustOfflineProcessor";
 import { TCompiledDsp, TFaustCompileOptions, FaustScriptProcessorNode, TFaustCompileArgs, TCompiledCode, TCompiledCodes, TAudioNodeOptions, TCompiledStrCodes } from "./types";
 
+import "./LibFaustWorker";
+
 // import * as Binaryen from "binaryen";
 
 /**
