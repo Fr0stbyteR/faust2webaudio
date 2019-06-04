@@ -167,6 +167,8 @@ declare namespace Emscripten {
     }
 }
 export class LibFaust extends Emscripten.Module {
+    calledRun: any;
+    onRuntimeInitialized: any;
     UTF8ToString(ptr: number, maxBytesToRead?: number): string;
     UTF8ArrayToString(u8Array: number[], ptr: number, maxBytesToRead?: number): string;
     stringToUTF8Array(str: string, outU8Array: number[], outIdx: number, maxBytesToWrite: number): number;

@@ -6,7 +6,7 @@
     </head>
     <body>
     </body>
-    <script>/*
+    <script>
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const faust = new Faust2WebAudio.Faust();
         window.faust = faust;
@@ -29,6 +29,6 @@ process = ba.pulsen(1, 10000) : pm.djembe(60, 0.3, 0.4, 1) <: dm.freeverb_demo;`
             const clean = () => events.forEach(e => b.removeEventListener(e, unlock));
             events.forEach(e => b.addEventListener(e, unlock, false));
         }
-        unlockAudioContext(audioCtx);*/
+        unlockAudioContext(audioCtx);
     </script>
 </html>
