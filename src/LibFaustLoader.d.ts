@@ -180,5 +180,5 @@ export class LibFaust extends Emscripten.Module {
 }
 declare function FaustModule(FaustModule: LibFaust | { [key: string]: any }, ...args: any[]): LibFaust;
 export class LibFaustLoader {
-    static load(url?: string): Promise<LibFaust>;
+    static load(wasmLocation: string, dataLocation: string): Promise<LibFaust>;
 }

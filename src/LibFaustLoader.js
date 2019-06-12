@@ -1,13 +1,11 @@
 import * as LibFaust from "./libfaust-wasm";
-import LibFaustData from "./wasm/libfaust-wasm.data";
-import LibFaustWasm from "./wasm/libfaust-wasm.wasm";
 
-const locateFile = (path, dir) => ({
-    "libfaust-wasm.wasm": LibFaustWasm,
-    "libfaust-wasm.data": LibFaustData
-}[path]) || dir + path;
 class LibFaustLoader {
-    static load() { // Don't convert to async
+    static load(wasmLocation, dataLocation) {
+        const locateFile = (path, dir) => ({
+            "libfaust-wasm.wasm": wasmLocation,
+            "libfaust-wasm.data": dataLocation
+        }[path]) || dir + path;
         const libFaust = LibFaust({ locateFile });
         libFaust.then = (f) => { // Workaround of issue https://github.com/emscripten-core/emscripten/issues/5820
             delete libFaust.then;

@@ -72,20 +72,34 @@ export class Faust {
      * @memberof Faust
      */
     private offlineProcessor: FaustOfflineProcessor = new FaustOfflineProcessor();
+    /**
+     * Location of `libfaust-wasm.wasm`
+     *
+     * @private
+     * @type {string}
+     * @memberof Faust
+     */
+    private wasmLocation: string;
+    /**
+     * Location of `libfaust-wasm.data`
+     *
+     * @private
+     * @type {string}
+     * @memberof Faust
+     */
+    private dataLocation: string;
 
     /**
      * Creates an instance of Faust
      * usage: `new Faust().ready.then(faust => any);`
      *
-     * @param {{ debug: boolean; libFaust: LibFaust }} [options]
+     * @param {{ debug?: boolean; wasmLocation?: string; dataLocation?: string }} [options]
      * @memberof Faust
      */
-    constructor(options?: { debug: boolean; libFaust: LibFaust }) {
+    constructor(options: { debug?: boolean; wasmLocation?: string; dataLocation?: string }) {
         this.debug = !!(options && options.debug);
-        if (options && options.libFaust) {
-            this.libFaust = options.libFaust;
-            this.importLibFaustFunctions();
-        }
+        this.wasmLocation = options.wasmLocation || "http://fr0stbyter.github.io/faust2webaudio/dist/libfaust-wasm.wasm";
+        this.dataLocation = options.dataLocation || "http://fr0stbyter.github.io/faust2webaudio/dist/libfaust-wasm.data";
     }
     /**
      * Load a libfaust module
@@ -95,7 +109,7 @@ export class Faust {
      */
     async loadLibFaust(): Promise<Faust> {
         if (this.libFaust) return this;
-        this.libFaust = await LibFaustLoader.load();
+        this.libFaust = await LibFaustLoader.load(this.wasmLocation, this.dataLocation);
         this.importLibFaustFunctions();
         return this;
     }
