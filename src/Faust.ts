@@ -96,7 +96,7 @@ export class Faust {
      * @param {{ debug?: boolean; wasmLocation?: string; dataLocation?: string }} [options]
      * @memberof Faust
      */
-    constructor(options: { debug?: boolean; wasmLocation?: string; dataLocation?: string }) {
+    constructor(options?: { debug?: boolean; wasmLocation?: string; dataLocation?: string }) {
         this.debug = !!(options && options.debug);
         this.wasmLocation = options.wasmLocation || "http://fr0stbyter.github.io/faust2webaudio/dist/libfaust-wasm.wasm";
         this.dataLocation = options.dataLocation || "http://fr0stbyter.github.io/faust2webaudio/dist/libfaust-wasm.data";
