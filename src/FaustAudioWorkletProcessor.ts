@@ -581,13 +581,8 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             if (this.voices) {
                 this.mixer.clearOutput(this.bufferSize, this.numOut, this.$outs); // First clear the outputs
                 for (let i = 0; i < this.voices; i++) { // Compute all running voices
-                    // if (this.dspVoicesState[i] === this.kFreeVoice) continue;
                     this.factory.compute(this.dspVoices$[i], this.bufferSize, this.$ins, this.$mixing); // Compute voice
-                    this.dspVoicesLevel[i] = this.mixer.mixVoice(this.bufferSize, this.numOut, this.$mixing, this.$outs); // Mix it in result
-                    // Check the level to possibly set the voice in kFreeVoice again
-                    if (this.dspVoicesLevel[i] < 0.0005 && this.dspVoicesState[i] === this.kReleaseVoice) {
-                        this.dspVoicesState[i] = this.kFreeVoice;
-                    }
+                    this.mixer.mixVoice(this.bufferSize, this.numOut, this.$mixing, this.$outs); // Mix it in result
                 }
                 if (this.effect) this.effect.compute(this.$effect, this.bufferSize, this.$outs, this.$outs); // Apply effect. Not a typo, effect is applied on the outs.
             } else {
