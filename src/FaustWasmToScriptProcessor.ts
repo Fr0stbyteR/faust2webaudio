@@ -289,7 +289,7 @@ export class FaustWasmToScriptProcessor {
             if (node.voices) {
                 node.mixer.clearOutput(node.bufferSize, node.numOut, node.$outs); // First clear the outputs
                 for (let i = 0; i < node.voices; i++) { // Compute all running voices
-                    if (node.dspVoicesState[i] === node.kFreeVoice) continue;
+                    // if (node.dspVoicesState[i] === node.kFreeVoice) continue;
                     node.factory.compute(node.dspVoices$[i], node.bufferSize, node.$ins, node.$mixing); // Compute voice
                     node.dspVoicesLevel[i] = node.mixer.mixVoice(node.bufferSize, node.numOut, node.$mixing, node.$outs); // Mix it in result
                     // Check the level to possibly set the voice in kFreeVoice again
