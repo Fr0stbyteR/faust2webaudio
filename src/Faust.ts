@@ -153,7 +153,8 @@ export class Faust {
         const argv = [] as string[];
         for (const key in optionsIn.args) {
             argv.push(key);
-            argv.push(optionsIn.args[key]);
+            if (Array.isArray(optionsIn.args[key])) argv.push(...optionsIn.args[key]);
+            else argv.push(optionsIn.args[key]);
         }
         const compiledDsp = await this.compileCodes(code, argv, !voices);
         if (!compiledDsp) return null;
@@ -173,7 +174,8 @@ export class Faust {
         const argv = [] as string[];
         for (const key in options.args) {
             argv.push(key);
-            argv.push(options.args[key]);
+            if (Array.isArray(options.args[key])) argv.push(...options.args[key]);
+            else argv.push(options.args[key]);
         }
         if (options.code) {
             compiledDsp = await this.compileCodes(options.code, argv, true);
