@@ -152,9 +152,8 @@ export class Faust {
         const { audioCtx, voices, useWorklet, bufferSize, plotHandler } = optionsIn;
         const argv = [] as string[];
         for (const key in optionsIn.args) {
-            argv.push(key);
-            if (Array.isArray(optionsIn.args[key])) argv.push(...optionsIn.args[key]);
-            else argv.push(optionsIn.args[key]);
+            if (Array.isArray(optionsIn.args[key])) optionsIn.args[key].forEach((s: string) => argv.push(key, s));
+            else argv.push(key, optionsIn.args[key]);
         }
         const compiledDsp = await this.compileCodes(code, argv, !voices);
         if (!compiledDsp) return null;
@@ -165,23 +164,23 @@ export class Faust {
     /**
      * Plot a dsp offline.
      *
-     * @param {{ code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }} [options]
+     * @param {{ code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }} [optionsIn]
      * @returns {Promise<Float32Array[]>}
      * @memberof Faust
      */
-    async plot(options?: { code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }): Promise<Float32Array[]> {
+    async plot(optionsIn?: { code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }): Promise<Float32Array[]> {
         let compiledDsp;
         const argv = [] as string[];
-        for (const key in options.args) {
+        for (const key in optionsIn.args) {
             argv.push(key);
-            if (Array.isArray(options.args[key])) argv.push(...options.args[key]);
-            else argv.push(options.args[key]);
+            if (Array.isArray(optionsIn.args[key])) optionsIn.args[key].forEach((s: string) => argv.push(key, s));
+            else argv.push(key, optionsIn.args[key]);
         }
-        if (options.code) {
-            compiledDsp = await this.compileCodes(options.code, argv, true);
+        if (optionsIn.code) {
+            compiledDsp = await this.compileCodes(optionsIn.code, argv, true);
             if (!compiledDsp) return null;
         }
-        return this.offlineProcessor.plot({ compiledDsp, ...options });
+        return this.offlineProcessor.plot({ compiledDsp, ...optionsIn });
     }
     /**
      * Generate Uint8Array and helpersCode from a dsp source code
