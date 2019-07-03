@@ -29,7 +29,8 @@ export type TFaustUIInputItem = {
     min?: string;
     max?: string;
     step?: string;
-    meta?: any[];
+    meta?: TFaustUIMeta[];
+    layout?: TLayoutProp;
 };
 export type TFaustUIOutputItem = {
     type: TFaustUIOutputType;
@@ -38,7 +39,25 @@ export type TFaustUIOutputItem = {
     index: string;
     min?: string;
     max?: string;
+    meta?: TFaustUIMeta[];
+    layout?: TLayoutProp;
 };
+type TFaustUIMeta = {
+    [order: number]: string;
+    style?: string; // "knob" | "menu{'Name0':value0;'Name1':value1}" | "radio{'Name0':value0;'Name1':value1}" | "led";
+    unit?: string;
+    scale?: "linear" | "exp" | "log";
+    tooltip?: string;
+    hidden?: string;
+    [key: string]: string;
+}
+type TLayoutProp = {
+    left?: number;
+    top?: number;
+    width: number;
+    height: number;
+    sizing: "horizontal" | "vertical" | "both" | "none";
+}
 export type TFaustUIGroupType = "vgroup" | "hgroup" | "tgroup";
 export type TFaustUIOutputType = "hbargraph" | "vbargraph";
 export type TFaustUIInputType = "vslider" | "hslider" | "button" | "checkbox" | "nentry";
@@ -452,6 +471,13 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode implements Fau
      * @memberof FaustScriptProcessorNode
      */
     getJSON: () => string;
+    /**
+     * Get DSP UI description
+     *
+     * @returns {TFaustUI} DSP UI description
+     * @memberof FaustScriptProcessorNode
+     */
+    getUI: () => TFaustUI;
 
     $buffer: number;
     cachedEvents: { type: string; data: any }[];

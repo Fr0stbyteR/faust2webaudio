@@ -183,4 +183,20 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
         }
         return JSON.stringify(this.dspMeta);
     }
+    getUI() {
+        if (this.voices) {
+            const o = this.dspMeta;
+            const e = this.effectMeta;
+            if (e) {
+                return [{ type: "tgroup", label: "Sequencer", items: [
+                    { type: "vgroup", label: "Instrument", items: o.ui },
+                    { type: "vgroup", label: "Effect", items: e.ui }
+                ] }];
+            }
+            return [{ type: "tgroup", label: "Polyphonic", items: [
+                { type: "vgroup", label: "Voices", items: o.ui }
+            ] }];
+        }
+        return this.dspMeta.ui;
+    }
 }

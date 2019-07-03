@@ -429,6 +429,22 @@ export class FaustWasmToScriptProcessor {
             }
             return JSON.stringify(node.dspMeta);
         };
+        node.getUI = () => {
+            if (node.voices) {
+                const o = node.dspMeta;
+                const e = node.effectMeta;
+                if (e) {
+                    return [{ type: "tgroup", label: "Sequencer", items: [
+                        { type: "vgroup", label: "Instrument", items: o.ui },
+                        { type: "vgroup", label: "Effect", items: e.ui }
+                    ] }];
+                }
+                return [{ type: "tgroup", label: "Polyphonic", items: [
+                    { type: "vgroup", label: "Voices", items: o.ui }
+                ] }];
+            }
+            return node.dspMeta.ui;
+        };
         // Init resulting DSP
         node.setup();
         return node;
