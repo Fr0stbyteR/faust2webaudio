@@ -150,11 +150,7 @@ export class Faust {
      */
     async getNode(code: string, optionsIn: TFaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
         const { audioCtx, voices, useWorklet, bufferSize, plotHandler } = optionsIn;
-        const argv = [] as string[];
-        for (const key in optionsIn.args) {
-            if (Array.isArray(optionsIn.args[key])) optionsIn.args[key].forEach((s: string) => argv.push(key, s));
-            else argv.push(key, optionsIn.args[key]);
-        }
+        const argv = utils.toArgv(optionsIn.args);
         const compiledDsp = await this.compileCodes(code, argv, !voices);
         if (!compiledDsp) return null;
         const options = { compiledDsp, audioCtx, voices, plotHandler, bufferSize: useWorklet ? 128 : bufferSize };
@@ -170,12 +166,7 @@ export class Faust {
      */
     async plot(optionsIn?: { code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }): Promise<Float32Array[]> {
         let compiledDsp;
-        const argv = [] as string[];
-        for (const key in optionsIn.args) {
-            argv.push(key);
-            if (Array.isArray(optionsIn.args[key])) optionsIn.args[key].forEach((s: string) => argv.push(key, s));
-            else argv.push(key, optionsIn.args[key]);
-        }
+        const argv = utils.toArgv(optionsIn.args);
         if (optionsIn.code) {
             compiledDsp = await this.compileCodes(optionsIn.code, argv, true);
             if (!compiledDsp) return null;
@@ -364,13 +355,12 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * From a DSP source file, creates a "self-contained" DSP source string where all needed librairies have been included.
      * All compilations options are 'normalized' and included as a comment in the expanded string.
      *
-     * @private
      * @param {string} code - dsp source code
-     * @param {string[]} argvIn - Array of paramaters to be given to the Faust compiler
+     * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
      * @returns {string} "self-contained" DSP source string where all needed librairies
      * @memberof Faust
      */
-    private expandCode(code: string, argvIn: string[]): string {
+    expandCode(code: string, args?: TFaustCompileArgs): string {
         this.log("libfaust.js version : " + this.getLibFaustVersion());
         // Allocate strings on the HEAP
         const codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
@@ -386,10 +376,9 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         this.libFaust.stringToUTF8(name, $name, nameSize);
         this.libFaust.stringToUTF8(code, $code, codeSize);
 
-        const argv = argvIn || [];
+        const argvIn = args ? utils.toArgv(args) : [];
         // Force "wasm" compilation
-        argv.push("-lang");
-        argv.push("wasm");
+        const argv = [...argvIn, "-lang", "wasm"];
 
         // Prepare 'argv' array for C side
         const ptrSize = 4;
@@ -611,11 +600,11 @@ const faustData = ${JSON.stringify({
      * Get an SVG Diagram XML File as string
      *
      * @param {string} code faust source code
-     * @param {string[]} argvIn faust compilation argv
+     * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
      * @returns {string} svg file as string
      * @memberof Faust
      */
-    getDiagram(code: string, argvIn: string[]): string {
+    getDiagram(code: string, args?: TFaustCompileArgs): string {
         const codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
         const $code = this.libFaust._malloc(codeSize);
         const name = "FaustDSP";
@@ -623,9 +612,10 @@ const faustData = ${JSON.stringify({
         const $name = this.libFaust._malloc(nameSize);
         const $errorMsg = this.libFaust._malloc(4096);
 
-        const argv = [...argvIn, "-lang", "wast", "-o", "/dev/null", "-svg"];
         this.libFaust.stringToUTF8(name, $name, nameSize);
         this.libFaust.stringToUTF8(code, $code, codeSize);
+        const argvIn = args ? utils.toArgv(args) : [];
+        const argv = [...argvIn, "-lang", "wast", "-o", "/dev/null", "-svg"];
 
         // Prepare 'argv' array for C side
         const ptrSize = 4;

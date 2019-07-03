@@ -71,10 +71,10 @@ export type TFaustCompileArgs = {
     /**
      * Add the directory to the import search path
      *
-     * @type {string}
+     * @type {string | string[]}
      */
-    "-I"?: string;
-    [key: string]: any;
+    "-I"?: string | string[];
+    [key: string]: number | string | string[];
 }
 export type TFaustCompileOptions = {
     audioCtx: AudioContext;

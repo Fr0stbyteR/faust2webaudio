@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable no-restricted-properties */
 /* eslint-disable object-property-newline */
-import { TDspMeta } from "./types";
+import { TDspMeta, TFaustCompileArgs } from "./types";
 import mixer32DataURI from "./wasm/mixer32.wasm";
 
 export const ab2str = (buf: ArrayBuffer): string => (buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null);
@@ -112,4 +112,14 @@ export const createWasmMemory = (voicesIn: number, dspMeta: TDspMeta, effectMeta
     ) / 65536;
     memorySize = Math.max(2, memorySize); // As least 2
     return new WebAssembly.Memory({ initial: memorySize, maximum: memorySize });
+};
+export const toArgv = (args: TFaustCompileArgs) => {
+    const argv: string[] = [];
+    for (const key in args) {
+        const arg = args[key];
+        if (Array.isArray(arg)) arg.forEach((s: string) => argv.push(key, s));
+        else if (typeof arg === "number") argv.push(key, arg.toString());
+        else argv.push(key, arg);
+    }
+    return argv;
 };
