@@ -66,8 +66,8 @@ export class FaustOfflineProcessor {
         this.dspInChannnels = [];
         this.dspOutChannnels = [];
 
-        this.numIn = parseInt(this.dspMeta.inputs);
-        this.numOut = parseInt(this.dspMeta.outputs);
+        this.numIn = this.dspMeta.inputs;
+        this.numOut = this.dspMeta.outputs;
         // Memory allocator
         this.ptrSize = 4;
         this.sampleSize = 4;
@@ -86,7 +86,7 @@ export class FaustOfflineProcessor {
         this.sampleRate = options && options.sampleRate || 48000;
 
         // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-        this.$audioHeap = parseInt(this.dspMeta.size);
+        this.$audioHeap = this.dspMeta.size;
 
         // Setup pointers offset
         this.$$audioHeapInputs = this.$audioHeap;

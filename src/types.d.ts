@@ -10,9 +10,9 @@ export type TDspMeta = {
     filename: string;
     compile_options: string;
     include_pathnames: string[];
-    inputs: string;
-    outputs: string;
-    size: string;
+    inputs: number;
+    outputs: number;
+    size: number;
     version: string;
     library_list: string[];
     meta: { [key: string]: string }[];
@@ -24,23 +24,21 @@ export type TFaustUIInputItem = {
     type: TFaustUIInputType;
     label: string;
     address: string;
-    index: string;
-    init?: string;
-    min?: string;
-    max?: string;
-    step?: string;
+    index: number;
+    init?: number;
+    min?: number;
+    max?: number;
+    step?: number;
     meta?: TFaustUIMeta[];
-    layout?: TLayoutProp;
 };
 export type TFaustUIOutputItem = {
     type: TFaustUIOutputType;
     label: string;
     address: string;
-    index: string;
-    min?: string;
-    max?: string;
+    index: number;
+    min?: number;
+    max?: number;
     meta?: TFaustUIMeta[];
-    layout?: TLayoutProp;
 };
 type TFaustUIMeta = {
     [order: number]: string;
@@ -50,13 +48,6 @@ type TFaustUIMeta = {
     tooltip?: string;
     hidden?: string;
     [key: string]: string;
-}
-type TLayoutProp = {
-    left?: number;
-    top?: number;
-    width: number;
-    height: number;
-    sizing: "horizontal" | "vertical" | "both" | "none";
 }
 export type TFaustUIGroupType = "vgroup" | "hgroup" | "tgroup";
 export type TFaustUIOutputType = "hbargraph" | "vbargraph";

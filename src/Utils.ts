@@ -103,11 +103,11 @@ export const createWasmMemory = (voicesIn: number, dspMeta: TDspMeta, effectMeta
         while (n < x) { n *= 2; }
         return n;
     };
-    const effectSize = effectMeta ? parseInt(effectMeta.size) : 0;
+    const effectSize = effectMeta ? effectMeta.size : 0;
     let memorySize = pow2limit(
         effectSize
-        + parseInt(dspMeta.size) * voices
-        + (parseInt(dspMeta.inputs) + parseInt(dspMeta.outputs) * 2)
+        + dspMeta.size * voices
+        + (dspMeta.inputs + dspMeta.outputs * 2)
         * (ptrSize + bufferSize * sampleSize)
     ) / 65536;
     memorySize = Math.max(2, memorySize); // As least 2

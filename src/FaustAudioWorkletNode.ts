@@ -49,10 +49,10 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
 
     constructor(options: { audioCtx: AudioContext; id: string; compiledDsp: TCompiledDsp; voices?: number; plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any; mixer32Module: WebAssembly.Module }) {
         super(options.audioCtx, options.id, {
-            numberOfInputs: parseInt(options.compiledDsp.dspMeta.inputs) > 0 ? 1 : 0,
-            numberOfOutputs: parseInt(options.compiledDsp.dspMeta.outputs) > 0 ? 1 : 0,
-            channelCount: Math.max(1, parseInt(options.compiledDsp.dspMeta.inputs)),
-            outputChannelCount: [parseInt(options.compiledDsp.dspMeta.outputs)],
+            numberOfInputs: options.compiledDsp.dspMeta.inputs > 0 ? 1 : 0,
+            numberOfOutputs: options.compiledDsp.dspMeta.outputs > 0 ? 1 : 0,
+            channelCount: Math.max(1, options.compiledDsp.dspMeta.inputs),
+            outputChannelCount: [options.compiledDsp.dspMeta.outputs],
             channelCountMode: "explicit",
             channelInterpretation: "speakers",
             processorOptions: { id: options.id, voices: options.voices, compiledDsp: options.compiledDsp, mixer32Module: options.mixer32Module }
@@ -156,10 +156,10 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
         return this.outputHandler;
     }
     getNumInputs() {
-        return parseInt(this.dspMeta.inputs);
+        return this.dspMeta.inputs;
     }
     getNumOutputs() {
-        return parseInt(this.dspMeta.outputs);
+        return this.dspMeta.outputs;
     }
     getParams() {
         return this.inputsItems;

@@ -14,8 +14,8 @@ export class FaustWasmToScriptProcessor {
     private initNode(compiledDsp: TCompiledDsp, dspInstance: WebAssembly.Instance, effectInstance: WebAssembly.Instance, mixerInstance: WebAssembly.Instance, audioCtx: AudioContext, bufferSize?: number, memory?: WebAssembly.Memory, voices?: number, plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any) {
         let node: FaustScriptProcessorNode;
         const dspMeta = compiledDsp.dspMeta;
-        const inputs = parseInt(dspMeta.inputs);
-        const outputs = parseInt(dspMeta.outputs);
+        const inputs = dspMeta.inputs;
+        const outputs = dspMeta.outputs;
         try {
             node = audioCtx.createScriptProcessor(bufferSize, inputs, outputs) as FaustScriptProcessorNode;
         } catch (e) {
@@ -70,7 +70,7 @@ export class FaustWasmToScriptProcessor {
         // Start of HEAP index
 
         // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-        node.$audioHeap = node.voices ? 0 : parseInt(node.dspMeta.size);
+        node.$audioHeap = node.voices ? 0 : node.dspMeta.size;
 
         // Setup pointers offset
         node.$$audioHeapInputs = node.$audioHeap;
@@ -114,13 +114,13 @@ export class FaustWasmToScriptProcessor {
             node.kNoVoice = -3;
 
             for (let i = 0; i < node.voices; i++) {
-                node.dspVoices$[i] = node.$dsp + i * parseInt(node.dspMeta.size);
+                node.dspVoices$[i] = node.$dsp + i * node.dspMeta.size;
                 node.dspVoicesState[i] = node.kFreeVoice;
                 node.dspVoicesLevel[i] = 0;
                 node.dspVoicesDate[i] = 0;
             }
             // Effect memory starts after last voice
-            node.$effect = node.dspVoices$[node.voices - 1] + parseInt(node.dspMeta.size);
+            node.$effect = node.dspVoices$[node.voices - 1] + node.dspMeta.size;
         }
 
         node.pathTable$ = {};
@@ -146,11 +146,11 @@ export class FaustWasmToScriptProcessor {
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Keep bargraph adresses
                 node.outputsItems.push(item.address);
-                node.pathTable$[item.address] = parseInt(item.index);
+                node.pathTable$[item.address] = item.index;
             } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
                 // Keep inputs adresses
                 node.inputsItems.push(item.address);
-                node.pathTable$[item.address] = parseInt(item.index);
+                node.pathTable$[item.address] = item.index;
                 if (!item.meta) return;
                 item.meta.forEach((meta) => {
                     const { midi } = meta;
@@ -161,7 +161,7 @@ export class FaustWasmToScriptProcessor {
                     } else {
                         const matched = strMidi.match(/^ctrl\s(\d+)/);
                         if (!matched) return;
-                        node.fCtrlLabel[parseInt(matched[1])].push({ path: item.address, min: parseFloat(item.min), max: parseFloat(item.max) });
+                        node.fCtrlLabel[parseInt(matched[1])].push({ path: item.address, min: item.min, max: item.max });
                     }
                 });
             }

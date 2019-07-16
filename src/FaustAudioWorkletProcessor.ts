@@ -84,11 +84,11 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             while (n < x) { n *= 2; }
             return n;
         };
-        const effectSize = effectMeta ? parseInt(effectMeta.size) : 0;
+        const effectSize = effectMeta ? effectMeta.size : 0;
         let memorySize = pow2limit(
             effectSize
-            + parseInt(dspMeta.size) * voices
-            + (parseInt(dspMeta.inputs) + parseInt(dspMeta.outputs) * 2)
+            + dspMeta.size * voices
+            + (dspMeta.inputs + dspMeta.outputs * 2)
             * (ptrSize + bufferSize * sampleSize)
         ) / 65536;
         memorySize = Math.max(2, memorySize); // As least 2
@@ -123,9 +123,9 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Nothing
             } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
-                obj.push({ name: item.address, defaultValue: +item.init || 0, minValue: isFinite(+item.min) ? +item.min : Number.MIN_VALUE, maxValue: isFinite(+item.max) ? +item.max : Number.MAX_VALUE });
+                obj.push({ name: item.address, defaultValue: item.init || 0, minValue: item.min || 0, maxValue: item.max || 0 });
             } else if (item.type === "button" || item.type === "checkbox") {
-                obj.push({ name: item.address, defaultValue: +item.init || 0, minValue: 0, maxValue: 1 });
+                obj.push({ name: item.address, defaultValue: item.init || 0, minValue: 0, maxValue: 1 });
             }
         }
         static parseItem2(item: TFaustUIItem, obj: FaustAudioWorkletProcessor, callback: (...args: any[]) => any) {
@@ -134,11 +134,11 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Keep bargraph adresses
                 obj.outputsItems.push(item.address);
-                obj.pathTable$[item.address] = parseInt(item.index); // eslint-disable-line no-param-reassign
+                obj.pathTable$[item.address] = item.index; // eslint-disable-line no-param-reassign
             } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
                 // Keep inputs adresses
                 obj.inputsItems.push(item.address);
-                obj.pathTable$[item.address] = parseInt(item.index); // eslint-disable-line no-param-reassign
+                obj.pathTable$[item.address] = item.index; // eslint-disable-line no-param-reassign
                 if (!item.meta) return;
                 item.meta.forEach((meta) => {
                     const { midi } = meta;
@@ -149,7 +149,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                     } else {
                         const matched = strMidi.match(/^ctrl\s(\d+)/);
                         if (!matched) return;
-                        obj.fCtrlLabel[parseInt(matched[1])].push({ path: item.address, min: parseFloat(item.min), max: parseFloat(item.max) });
+                        obj.fCtrlLabel[parseInt(matched[1])].push({ path: item.address, min: item.min, max: item.max });
                     }
                 });
             }
@@ -259,8 +259,8 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.fPitchwheelLabel = [];
             this.fCtrlLabel = new Array(128).fill(null).map(() => []);
 
-            this.numIn = parseInt(this.dspMeta.inputs);
-            this.numOut = parseInt(this.dspMeta.outputs);
+            this.numIn = this.dspMeta.inputs;
+            this.numOut = this.dspMeta.outputs;
 
             // Memory allocator
             this.ptrSize = 4;
@@ -286,7 +286,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             // Start of HEAP index
 
             // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-            this.$audioHeap = this.voices ? 0 : parseInt(this.dspMeta.size);
+            this.$audioHeap = this.voices ? 0 : this.dspMeta.size;
 
             // Setup pointers offset
             this.$$audioHeapInputs = this.$audioHeap;
@@ -332,13 +332,13 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 this.kNoVoice = -3;
 
                 for (let i = 0; i < this.voices; i++) {
-                    this.dspVoices$[i] = this.$dsp + i * parseInt(this.dspMeta.size);
+                    this.dspVoices$[i] = this.$dsp + i * this.dspMeta.size;
                     this.dspVoicesState[i] = this.kFreeVoice;
                     this.dspVoicesLevel[i] = 0;
                     this.dspVoicesDate[i] = 0;
                 }
                 // Effect memory starts after last voice
-                this.$effect = this.dspVoices$[this.voices - 1] + parseInt(this.dspMeta.size);
+                this.$effect = this.dspVoices$[this.voices - 1] + this.dspMeta.size;
             }
 
             this.pathTable$ = {};
