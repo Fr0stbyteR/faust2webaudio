@@ -87,3 +87,9 @@ For Poly ScriptProcessor: `./test/poly.html`
 For Mono AudioWorklet: `./test/wmono.html`
 
 For Poly AudioWorklet: `./test/wpoly.html`
+
+## Versioning 
+
+You'll have to raise the package version number in `package.json` for `npm run update` to properly work.
+
+
