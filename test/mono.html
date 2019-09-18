@@ -8,7 +8,7 @@
     </body>
     <script>
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const faust = new Faust2WebAudio.Faust({ wasmLocation: "../dist/libfaust-wasm.wasm", dataLocation: "../dist/libfaust-wasm.data" });
+        const faust = new Faust2WebAudio.Faust({ debug: true, wasmLocation: "../dist/libfaust-wasm.wasm", dataLocation: "../dist/libfaust-wasm.data" });
         window.faust = faust;
         faust.ready
         .then(() => {
