@@ -67,7 +67,7 @@ Install dev dependencies:
 npm install
 ```
 
-To upgrade Libfaust version: replace `src/libfaust-wasm.js` and `src/wasm/libfaust-wasm.wasm`
+To upgrade Libfaust version: replace `src/libfaust-wasm.js`, `dist/libfaust-wasm.wasm` and `dist/libfaust-wasm.data` with the new files
 
 To build everything (using Webpack 4, Babel 7, TypeScript), this will produce `dist/index.js` and `dist/index.min.js`
 ```bash
@@ -87,3 +87,9 @@ For Poly ScriptProcessor: `./test/poly.html`
 For Mono AudioWorklet: `./test/wmono.html`
 
 For Poly AudioWorklet: `./test/wpoly.html`
+
+## Versioning 
+
+You'll have to raise the package version number in `package.json` for `npm run update` to properly work.
+
+
