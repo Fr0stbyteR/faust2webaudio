@@ -35,12 +35,12 @@ type FaustData = {
 declare const faustData: FaustData;
 
 declare const remap: (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => number;
+declare const midiToFreq: (v: number) => number;
 declare const findPath: (o: any, p: string) => boolean;
 declare const createWasmImport: (voices: number, memory: WebAssembly.Memory) => { [key: string]: any };
 declare const createWasmMemory: (voicesIn: number, dspMeta: TDspMeta, effectMeta: TDspMeta, bufferSize: number) => WebAssembly.Memory;
 
 export const FaustAudioWorkletProcessorWrapper = () => {
-    const midiToFreq = (note: number) => 440.0 * 2 ** ((note - 69) / 12);
     class FaustConst {
         static id = faustData.id;
         static dspMeta = faustData.dspMeta;
