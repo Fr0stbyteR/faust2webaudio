@@ -518,6 +518,10 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         const id = compiledDsp.shaKey + "_" + voices;
         if (this.workletProcessors.indexOf(id) === -1) {
             const strProcessor = `
+const remap = ${utils.remap.toString()};
+const findPath = ${utils.findPath.toString()};
+const createWasmImport = ${utils.createWasmImport.toString()};
+const createWasmMemory = ${utils.createWasmMemory.toString()};
 const faustData = ${JSON.stringify({
         id,
         dspMeta: compiledDsp.dspMeta,

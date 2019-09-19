@@ -9982,7 +9982,7 @@ exports.constants = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
-/* SHA-1 (FIPS 180-4) implementation in JavaScript                    (c) Chris Veness 2002-2019  */
+/* SHA-1 (FIPS 180-4) implementation in JavaScript                    (c) Chris Veness 2002-2018  */
 /*                                                                                   MIT Licence  */
 /* www.movable-type.co.uk/scripts/sha1.html                                                       */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  */
@@ -10013,10 +10013,6 @@ class Sha1 {
      * @param   {string} [options.outFormat=hex] - Output format: 'hex' for string of contiguous
      *   hex bytes; 'hex-w' for grouping hex bytes into groups of (4 byte / 8 character) words.
      * @returns {string} Hash of msg as hex character string.
-     *
-     * @example
-     *   import Sha1 from './sha1.js';
-     *   const hash = Sha1.hash('abc'); // 'a9993e364706816aba3e25717850c26c9cd0d89d'
      */
     static hash(msg, options) {
         const defaults = { msgFormat: 'string', outFormat: 'hex' };
@@ -10071,7 +10067,7 @@ class Sha1 {
             // 3 - main loop (use JavaScript '>>> 0' to emulate UInt32 variables)
             for (let t=0; t<80; t++) {
                 const s = Math.floor(t/20); // seq for blocks of 'f' functions and 'K' constants
-                const T = (Sha1.ROTL(a, 5) + Sha1.f(s, b, c, d) + e + K[s] + W[t]) >>> 0;
+                const T = (Sha1.ROTL(a,5) + Sha1.f(s,b,c,d) + e + K[s] + W[t]) >>> 0;
                 e = d;
                 d = c;
                 c = Sha1.ROTL(b, 30) >>> 0;
@@ -15249,10 +15245,10 @@ utils.intFromLE = intFromLE;
 /*!********************************************!*\
   !*** ./node_modules/elliptic/package.json ***!
   \********************************************/
-/*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
+/*! exports provided: name, version, description, main, files, scripts, repository, keywords, author, license, bugs, homepage, devDependencies, dependencies, _resolved, _integrity, _from, default */
 /***/ (function(module) {
 
-module.exports = {"_args":[["elliptic@6.4.1","/Documents/faust2webaudio"]],"_development":true,"_from":"elliptic@6.4.1","_id":"elliptic@6.4.1","_inBundle":false,"_integrity":"sha512-BsXLz5sqX8OHcsh7CqBMztyXARmGQ3LWPtGjJi6DiJHq5C/qvi9P3OqgswKSDftbu8+IoI/QDTAm2fFnQ9SZSQ==","_location":"/elliptic","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"elliptic@6.4.1","name":"elliptic","escapedName":"elliptic","rawSpec":"6.4.1","saveSpec":null,"fetchSpec":"6.4.1"},"_requiredBy":["/browserify-sign","/create-ecdh"],"_resolved":"https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz","_spec":"6.4.1","_where":"/Documents/faust2webaudio","author":{"name":"Fedor Indutny","email":"fedor@indutny.com"},"bugs":{"url":"https://github.com/indutny/elliptic/issues"},"dependencies":{"bn.js":"^4.4.0","brorand":"^1.0.1","hash.js":"^1.0.0","hmac-drbg":"^1.0.0","inherits":"^2.0.1","minimalistic-assert":"^1.0.0","minimalistic-crypto-utils":"^1.0.0"},"description":"EC cryptography","devDependencies":{"brfs":"^1.4.3","coveralls":"^2.11.3","grunt":"^0.4.5","grunt-browserify":"^5.0.0","grunt-cli":"^1.2.0","grunt-contrib-connect":"^1.0.0","grunt-contrib-copy":"^1.0.0","grunt-contrib-uglify":"^1.0.1","grunt-mocha-istanbul":"^3.0.1","grunt-saucelabs":"^8.6.2","istanbul":"^0.4.2","jscs":"^2.9.0","jshint":"^2.6.0","mocha":"^2.1.0"},"files":["lib"],"homepage":"https://github.com/indutny/elliptic","keywords":["EC","Elliptic","curve","Cryptography"],"license":"MIT","main":"lib/elliptic.js","name":"elliptic","repository":{"type":"git","url":"git+ssh://git@github.com/indutny/elliptic.git"},"scripts":{"jscs":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","jshint":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","lint":"npm run jscs && npm run jshint","test":"npm run lint && npm run unit","unit":"istanbul test _mocha --reporter=spec test/index.js","version":"grunt dist && git add dist/"},"version":"6.4.1"};
+module.exports = {"name":"elliptic","version":"6.4.1","description":"EC cryptography","main":"lib/elliptic.js","files":["lib"],"scripts":{"jscs":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","jshint":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","lint":"npm run jscs && npm run jshint","unit":"istanbul test _mocha --reporter=spec test/index.js","test":"npm run lint && npm run unit","version":"grunt dist && git add dist/"},"repository":{"type":"git","url":"git@github.com:indutny/elliptic"},"keywords":["EC","Elliptic","curve","Cryptography"],"author":"Fedor Indutny <fedor@indutny.com>","license":"MIT","bugs":{"url":"https://github.com/indutny/elliptic/issues"},"homepage":"https://github.com/indutny/elliptic","devDependencies":{"brfs":"^1.4.3","coveralls":"^2.11.3","grunt":"^0.4.5","grunt-browserify":"^5.0.0","grunt-cli":"^1.2.0","grunt-contrib-connect":"^1.0.0","grunt-contrib-copy":"^1.0.0","grunt-contrib-uglify":"^1.0.1","grunt-mocha-istanbul":"^3.0.1","grunt-saucelabs":"^8.6.2","istanbul":"^0.4.2","jscs":"^2.9.0","jshint":"^2.6.0","mocha":"^2.1.0"},"dependencies":{"bn.js":"^4.4.0","brorand":"^1.0.1","hash.js":"^1.0.0","hmac-drbg":"^1.0.0","inherits":"^2.0.1","minimalistic-assert":"^1.0.0","minimalistic-crypto-utils":"^1.0.0"},"_resolved":"https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz","_integrity":"sha512-BsXLz5sqX8OHcsh7CqBMztyXARmGQ3LWPtGjJi6DiJHq5C/qvi9P3OqgswKSDftbu8+IoI/QDTAm2fFnQ9SZSQ==","_from":"elliptic@6.4.1"};
 
 /***/ }),
 
@@ -25749,7 +25745,7 @@ class Faust {
                 break;
               }
 
-              strProcessor = "\nconst faustData = ".concat(JSON.stringify({
+              strProcessor = "\nconst remap = ".concat(_utils__WEBPACK_IMPORTED_MODULE_8__["remap"].toString(), ";\nconst findPath = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["findPath"].toString(), ";\nconst createWasmImport = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmImport"].toString(), ";\nconst createWasmMemory = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmMemory"].toString(), ";\nconst faustData = ").concat(JSON.stringify({
                 id,
                 dspMeta: compiledDsp.dspMeta,
                 effectMeta: compiledDsp.effectMeta
@@ -26312,115 +26308,6 @@ __webpack_require__.r(__webpack_exports__);
 // Injected by Faust
 var FaustAudioWorkletProcessorWrapper = () => {
   var midiToFreq = note => 440.0 * Math.pow(2, (note - 69) / 12);
-
-  var remap = (v, mn0, mx0, mn1, mx1) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
-
-  var findPath = (o, p) => {
-    if (typeof o !== "object") return false;
-
-    if (o.address) {
-      if (o.address === p) return true;
-      return false;
-    }
-
-    for (var k in o) {
-      if (findPath(o[k], p)) return true;
-    }
-
-    return false;
-  };
-
-  var createWasmImport = (voices, memory) => ({
-    env: {
-      memory: voices ? memory : undefined,
-      memoryBase: 0,
-      tableBase: 0,
-      _abs: Math.abs,
-      // Float version
-      _acosf: Math.acos,
-      _asinf: Math.asin,
-      _atanf: Math.atan,
-      _atan2f: Math.atan2,
-      _ceilf: Math.ceil,
-      _cosf: Math.cos,
-      _expf: Math.exp,
-      _floorf: Math.floor,
-      _fmodf: (x, y) => x % y,
-      _logf: Math.log,
-      _log10f: Math.log10,
-      _max_f: Math.max,
-      _min_f: Math.min,
-      _remainderf: (x, y) => x - Math.round(x / y) * y,
-      _powf: Math.pow,
-      _roundf: Math.fround,
-      _sinf: Math.sin,
-      _sqrtf: Math.sqrt,
-      _tanf: Math.tan,
-      _acosfh: Math.acosh,
-      _asinfh: Math.asinh,
-      _atanfh: Math.atanh,
-      _cosfh: Math.cosh,
-      _sinfh: Math.sinh,
-      _tanfh: Math.tanh,
-      // Double version
-      _acos: Math.acos,
-      _asin: Math.asin,
-      _atan: Math.atan,
-      _atan2: Math.atan2,
-      _ceil: Math.ceil,
-      _cos: Math.cos,
-      _exp: Math.exp,
-      _floor: Math.floor,
-      _fmod: (x, y) => x % y,
-      _log: Math.log,
-      _log10: Math.log10,
-      _max_: Math.max,
-      _min_: Math.min,
-      _remainder: (x, y) => x - Math.round(x / y) * y,
-      _pow: Math.pow,
-      _round: Math.fround,
-      _sin: Math.sin,
-      _sqrt: Math.sqrt,
-      _tan: Math.tan,
-      _acosh: Math.acosh,
-      _asinh: Math.asinh,
-      _atanh: Math.atanh,
-      _cosh: Math.cosh,
-      _sinh: Math.sinh,
-      _tanh: Math.tanh,
-      table: new WebAssembly.Table({
-        initial: 0,
-        element: "anyfunc"
-      })
-    }
-  });
-
-  var createWasmMemory = (voicesIn, dspMeta, effectMeta, bufferSize) => {
-    // Hack : at least 4 voices (to avoid weird wasm memory bug?)
-    var voices = Math.max(4, voicesIn); // Memory allocator
-
-    var ptrSize = 4;
-    var sampleSize = 4;
-
-    var pow2limit = x => {
-      var n = 65536; // Minimum = 64 kB
-
-      while (n < x) {
-        n *= 2;
-      }
-
-      return n;
-    };
-
-    var effectSize = effectMeta ? effectMeta.size : 0;
-    var memorySize = pow2limit(effectSize + dspMeta.size * voices + (dspMeta.inputs + dspMeta.outputs * 2) * (ptrSize + bufferSize * sampleSize)) / 65536;
-    memorySize = Math.max(2, memorySize); // As least 2
-
-    return new WebAssembly.Memory({
-      initial: memorySize,
-      maximum: memorySize
-    });
-  };
 
   class FaustConst {}
 
