@@ -26794,7 +26794,7 @@ var FaustAudioWorkletProcessorWrapper = () => {
 
     pitchWheel(channel, wheel) {
       this.fPitchwheelLabel.forEach(pw => {
-        this.setParamValue(pw.path, remap(value, 0, 16383, pw.min, pw.max));
+        this.setParamValue(pw.path, remap(wheel, 0, 16383, pw.min, pw.max));
         if (this.outputHandler) this.outputHandler(pw.path, this.getParamValue(pw.path));
       });
     }
@@ -27521,7 +27521,7 @@ class FaustWasmToScriptProcessor {
         data: [channel, wheel]
       });
       node.fPitchwheelLabel.forEach(pw => {
-        node.setParamValue(pw.path, Object(_utils__WEBPACK_IMPORTED_MODULE_3__["remap"])(value, 0, 16383, pw.min, pw.max));
+        node.setParamValue(pw.path, Object(_utils__WEBPACK_IMPORTED_MODULE_3__["remap"])(wheel, 0, 16383, pw.min, pw.max));
         if (node.outputHandler) node.outputHandler(pw.path, node.getParamValue(pw.path));
       });
     };

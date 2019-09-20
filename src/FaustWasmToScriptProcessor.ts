@@ -274,7 +274,7 @@ export class FaustWasmToScriptProcessor {
         node.pitchWheel = (channel, wheel) => {
             node.cachedEvents.push({ type: "pitchWheel", data: [channel, wheel] });
             node.fPitchwheelLabel.forEach((pw) => {
-                node.setParamValue(pw.path, remap(value, 0, 16383, pw.min, pw.max));
+                node.setParamValue(pw.path, remap(wheel, 0, 16383, pw.min, pw.max));
                 if (node.outputHandler) node.outputHandler(pw.path, node.getParamValue(pw.path));
             });
         };
