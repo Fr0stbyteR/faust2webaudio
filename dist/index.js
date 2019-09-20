@@ -27522,7 +27522,7 @@ class FaustWasmToScriptProcessor {
       });
       node.fPitchwheelLabel.forEach(pw => {
         node.setParamValue(pw.path, Object(_utils__WEBPACK_IMPORTED_MODULE_3__["remap"])(value, 0, 16383, pw.min, pw.max));
-        if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
+        if (node.outputHandler) node.outputHandler(pw.path, node.getParamValue(pw.path));
       });
     };
 
