@@ -26793,7 +26793,7 @@ var FaustAudioWorkletProcessorWrapper = () => {
     }
 
     pitchWheel(channel, wheel) {
-      this.fPitchwheelLabel.forEach(path => {
+      this.fPitchwheelLabel.forEach(pw => {
         this.setParamValue(pw.path, remap(value, 0, 16383, pw.min, pw.max));
         if (this.outputHandler) this.outputHandler(pw.path, this.getParamValue(pw.path));
       });
