@@ -157,7 +157,7 @@ export class FaustWasmToScriptProcessor {
                     if (!midi) return;
                     const strMidi = midi.trim();
                     if (strMidi === "pitchwheel") {
-                        node.fPitchwheelLabel.push(item.address);
+                        node.fPitchwheelLabel.push({ path: item.address, min: item.min, max: item.max });
                     } else {
                         const matched = strMidi.match(/^ctrl\s(\d+)/);
                         if (!matched) return;
@@ -259,7 +259,7 @@ export class FaustWasmToScriptProcessor {
                 if (cmd === 9) return node.keyOn(channel, data1, data2);
             }
             if (cmd === 11) return node.ctrlChange(channel, data1, data2);
-            if (cmd === 14) return node.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
+            if (cmd === 14) return node.pitchWheel(channel, (data2 * 128.0 + data1));
             return undefined;
         };
         node.ctrlChange = (channel, ctrl, value) => {
@@ -273,8 +273,8 @@ export class FaustWasmToScriptProcessor {
         };
         node.pitchWheel = (channel, wheel) => {
             node.cachedEvents.push({ type: "pitchWheel", data: [channel, wheel] });
-            node.fPitchwheelLabel.forEach((path) => {
-                node.setParamValue(path, Math.pow(2, wheel / 12));
+            node.fPitchwheelLabel.forEach((pw) => {
+                node.setParamValue(pw.path, remap(value, 0, 16383, pw.min, pw.max));
                 if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
             });
         };

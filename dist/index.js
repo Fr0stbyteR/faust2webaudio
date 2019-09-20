@@ -26325,7 +26325,11 @@ var FaustAudioWorkletProcessorWrapper = () => {
           var strMidi = midi.trim();
 
           if (strMidi === "pitchwheel") {
-            obj.fPitchwheelLabel.push(item.address);
+            obj.fPitchwheelLabel.push({
+              path: item.address,
+              min: item.min,
+              max: item.max
+            });
           } else {
             var matched = strMidi.match(/^ctrl\s(\d+)/);
             if (!matched) return;
@@ -26775,7 +26779,7 @@ var FaustAudioWorkletProcessorWrapper = () => {
       if (cmd === 8 || cmd === 9 && data2 === 0) return this.keyOff(channel, data1, data2);
       if (cmd === 9) return this.keyOn(channel, data1, data2);
       if (cmd === 11) return this.ctrlChange(channel, data1, data2);
-      if (cmd === 14) return this.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
+      if (cmd === 14) return this.pitchWheel(channel, data2 * 128.0 + data1);
       return undefined;
     }
 
@@ -26790,8 +26794,8 @@ var FaustAudioWorkletProcessorWrapper = () => {
 
     pitchWheel(channel, wheel) {
       this.fPitchwheelLabel.forEach(path => {
-        this.setParamValue(path, Math.pow(2, wheel / 12));
-        if (this.outputHandler) this.outputHandler(path, this.getParamValue(path));
+        this.setParamValue(pw.path, remap(value, 0, 16383, pw.min, pw.max));
+        if (this.outputHandler) this.outputHandler(pw.path, this.getParamValue(pw.path));
       });
     }
 
@@ -27348,7 +27352,11 @@ class FaustWasmToScriptProcessor {
           var strMidi = midi.trim();
 
           if (strMidi === "pitchwheel") {
-            node.fPitchwheelLabel.push(item.address);
+            node.fPitchwheelLabel.push({
+              path: item.address,
+              min: item.min,
+              max: item.max
+            });
           } else {
             var matched = strMidi.match(/^ctrl\s(\d+)/);
             if (!matched) return;
@@ -27490,7 +27498,7 @@ class FaustWasmToScriptProcessor {
       }
 
       if (cmd === 11) return node.ctrlChange(channel, data1, data2);
-      if (cmd === 14) return node.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
+      if (cmd === 14) return node.pitchWheel(channel, data2 * 128.0 + data1);
       return undefined;
     };
 
@@ -27512,8 +27520,8 @@ class FaustWasmToScriptProcessor {
         type: "pitchWheel",
         data: [channel, wheel]
       });
-      node.fPitchwheelLabel.forEach(path => {
-        node.setParamValue(path, Math.pow(2, wheel / 12));
+      node.fPitchwheelLabel.forEach(pw => {
+        node.setParamValue(pw.path, Object(_utils__WEBPACK_IMPORTED_MODULE_3__["remap"])(value, 0, 16383, pw.min, pw.max));
         if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
       });
     };
