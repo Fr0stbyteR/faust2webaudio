@@ -78,7 +78,7 @@ If you don't want to build the minified js for testing purpose:
 ```bash
 npm run build
 ```
-To test, put the directory in a local server, then open following pages:
+To test, put the directory in a local server, then open the following pages:
 
 For Mono ScriptProcessor: `./test/mono.html`
 
