@@ -152,7 +152,7 @@ export interface FaustDspNode {
     $outs: number;
     dspInChannnels: Float32Array[];
     dspOutChannnels: Float32Array[];
-    fPitchwheelLabel: string[];
+    fPitchwheelLabel: { path: string; min: number; max: number }[];
     fCtrlLabel: { path: string; min: number; max: number }[][];
     numIn: number;
     numOut: number;
@@ -288,7 +288,7 @@ export class FaustScriptProcessorNode extends ScriptProcessorNode implements Fau
     $outs: number;
     dspInChannnels: Float32Array[];
     dspOutChannnels: Float32Array[];
-    fPitchwheelLabel: string[];
+    fPitchwheelLabel: { path: string; min: number; max: number }[];
     fCtrlLabel: { path: string; min: number; max: number }[][];
     numIn: number;
     numOut: number;

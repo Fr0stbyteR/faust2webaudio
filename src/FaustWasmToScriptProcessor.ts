@@ -3,7 +3,7 @@
 /* eslint-disable object-property-newline */
 /* eslint-disable object-curly-newline */
 import { Faust } from "./Faust";
-import { mixer32Module, createWasmMemory, createWasmImport, midiToFreq, remap } from "./utils";
+import { mixer32Module, createWasmMemory, createWasmImport, midiToFreq, remap } from "./util";
 import { TCompiledDsp, FaustScriptProcessorNode, TAudioNodeOptions } from "./types";
 
 export class FaustWasmToScriptProcessor {

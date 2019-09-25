@@ -5,7 +5,7 @@ import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
 import { FaustAudioWorkletProcessorWrapper } from "./FaustAudioWorkletProcessor";
 import { FaustAudioWorkletNode } from "./FaustAudioWorkletNode";
 
-import * as utils from "./utils";
+import * as utils from "./util";
 import { FaustOfflineProcessor } from "./FaustOfflineProcessor";
 import { TCompiledDsp, TFaustCompileOptions, FaustScriptProcessorNode, TFaustCompileArgs, TCompiledCode, TCompiledCodes, TAudioNodeOptions, TCompiledStrCodes } from "./types";
 

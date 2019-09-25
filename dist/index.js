@@ -96,46 +96,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/@babel/runtime/helpers/arrayWithoutHoles.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/arrayWithoutHoles.js ***!
-  \******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-module.exports = _arrayWithoutHoles;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/assertThisInitialized.js":
-/*!**********************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/assertThisInitialized.js ***!
-  \**********************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-module.exports = _assertThisInitialized;
-
-/***/ }),
-
 /***/ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js":
 /*!*****************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/asyncToGenerator.js ***!
@@ -183,93 +143,6 @@ module.exports = _asyncToGenerator;
 
 /***/ }),
 
-/***/ "./node_modules/@babel/runtime/helpers/classCallCheck.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/classCallCheck.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-module.exports = _classCallCheck;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/construct.js":
-/*!**********************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/construct.js ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var setPrototypeOf = __webpack_require__(/*! ./setPrototypeOf */ "./node_modules/@babel/runtime/helpers/setPrototypeOf.js");
-
-function isNativeReflectConstruct() {
-  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-  if (Reflect.construct.sham) return false;
-  if (typeof Proxy === "function") return true;
-
-  try {
-    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-function _construct(Parent, args, Class) {
-  if (isNativeReflectConstruct()) {
-    module.exports = _construct = Reflect.construct;
-  } else {
-    module.exports = _construct = function _construct(Parent, args, Class) {
-      var a = [null];
-      a.push.apply(a, args);
-      var Constructor = Function.bind.apply(Parent, a);
-      var instance = new Constructor();
-      if (Class) setPrototypeOf(instance, Class.prototype);
-      return instance;
-    };
-  }
-
-  return _construct.apply(null, arguments);
-}
-
-module.exports = _construct;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/createClass.js":
-/*!************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/createClass.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-module.exports = _createClass;
-
-/***/ }),
-
 /***/ "./node_modules/@babel/runtime/helpers/defineProperty.js":
 /*!***************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
@@ -293,241 +166,6 @@ function _defineProperty(obj, key, value) {
 }
 
 module.exports = _defineProperty;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/getPrototypeOf.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _getPrototypeOf(o) {
-  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-    return o.__proto__ || Object.getPrototypeOf(o);
-  };
-  return _getPrototypeOf(o);
-}
-
-module.exports = _getPrototypeOf;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/inherits.js":
-/*!*********************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/inherits.js ***!
-  \*********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var setPrototypeOf = __webpack_require__(/*! ./setPrototypeOf */ "./node_modules/@babel/runtime/helpers/setPrototypeOf.js");
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) setPrototypeOf(subClass, superClass);
-}
-
-module.exports = _inherits;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/isNativeFunction.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/isNativeFunction.js ***!
-  \*****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _isNativeFunction(fn) {
-  return Function.toString.call(fn).indexOf("[native code]") !== -1;
-}
-
-module.exports = _isNativeFunction;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/iterableToArray.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/iterableToArray.js ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-module.exports = _iterableToArray;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/nonIterableSpread.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/nonIterableSpread.js ***!
-  \******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-module.exports = _nonIterableSpread;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js":
-/*!**************************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js ***!
-  \**************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var _typeof = __webpack_require__(/*! ../helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
-
-var assertThisInitialized = __webpack_require__(/*! ./assertThisInitialized */ "./node_modules/@babel/runtime/helpers/assertThisInitialized.js");
-
-function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
-    return call;
-  }
-
-  return assertThisInitialized(self);
-}
-
-module.exports = _possibleConstructorReturn;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/setPrototypeOf.js":
-/*!***************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/setPrototypeOf.js ***!
-  \***************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _setPrototypeOf(o, p) {
-  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-
-  return _setPrototypeOf(o, p);
-}
-
-module.exports = _setPrototypeOf;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/toConsumableArray.js":
-/*!******************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/toConsumableArray.js ***!
-  \******************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayWithoutHoles = __webpack_require__(/*! ./arrayWithoutHoles */ "./node_modules/@babel/runtime/helpers/arrayWithoutHoles.js");
-
-var iterableToArray = __webpack_require__(/*! ./iterableToArray */ "./node_modules/@babel/runtime/helpers/iterableToArray.js");
-
-var nonIterableSpread = __webpack_require__(/*! ./nonIterableSpread */ "./node_modules/@babel/runtime/helpers/nonIterableSpread.js");
-
-function _toConsumableArray(arr) {
-  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
-}
-
-module.exports = _toConsumableArray;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/typeof.js":
-/*!*******************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/typeof.js ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
-    module.exports = _typeof = function _typeof(obj) {
-      return _typeof2(obj);
-    };
-  } else {
-    module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
-    };
-  }
-
-  return _typeof(obj);
-}
-
-module.exports = _typeof;
-
-/***/ }),
-
-/***/ "./node_modules/@babel/runtime/helpers/wrapNativeSuper.js":
-/*!****************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/wrapNativeSuper.js ***!
-  \****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var getPrototypeOf = __webpack_require__(/*! ./getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-
-var setPrototypeOf = __webpack_require__(/*! ./setPrototypeOf */ "./node_modules/@babel/runtime/helpers/setPrototypeOf.js");
-
-var isNativeFunction = __webpack_require__(/*! ./isNativeFunction */ "./node_modules/@babel/runtime/helpers/isNativeFunction.js");
-
-var construct = __webpack_require__(/*! ./construct */ "./node_modules/@babel/runtime/helpers/construct.js");
-
-function _wrapNativeSuper(Class) {
-  var _cache = typeof Map === "function" ? new Map() : undefined;
-
-  module.exports = _wrapNativeSuper = function _wrapNativeSuper(Class) {
-    if (Class === null || !isNativeFunction(Class)) return Class;
-
-    if (typeof Class !== "function") {
-      throw new TypeError("Super expression must either be null or a function");
-    }
-
-    if (typeof _cache !== "undefined") {
-      if (_cache.has(Class)) return _cache.get(Class);
-
-      _cache.set(Class, Wrapper);
-    }
-
-    function Wrapper() {
-      return construct(Class, arguments, getPrototypeOf(this).constructor);
-    }
-
-    Wrapper.prototype = Object.create(Class.prototype, {
-      constructor: {
-        value: Wrapper,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-    return setPrototypeOf(Wrapper, Class);
-  };
-
-  return _wrapNativeSuper(Class);
-}
-
-module.exports = _wrapNativeSuper;
 
 /***/ }),
 
@@ -15558,10 +15196,10 @@ utils.intFromLE = intFromLE;
 /*!********************************************!*\
   !*** ./node_modules/elliptic/package.json ***!
   \********************************************/
-/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, dependencies, deprecated, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
+/*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_from\":\"elliptic@^6.0.0\",\"_id\":\"elliptic@6.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"range\",\"registry\":true,\"raw\":\"elliptic@^6.0.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"^6.0.0\",\"saveSpec\":null,\"fetchSpec\":\"^6.0.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.1.tgz\",\"_shasum\":\"c380f5f909bf1b9b4428d028cd18d3b0efd6b52b\",\"_spec\":\"elliptic@^6.0.0\",\"_where\":\"/Documents/faust2webaudio/node_modules/browserify-sign\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"bundleDependencies\":false,\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"deprecated\":false,\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.1\",\"D:\\\\p\\\\faust2webaudio\"]],\"_development\":true,\"_from\":\"elliptic@6.5.1\",\"_id\":\"elliptic@6.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.1\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.1\",\"saveSpec\":null,\"fetchSpec\":\"6.5.1\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.1.tgz\",\"_spec\":\"6.5.1\",\"_where\":\"D:\\\\p\\\\faust2webaudio\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
 
 /***/ }),
 
@@ -25289,35 +24927,26 @@ module.exports = function() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Faust", function() { return Faust; });
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js");
-/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! crypto-libraries/sha1 */ "./node_modules/crypto-libraries/sha1.js");
-/* harmony import */ var _LibFaustLoader__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./LibFaustLoader */ "./src/LibFaustLoader.js");
-/* harmony import */ var _FaustWasmToScriptProcessor__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./FaustWasmToScriptProcessor */ "./src/FaustWasmToScriptProcessor.ts");
-/* harmony import */ var _FaustAudioWorkletProcessor__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./FaustAudioWorkletProcessor */ "./src/FaustAudioWorkletProcessor.ts");
-/* harmony import */ var _FaustAudioWorkletNode__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./FaustAudioWorkletNode */ "./src/FaustAudioWorkletNode.ts");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
-/* harmony import */ var _FaustOfflineProcessor__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./FaustOfflineProcessor */ "./src/FaustOfflineProcessor.ts");
-
-
-
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! crypto-libraries/sha1 */ "./node_modules/crypto-libraries/sha1.js");
+/* harmony import */ var _LibFaustLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./LibFaustLoader */ "./src/LibFaustLoader.js");
+/* harmony import */ var _FaustWasmToScriptProcessor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./FaustWasmToScriptProcessor */ "./src/FaustWasmToScriptProcessor.ts");
+/* harmony import */ var _FaustAudioWorkletProcessor__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./FaustAudioWorkletProcessor */ "./src/FaustAudioWorkletProcessor.ts");
+/* harmony import */ var _FaustAudioWorkletNode__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./FaustAudioWorkletNode */ "./src/FaustAudioWorkletNode.ts");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+/* harmony import */ var _FaustOfflineProcessor__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./FaustOfflineProcessor */ "./src/FaustOfflineProcessor.ts");
 
 
 
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /* eslint-disable no-console */
 
@@ -25336,9 +24965,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
  * @export
  * @class Faust
  */
-var Faust =
-/*#__PURE__*/
-function () {
+class Faust {
   /**
    * The libfaust Wasm Emscripten Module
    *
@@ -25401,9 +25028,7 @@ function () {
    * @param {{ debug?: boolean; wasmLocation?: string; dataLocation?: string }} [options]
    * @memberof Faust
    */
-  function Faust(options) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4___default()(this, Faust);
-
+  constructor(options) {
     this.libFaust = void 0;
     this.createWasmCDSPFactoryFromString = void 0;
     this.deleteAllWasmCDSPFactories = void 0;
@@ -25422,7 +25047,7 @@ function () {
     this.dspTable = {};
     this.workletProcessors = [];
     this._log = [];
-    this.offlineProcessor = new _FaustOfflineProcessor__WEBPACK_IMPORTED_MODULE_12__["FaustOfflineProcessor"]();
+    this.offlineProcessor = new _FaustOfflineProcessor__WEBPACK_IMPORTED_MODULE_9__["FaustOfflineProcessor"]();
     this.wasmLocation = void 0;
     this.dataLocation = void 0;
     this.logHandler = void 0;
@@ -25438,938 +25063,889 @@ function () {
    */
 
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5___default()(Faust, [{
-    key: "loadLibFaust",
-    value: function () {
-      var _loadLibFaust = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!this.libFaust) {
-                  _context.next = 2;
-                  break;
-                }
+  loadLibFaust() {
+    var _this = this;
 
-                return _context.abrupt("return", this);
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (!_this.libFaust) {
+                _context.next = 2;
+                break;
+              }
 
-              case 2:
-                _context.next = 4;
-                return _LibFaustLoader__WEBPACK_IMPORTED_MODULE_7__["LibFaustLoader"].load(this.wasmLocation, this.dataLocation);
+              return _context.abrupt("return", _this);
 
-              case 4:
-                this.libFaust = _context.sent;
-                this.importLibFaustFunctions();
-                return _context.abrupt("return", this);
+            case 2:
+              _context.next = 4;
+              return _LibFaustLoader__WEBPACK_IMPORTED_MODULE_4__["LibFaustLoader"].load(_this.wasmLocation, _this.dataLocation);
 
-              case 7:
-              case "end":
-                return _context.stop();
-            }
+            case 4:
+              _this.libFaust = _context.sent;
+
+              _this.importLibFaustFunctions();
+
+              return _context.abrupt("return", _this);
+
+            case 7:
+            case "end":
+              return _context.stop();
           }
-        }, _callee, this);
-      }));
+        }
+      }, _callee);
+    }))();
+  }
+  /**
+   * A promise to resolve when libfaust is ready.
+   *
+   * @readonly
+   * @type {Promise<Faust>}
+   * @memberof Faust
+   */
 
-      function loadLibFaust() {
-        return _loadLibFaust.apply(this, arguments);
+
+  get ready() {
+    return this.loadLibFaust();
+  }
+
+  importLibFaustFunctions() {
+    if (!this.libFaust) return; // Low-level API
+
+    this.createWasmCDSPFactoryFromString = this.libFaust.cwrap("createWasmCDSPFactoryFromString", "number", ["number", "number", "number", "number", "number", "number"]);
+    this.deleteAllWasmCDSPFactories = this.libFaust.cwrap("deleteAllWasmCDSPFactories", null, []);
+    this.expandCDSPFromString = this.libFaust.cwrap("expandCDSPFromString", "number", ["number", "number", "number", "number", "number", "number"]);
+    this.getCLibFaustVersion = this.libFaust.cwrap("getCLibFaustVersion", "number", []);
+    this.getWasmCModule = this.libFaust.cwrap("getWasmCModule", "number", ["number"]);
+    this.getWasmCModuleSize = this.libFaust.cwrap("getWasmCModuleSize", "number", ["number"]);
+    this.getWasmCHelpers = this.libFaust.cwrap("getWasmCHelpers", "number", ["number"]);
+    this.freeWasmCModule = this.libFaust.cwrap("freeWasmCModule", null, ["number"]);
+    this.freeCMemory = this.libFaust.cwrap("freeCMemory", null, ["number"]);
+    this.cleanupAfterException = this.libFaust.cwrap("cleanupAfterException", null, []);
+    this.getErrorAfterException = this.libFaust.cwrap("getErrorAfterException", "number", []);
+
+    this.getLibFaustVersion = () => this.libFaust.UTF8ToString(this.getCLibFaustVersion());
+
+    this.generateCAuxFilesFromString = this.libFaust.cwrap("generateCAuxFilesFromString", "number", ["number", "number", "number", "number", "number"]);
+  }
+  /**
+   * Create a AudioNode from dsp source code with options.
+   *
+   * @param {string} code - the source code
+   * @param {TFaustCompileOptions} optionsIn - options with audioCtx, bufferSize, voices, useWorklet, args, plot and plotHandler
+   * @returns {Promise<FaustAudioWorkletNode | FaustScriptProcessorNode>}
+   * @memberof Faust
+   */
+
+
+  getNode(code, optionsIn) {
+    var _this2 = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee2() {
+      var audioCtx, voices, useWorklet, bufferSize, plotHandler, argv, compiledDsp, options, node;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              audioCtx = optionsIn.audioCtx, voices = optionsIn.voices, useWorklet = optionsIn.useWorklet, bufferSize = optionsIn.bufferSize, plotHandler = optionsIn.plotHandler;
+              argv = _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](optionsIn.args);
+              _context2.next = 4;
+              return _this2.compileCodes(code, argv, !voices);
+
+            case 4:
+              compiledDsp = _context2.sent;
+
+              if (compiledDsp) {
+                _context2.next = 7;
+                break;
+              }
+
+              return _context2.abrupt("return", null);
+
+            case 7:
+              options = {
+                compiledDsp,
+                audioCtx,
+                voices,
+                plotHandler,
+                bufferSize: useWorklet ? 128 : bufferSize
+              };
+              _context2.next = 10;
+              return useWorklet;
+
+            case 10:
+              if (!_context2.sent) {
+                _context2.next = 14;
+                break;
+              }
+
+              _context2.t0 = _this2.getAudioWorkletNode(options);
+              _context2.next = 15;
+              break;
+
+            case 14:
+              _context2.t0 = _this2.getScriptProcessorNode(options);
+
+            case 15:
+              node = _context2.t0;
+              return _context2.abrupt("return", node);
+
+            case 17:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }))();
+  }
+  /**
+   * Plot a dsp offline.
+   *
+   * @param {{ code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }} [optionsIn]
+   * @returns {Promise<Float32Array[]>}
+   * @memberof Faust
+   */
+
+
+  plot(optionsIn) {
+    var _this3 = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee3() {
+      var compiledDsp, argv;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              argv = _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](optionsIn.args);
+
+              if (!optionsIn.code) {
+                _context3.next = 7;
+                break;
+              }
+
+              _context3.next = 4;
+              return _this3.compileCodes(optionsIn.code, argv, true);
+
+            case 4:
+              compiledDsp = _context3.sent;
+
+              if (compiledDsp) {
+                _context3.next = 7;
+                break;
+              }
+
+              return _context3.abrupt("return", null);
+
+            case 7:
+              return _context3.abrupt("return", _this3.offlineProcessor.plot(_objectSpread({
+                compiledDsp
+              }, optionsIn)));
+
+            case 8:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }))();
+  }
+  /**
+   * Generate Uint8Array and helpersCode from a dsp source code
+   *
+   * @private
+   * @param {string} factoryName - Class name of the source code
+   * @param {string} code - dsp source code
+   * @param {string[]} argvIn - Array of paramaters to be given to the Faust compiler
+   * @param {boolean} internalMemory - Use internal Memory flag, false for poly, true for mono
+   * @returns {TCompiledCode} - An object with ui8Code, code, helpersCode
+   * @memberof Faust
+   */
+
+
+  compileCode(factoryName, code, argvIn, internalMemory) {
+    var codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
+
+    var $code = this.libFaust._malloc(codeSize);
+
+    var name = "FaustDSP";
+    var nameSize = this.libFaust.lengthBytesUTF8(name) + 1;
+
+    var $name = this.libFaust._malloc(nameSize);
+
+    var $errorMsg = this.libFaust._malloc(4096);
+
+    this.libFaust.stringToUTF8(name, $name, nameSize);
+    this.libFaust.stringToUTF8(code, $code, codeSize); // Add 'cn' option with the factory name
+
+    var argv = argvIn || [];
+    argv.push("-cn", factoryName); // Prepare 'argv_aux' array for C side
+
+    var ptrSize = 4;
+
+    var $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
+
+
+    var argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
+
+    for (var i = 0; i < argv.length; i++) {
+      var size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
+
+      var $arg = this.libFaust._malloc(size$arg);
+
+      this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
+      argvBuffer$[i] = $arg;
+    }
+
+    try {
+      var time1 = performance.now();
+
+      var _$moduleCode = this.createWasmCDSPFactoryFromString($name, $code, argv.length, $argv, $errorMsg, internalMemory);
+
+      var time2 = performance.now();
+      this.log("Faust compilation duration : " + (time2 - time1));
+      var errorMsg = this.libFaust.UTF8ToString($errorMsg);
+      if (errorMsg) throw errorMsg;
+      if (_$moduleCode === 0) return null;
+      var $compiledCode = this.getWasmCModule(_$moduleCode);
+      var compiledCodeSize = this.getWasmCModuleSize(_$moduleCode); // Copy native 'binary' string in JavaScript Uint8Array
+
+      var ui8Code = new Uint8Array(compiledCodeSize);
+
+      for (var _i = 0; _i < compiledCodeSize; _i++) {
+        // faster than 'getValue' which gets the type of access for each read...
+        ui8Code[_i] = this.libFaust.HEAP8[$compiledCode + _i];
       }
 
-      return loadLibFaust;
-    }()
-    /**
-     * A promise to resolve when libfaust is ready.
-     *
-     * @readonly
-     * @type {Promise<Faust>}
-     * @memberof Faust
-     */
+      var $helpersCode = this.getWasmCHelpers(_$moduleCode);
+      var helpersCode = this.libFaust.UTF8ToString($helpersCode); // Free strings
 
-  }, {
-    key: "importLibFaustFunctions",
-    value: function importLibFaustFunctions() {
-      var _this = this;
+      this.libFaust._free($code);
 
-      if (!this.libFaust) return; // Low-level API
+      this.libFaust._free($name);
 
-      this.createWasmCDSPFactoryFromString = this.libFaust.cwrap("createWasmCDSPFactoryFromString", "number", ["number", "number", "number", "number", "number", "number"]);
-      this.deleteAllWasmCDSPFactories = this.libFaust.cwrap("deleteAllWasmCDSPFactories", null, []);
-      this.expandCDSPFromString = this.libFaust.cwrap("expandCDSPFromString", "number", ["number", "number", "number", "number", "number", "number"]);
-      this.getCLibFaustVersion = this.libFaust.cwrap("getCLibFaustVersion", "number", []);
-      this.getWasmCModule = this.libFaust.cwrap("getWasmCModule", "number", ["number"]);
-      this.getWasmCModuleSize = this.libFaust.cwrap("getWasmCModuleSize", "number", ["number"]);
-      this.getWasmCHelpers = this.libFaust.cwrap("getWasmCHelpers", "number", ["number"]);
-      this.freeWasmCModule = this.libFaust.cwrap("freeWasmCModule", null, ["number"]);
-      this.freeCMemory = this.libFaust.cwrap("freeCMemory", null, ["number"]);
-      this.cleanupAfterException = this.libFaust.cwrap("cleanupAfterException", null, []);
-      this.getErrorAfterException = this.libFaust.cwrap("getErrorAfterException", "number", []);
+      this.libFaust._free($errorMsg); // Free C allocated wasm module
 
-      this.getLibFaustVersion = function () {
-        return _this.libFaust.UTF8ToString(_this.getCLibFaustVersion());
+
+      this.freeWasmCModule(_$moduleCode); // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
+
+      argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Free 'argv' C side array
+
+      for (var _i2 = 0; _i2 < argv.length; _i2++) {
+        this.libFaust._free(argvBuffer$[_i2]);
+      }
+
+      this.libFaust._free($argv);
+
+      return {
+        ui8Code,
+        code,
+        helpersCode
+      };
+    } catch (e) {
+      // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
+      var _errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
+
+
+      if (!_errorMsg) _errorMsg = e;
+      this.cleanupAfterException();
+      throw _errorMsg;
+    }
+  }
+  /**
+   * createDSPFactoryAux
+   * Generate shaKey, effects, dsp, their Wasm Modules and helpers from a dsp source code
+   *
+   * @private
+   * @param {string} code - dsp source code
+   * @param {string[]} argv - Array of paramaters to be given to the Faust compiler
+   * @param {boolean} internalMemory - Use internal Memory flag, false for poly, true for mono
+   * @returns {Promise<TCompiledDsp>} - An object contains shaKey, empty polyphony map, original codes, modules and helpers
+   * @memberof Faust
+   */
+
+
+  compileCodes(code, argv, internalMemory) {
+    var _this4 = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee4() {
+      var strArgv, shaKey, compiledDsp, effectCode, dspCompiledCode, effectCompiledCode, compiledCodes;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
+              strArgv = argv.join("");
+              shaKey = crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_3__["default"].hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, {
+                msgFormat: "string"
+              });
+              compiledDsp = _this4.dspTable[shaKey];
+
+              if (!compiledDsp) {
+                _context4.next = 6;
+                break;
+              }
+
+              _this4.log("Existing library : " + shaKey); // Existing factory, do not create it...
+
+
+              return _context4.abrupt("return", compiledDsp);
+
+            case 6:
+              _this4.log("libfaust.js version : " + _this4.getLibFaustVersion()); // Create 'effect' expression
+
+
+              effectCode = "adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _;\nadaptor(F,G) = adapt(outputs(F),inputs(G));\ndsp_code = environment{".concat(code, "};\nprocess = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;");
+              dspCompiledCode = _this4.compileCode(shaKey, code, argv, internalMemory);
+
+              try {
+                effectCompiledCode = _this4.compileCode(shaKey + "_", effectCode, argv, internalMemory);
+              } catch (e) {} // eslint-disable-line no-empty
+
+
+              compiledCodes = {
+                dsp: dspCompiledCode,
+                effect: effectCompiledCode
+              };
+              return _context4.abrupt("return", _this4.compileDsp(compiledCodes, shaKey));
+
+            case 12:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4);
+    }))();
+  }
+  /**
+   * From a DSP source file, creates a "self-contained" DSP source string where all needed librairies have been included.
+   * All compilations options are 'normalized' and included as a comment in the expanded string.
+   *
+   * @param {string} code - dsp source code
+   * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
+   * @returns {string} "self-contained" DSP source string where all needed librairies
+   * @memberof Faust
+   */
+
+
+  expandCode(code, args) {
+    this.log("libfaust.js version : " + this.getLibFaustVersion()); // Allocate strings on the HEAP
+
+    var codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
+
+    var $code = this.libFaust._malloc(codeSize);
+
+    var name = "FaustDSP";
+    var nameSize = this.libFaust.lengthBytesUTF8(name) + 1;
+
+    var $name = this.libFaust._malloc(nameSize);
+
+    var $shaKey = this.libFaust._malloc(64);
+
+    var $errorMsg = this.libFaust._malloc(4096);
+
+    this.libFaust.stringToUTF8(name, $name, nameSize);
+    this.libFaust.stringToUTF8(code, $code, codeSize);
+    var argvIn = args ? _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](args) : []; // Force "wasm" compilation
+
+    var argv = [...argvIn, "-lang", "wasm"]; // Prepare 'argv' array for C side
+
+    var ptrSize = 4;
+
+    var $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
+
+
+    var argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
+
+    for (var i = 0; i < argv.length; i++) {
+      var size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
+
+      var $arg = this.libFaust._malloc(size$arg);
+
+      this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
+      argvBuffer$[i] = $arg;
+    }
+
+    try {
+      var $expandedCode = this.expandCDSPFromString($name, $code, argv.length, $argv, $shaKey, $errorMsg);
+      var expandedCode = this.libFaust.UTF8ToString($expandedCode);
+      var errorMsg = this.libFaust.UTF8ToString($errorMsg);
+      if (errorMsg) this.error(errorMsg); // Free strings
+
+      this.libFaust._free($code);
+
+      this.libFaust._free($name);
+
+      this.libFaust._free($shaKey);
+
+      this.libFaust._free($errorMsg); // Free C allocated expanded string
+
+
+      this.freeCMemory($expandedCode); // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
+
+      argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Free 'argv' C side array
+
+      for (var _i3 = 0; _i3 < argv.length; _i3++) {
+        this.libFaust._free(argvBuffer$[_i3]);
+      }
+
+      this.libFaust._free($argv);
+
+      return expandedCode;
+    } catch (e) {
+      // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
+      var _errorMsg2 = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
+
+
+      if (!_errorMsg2) _errorMsg2 = e;
+      this.cleanupAfterException();
+      throw _errorMsg2;
+    }
+  }
+  /**
+   * readDSPFactoryFromMachineAux
+   * Compile wasm modules from dsp and effect Uint8Arrays
+   *
+   * @private
+   * @param {TCompiledCodes} codes
+   * @param {string} shaKey
+   * @returns {Promise<TCompiledDsp>}
+   * @memberof Faust
+   */
+
+
+  compileDsp(codes, shaKey) {
+    var _this5 = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee5() {
+      var time1, dspModule, time2, compiledDsp, json, meta, effectModule, _json, _meta;
+
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee5$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              time1 = performance.now();
+              /*
+              if (typeof Binaryen !== "undefined") {
+                  try {
+                      const binaryenModule = Binaryen.readBinary(codes.dsp.ui8Code);
+                      this.log("Binaryen based optimisation");
+                      binaryenModule.optimize();
+                      // console.log(binaryen_module.emitText());
+                      codes.dsp.ui8Code = binaryenModule.emitBinary();
+                      binaryenModule.dispose();
+                  } catch (e) {
+                      this.log("Binaryen not available, no optimisation...");
+                  }
+              }
+              */
+
+              _context5.next = 3;
+              return WebAssembly.compile(codes.dsp.ui8Code);
+
+            case 3:
+              dspModule = _context5.sent;
+
+              if (dspModule) {
+                _context5.next = 7;
+                break;
+              }
+
+              _this5.error("Faust DSP factory cannot be compiled");
+
+              throw new Error("Faust DSP factory cannot be compiled");
+
+            case 7:
+              time2 = performance.now();
+
+              _this5.log("WASM compilation duration : " + (time2 - time1));
+
+              compiledDsp = {
+                shaKey,
+                codes,
+                dspModule,
+                dspMeta: undefined
+              }; // Default mode
+              // 'libfaust.js' wasm backend generates UI methods, then we compile the code
+              // eval(helpers_code1);
+              // factory.getJSON = eval("getJSON" + dspName);
+              // factory.getBase64Code = eval("getBase64Code" + dspName);
+
+              _context5.prev = 10;
+              json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'"); // const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
+
+              meta = JSON.parse(json);
+              compiledDsp.dspMeta = meta;
+              _context5.next = 20;
+              break;
+
+            case 16:
+              _context5.prev = 16;
+              _context5.t0 = _context5["catch"](10);
+
+              _this5.error("Error in JSON.parse: " + _context5.t0);
+
+              throw _context5.t0;
+
+            case 20:
+              _this5.dspTable[shaKey] = compiledDsp; // Possibly compile effect
+
+              if (codes.effect) {
+                _context5.next = 23;
+                break;
+              }
+
+              return _context5.abrupt("return", compiledDsp);
+
+            case 23:
+              _context5.prev = 23;
+              _context5.next = 26;
+              return WebAssembly.compile(codes.effect.ui8Code);
+
+            case 26:
+              effectModule = _context5.sent;
+              compiledDsp.effectModule = effectModule; // 'libfaust.js' wasm backend generates UI methods, then we compile the code
+              // eval(helpers_code2);
+              // factory.getJSONeffect = eval("getJSON" + factory_name2);
+              // factory.getBase64Codeeffect = eval("getBase64Code" + factory_name2);
+
+              _context5.prev = 28;
+              _json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'"); // const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
+
+              _meta = JSON.parse(_json);
+              compiledDsp.effectMeta = _meta;
+              _context5.next = 38;
+              break;
+
+            case 34:
+              _context5.prev = 34;
+              _context5.t1 = _context5["catch"](28);
+
+              _this5.error("Error in JSON.parse: " + _context5.t1);
+
+              throw _context5.t1;
+
+            case 38:
+              _context5.next = 43;
+              break;
+
+            case 40:
+              _context5.prev = 40;
+              _context5.t2 = _context5["catch"](23);
+              return _context5.abrupt("return", compiledDsp);
+
+            case 43:
+              return _context5.abrupt("return", compiledDsp);
+
+            case 44:
+            case "end":
+              return _context5.stop();
+          }
+        }
+      }, _callee5, null, [[10, 16], [23, 40], [28, 34]]);
+    }))();
+  }
+  /**
+   * Get a ScriptProcessorNode from compiled dsp
+   *
+   * @private
+   * @param {TCompiledDsp} compiledDsp - DSP compiled by libfaust
+   * @param {TAudioNodeOptions} optionsIn
+   * @returns {Promise<FaustScriptProcessorNode>}
+   * @memberof Faust
+   */
+
+
+  getScriptProcessorNode(optionsIn) {
+    var _this6 = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee6() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee6$(_context6) {
+        while (1) {
+          switch (_context6.prev = _context6.next) {
+            case 0:
+              return _context6.abrupt("return", new _FaustWasmToScriptProcessor__WEBPACK_IMPORTED_MODULE_5__["FaustWasmToScriptProcessor"](_this6).getNode(optionsIn));
+
+            case 1:
+            case "end":
+              return _context6.stop();
+          }
+        }
+      }, _callee6);
+    }))();
+  } // deleteDSPInstance() {}
+
+  /**
+   * Get a AudioWorkletNode from compiled dsp
+   *
+   * @private
+   * @param {TAudioNodeOptions} optionsIn
+   * @returns {Promise<FaustAudioWorkletNode>}
+   * @memberof Faust
+   */
+
+
+  getAudioWorkletNode(optionsIn) {
+    var _this7 = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee7() {
+      var compiledDspWithCodes, audioCtx, voices, plotHandler, compiledDsp, id, strProcessor, url;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee7$(_context7) {
+        while (1) {
+          switch (_context7.prev = _context7.next) {
+            case 0:
+              compiledDspWithCodes = optionsIn.compiledDsp, audioCtx = optionsIn.audioCtx, voices = optionsIn.voices, plotHandler = optionsIn.plotHandler;
+              compiledDsp = _objectSpread({}, compiledDspWithCodes);
+              delete compiledDsp.codes;
+              id = compiledDsp.shaKey + "_" + voices;
+
+              if (!(_this7.workletProcessors.indexOf(id) === -1)) {
+                _context7.next = 10;
+                break;
+              }
+
+              strProcessor = "\nconst remap = ".concat(_utils__WEBPACK_IMPORTED_MODULE_8__["remap"].toString(), ";\nconst midiToFreq = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["midiToFreq"].toString(), ";\nconst findPath = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["findPath"].toString(), ";\nconst createWasmImport = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmImport"].toString(), ";\nconst createWasmMemory = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmMemory"].toString(), ";\nconst faustData = ").concat(JSON.stringify({
+                id,
+                dspMeta: compiledDsp.dspMeta,
+                effectMeta: compiledDsp.effectMeta
+              }), ";\n(").concat(_FaustAudioWorkletProcessor__WEBPACK_IMPORTED_MODULE_6__["FaustAudioWorkletProcessorWrapper"].toString(), ")();\n");
+              url = window.URL.createObjectURL(new Blob([strProcessor], {
+                type: "text/javascript"
+              }));
+              _context7.next = 9;
+              return audioCtx.audioWorklet.addModule(url);
+
+            case 9:
+              _this7.workletProcessors.push(id);
+
+            case 10:
+              return _context7.abrupt("return", new _FaustAudioWorkletNode__WEBPACK_IMPORTED_MODULE_7__["FaustAudioWorkletNode"]({
+                audioCtx,
+                id,
+                voices,
+                compiledDsp,
+                plotHandler,
+                mixer32Module: _utils__WEBPACK_IMPORTED_MODULE_8__["mixer32Module"]
+              }));
+
+            case 11:
+            case "end":
+              return _context7.stop();
+          }
+        }
+      }, _callee7);
+    }))();
+  }
+  /**
+   * Remove a DSP from registry
+   *
+   * @private
+   * @param {TCompiledDsp} compiledDsp
+   * @memberof Faust
+   */
+
+
+  deleteDsp(compiledDsp) {
+    // The JS side is cleared
+    delete this.dspTable[compiledDsp.shaKey]; // The native C++ is cleared each time (freeWasmCModule has been already called in faust.compile)
+
+    this.deleteAllWasmCDSPFactories();
+  }
+  /**
+   * Stringify current storaged DSP Table.
+   *
+   * @returns {string}
+   * @memberof Faust
+   */
+
+
+  stringifyDspTable() {
+    var strTable = {};
+
+    for (var key in this.dspTable) {
+      var codes = this.dspTable[key].codes;
+      strTable[key] = {
+        dsp: {
+          strCode: btoa(_utils__WEBPACK_IMPORTED_MODULE_8__["ab2str"](codes.dsp.ui8Code)),
+          code: codes.dsp.code,
+          helpersCode: codes.dsp.helpersCode
+        },
+        effect: codes.effect ? {
+          strCode: btoa(_utils__WEBPACK_IMPORTED_MODULE_8__["ab2str"](codes.effect.ui8Code)),
+          code: codes.effect.code,
+          helpersCode: codes.effect.helpersCode
+        } : undefined
+      };
+    }
+
+    return JSON.stringify(strTable);
+  }
+  /**
+   * parse and store a stringified DSP Table.
+   *
+   * @param {string} str
+   * @memberof Faust
+   */
+
+
+  parseDspTable(str) {
+    var _this8 = this;
+
+    var strTable = JSON.parse(str);
+
+    var _loop = function _loop(_shaKey) {
+      if (_this8.dspTable[_shaKey]) return "continue";
+      var strCodes = strTable[_shaKey];
+      var compiledCodes = {
+        dsp: {
+          ui8Code: _utils__WEBPACK_IMPORTED_MODULE_8__["str2ab"](atob(strCodes.dsp.strCode)),
+          code: strCodes.dsp.code,
+          helpersCode: strCodes.dsp.helpersCode
+        },
+        effect: strCodes.effect ? {
+          ui8Code: _utils__WEBPACK_IMPORTED_MODULE_8__["str2ab"](atob(strCodes.effect.strCode)),
+          code: strCodes.effect.code,
+          helpersCode: strCodes.effect.helpersCode
+        } : undefined
       };
 
-      this.generateCAuxFilesFromString = this.libFaust.cwrap("generateCAuxFilesFromString", "number", ["number", "number", "number", "number", "number"]);
+      _this8.compileDsp(compiledCodes, _shaKey).then(dsp => _this8.dspTable[_shaKey] = dsp);
+    };
+
+    for (var _shaKey in strTable) {
+      var _ret = _loop(_shaKey);
+
+      if (_ret === "continue") continue;
     }
-    /**
-     * Create a AudioNode from dsp source code with options.
-     *
-     * @param {string} code - the source code
-     * @param {TFaustCompileOptions} optionsIn - options with audioCtx, bufferSize, voices, useWorklet, args, plot and plotHandler
-     * @returns {Promise<FaustAudioWorkletNode | FaustScriptProcessorNode>}
-     * @memberof Faust
-     */
+  } // deleteDSPWorkletInstance() {}
 
-  }, {
-    key: "getNode",
-    value: function () {
-      var _getNode = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee2(code, optionsIn) {
-        var audioCtx, voices, useWorklet, bufferSize, plotHandler, argv, compiledDsp, options, node;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                audioCtx = optionsIn.audioCtx, voices = optionsIn.voices, useWorklet = optionsIn.useWorklet, bufferSize = optionsIn.bufferSize, plotHandler = optionsIn.plotHandler;
-                argv = _utils__WEBPACK_IMPORTED_MODULE_11__["toArgv"](optionsIn.args);
-                _context2.next = 4;
-                return this.compileCodes(code, argv, !voices);
-
-              case 4:
-                compiledDsp = _context2.sent;
-
-                if (compiledDsp) {
-                  _context2.next = 7;
-                  break;
-                }
-
-                return _context2.abrupt("return", null);
-
-              case 7:
-                options = {
-                  compiledDsp: compiledDsp,
-                  audioCtx: audioCtx,
-                  voices: voices,
-                  plotHandler: plotHandler,
-                  bufferSize: useWorklet ? 128 : bufferSize
-                };
-                _context2.next = 10;
-                return useWorklet;
-
-              case 10:
-                if (!_context2.sent) {
-                  _context2.next = 14;
-                  break;
-                }
-
-                _context2.t0 = this.getAudioWorkletNode(options);
-                _context2.next = 15;
-                break;
-
-              case 14:
-                _context2.t0 = this.getScriptProcessorNode(options);
-
-              case 15:
-                node = _context2.t0;
-                return _context2.abrupt("return", node);
-
-              case 17:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function getNode(_x, _x2) {
-        return _getNode.apply(this, arguments);
-      }
-
-      return getNode;
-    }()
-    /**
-     * Plot a dsp offline.
-     *
-     * @param {{ code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }} [optionsIn]
-     * @returns {Promise<Float32Array[]>}
-     * @memberof Faust
-     */
-
-  }, {
-    key: "plot",
-    value: function () {
-      var _plot = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee3(optionsIn) {
-        var compiledDsp, argv;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                argv = _utils__WEBPACK_IMPORTED_MODULE_11__["toArgv"](optionsIn.args);
-
-                if (!optionsIn.code) {
-                  _context3.next = 7;
-                  break;
-                }
-
-                _context3.next = 4;
-                return this.compileCodes(optionsIn.code, argv, true);
-
-              case 4:
-                compiledDsp = _context3.sent;
-
-                if (compiledDsp) {
-                  _context3.next = 7;
-                  break;
-                }
-
-                return _context3.abrupt("return", null);
-
-              case 7:
-                return _context3.abrupt("return", this.offlineProcessor.plot(_objectSpread({
-                  compiledDsp: compiledDsp
-                }, optionsIn)));
-
-              case 8:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function plot(_x3) {
-        return _plot.apply(this, arguments);
-      }
-
-      return plot;
-    }()
-    /**
-     * Generate Uint8Array and helpersCode from a dsp source code
-     *
-     * @private
-     * @param {string} factoryName - Class name of the source code
-     * @param {string} code - dsp source code
-     * @param {string[]} argvIn - Array of paramaters to be given to the Faust compiler
-     * @param {boolean} internalMemory - Use internal Memory flag, false for poly, true for mono
-     * @returns {TCompiledCode} - An object with ui8Code, code, helpersCode
-     * @memberof Faust
-     */
-
-  }, {
-    key: "compileCode",
-    value: function compileCode(factoryName, code, argvIn, internalMemory) {
-      var codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
-
-      var $code = this.libFaust._malloc(codeSize);
-
-      var name = "FaustDSP";
-      var nameSize = this.libFaust.lengthBytesUTF8(name) + 1;
-
-      var $name = this.libFaust._malloc(nameSize);
-
-      var $errorMsg = this.libFaust._malloc(4096);
-
-      this.libFaust.stringToUTF8(name, $name, nameSize);
-      this.libFaust.stringToUTF8(code, $code, codeSize); // Add 'cn' option with the factory name
-
-      var argv = argvIn || [];
-      argv.push("-cn", factoryName); // Prepare 'argv_aux' array for C side
-
-      var ptrSize = 4;
-
-      var $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
+  /**
+   * Get an SVG Diagram XML File as string
+   *
+   * @param {string} code faust source code
+   * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
+   * @returns {string} svg file as string
+   * @memberof Faust
+   */
 
 
-      var argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
+  getDiagram(code, args) {
+    var codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
 
-      for (var i = 0; i < argv.length; i++) {
-        var size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
+    var $code = this.libFaust._malloc(codeSize);
 
-        var $arg = this.libFaust._malloc(size$arg);
+    var name = "FaustDSP";
+    var nameSize = this.libFaust.lengthBytesUTF8(name) + 1;
 
-        this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
-        argvBuffer$[i] = $arg;
-      }
+    var $name = this.libFaust._malloc(nameSize);
 
-      try {
-        var time1 = performance.now();
+    var $errorMsg = this.libFaust._malloc(4096);
 
-        var _$moduleCode = this.createWasmCDSPFactoryFromString($name, $code, argv.length, $argv, $errorMsg, internalMemory);
+    this.libFaust.stringToUTF8(name, $name, nameSize);
+    this.libFaust.stringToUTF8(code, $code, codeSize);
+    var argvIn = args ? _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](args) : [];
+    var argv = [...argvIn, "-lang", "wast", "-o", "/dev/null", "-svg"]; // Prepare 'argv' array for C side
 
-        var time2 = performance.now();
-        this.log("Faust compilation duration : " + (time2 - time1));
-        var errorMsg = this.libFaust.UTF8ToString($errorMsg);
-        if (errorMsg) throw errorMsg;
-        if (_$moduleCode === 0) return null;
-        var $compiledCode = this.getWasmCModule(_$moduleCode);
-        var compiledCodeSize = this.getWasmCModuleSize(_$moduleCode); // Copy native 'binary' string in JavaScript Uint8Array
+    var ptrSize = 4;
 
-        var ui8Code = new Uint8Array(compiledCodeSize);
-
-        for (var _i = 0; _i < compiledCodeSize; _i++) {
-          // faster than 'getValue' which gets the type of access for each read...
-          ui8Code[_i] = this.libFaust.HEAP8[$compiledCode + _i];
-        }
-
-        var $helpersCode = this.getWasmCHelpers(_$moduleCode);
-        var helpersCode = this.libFaust.UTF8ToString($helpersCode); // Free strings
-
-        this.libFaust._free($code);
-
-        this.libFaust._free($name);
-
-        this.libFaust._free($errorMsg); // Free C allocated wasm module
+    var $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
 
 
-        this.freeWasmCModule(_$moduleCode); // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
+    var argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
 
-        argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Free 'argv' C side array
+    for (var i = 0; i < argv.length; i++) {
+      var size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
 
-        for (var _i2 = 0; _i2 < argv.length; _i2++) {
-          this.libFaust._free(argvBuffer$[_i2]);
-        }
+      var $arg = this.libFaust._malloc(size$arg);
 
-        this.libFaust._free($argv);
-
-        return {
-          ui8Code: ui8Code,
-          code: code,
-          helpersCode: helpersCode
-        };
-      } catch (e) {
-        // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-        var _errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
-
-
-        if (!_errorMsg) _errorMsg = e;
-        this.cleanupAfterException();
-        throw _errorMsg;
-      }
+      this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
+      argvBuffer$[i] = $arg;
     }
-    /**
-     * createDSPFactoryAux
-     * Generate shaKey, effects, dsp, their Wasm Modules and helpers from a dsp source code
-     *
-     * @private
-     * @param {string} code - dsp source code
-     * @param {string[]} argv - Array of paramaters to be given to the Faust compiler
-     * @param {boolean} internalMemory - Use internal Memory flag, false for poly, true for mono
-     * @returns {Promise<TCompiledDsp>} - An object contains shaKey, empty polyphony map, original codes, modules and helpers
-     * @memberof Faust
-     */
 
-  }, {
-    key: "compileCodes",
-    value: function () {
-      var _compileCodes = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee4(code, argv, internalMemory) {
-        var strArgv, shaKey, compiledDsp, effectCode, dspCompiledCode, effectCompiledCode, compiledCodes;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
-                strArgv = argv.join("");
-                shaKey = crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_6__["default"].hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, {
-                  msgFormat: "string"
-                });
-                compiledDsp = this.dspTable[shaKey];
+    try {
+      this.generateCAuxFilesFromString($name, $code, argv.length, $argv, $errorMsg); // Free strings
 
-                if (!compiledDsp) {
-                  _context4.next = 6;
-                  break;
-                }
+      this.libFaust._free($code);
 
-                this.log("Existing library : " + shaKey); // Existing factory, do not create it...
+      this.libFaust._free($name);
 
-                return _context4.abrupt("return", compiledDsp);
-
-              case 6:
-                this.log("libfaust.js version : " + this.getLibFaustVersion()); // Create 'effect' expression
-
-                effectCode = "adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _;\nadaptor(F,G) = adapt(outputs(F),inputs(G));\ndsp_code = environment{".concat(code, "};\nprocess = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;");
-                dspCompiledCode = this.compileCode(shaKey, code, argv, internalMemory);
-
-                try {
-                  effectCompiledCode = this.compileCode(shaKey + "_", effectCode, argv, internalMemory);
-                } catch (e) {} // eslint-disable-line no-empty
+      this.libFaust._free($errorMsg); // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
 
 
-                compiledCodes = {
-                  dsp: dspCompiledCode,
-                  effect: effectCompiledCode
-                };
-                return _context4.abrupt("return", this.compileDsp(compiledCodes, shaKey));
+      argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Free 'argv' C side array
 
-              case 12:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function compileCodes(_x4, _x5, _x6) {
-        return _compileCodes.apply(this, arguments);
+      for (var _i4 = 0; _i4 < argv.length; _i4++) {
+        this.libFaust._free(argvBuffer$[_i4]);
       }
 
-      return compileCodes;
-    }()
-    /**
-     * From a DSP source file, creates a "self-contained" DSP source string where all needed librairies have been included.
-     * All compilations options are 'normalized' and included as a comment in the expanded string.
-     *
-     * @param {string} code - dsp source code
-     * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
-     * @returns {string} "self-contained" DSP source string where all needed librairies
-     * @memberof Faust
-     */
+      this.libFaust._free($argv);
+    } catch (e) {
+      // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
+      var errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
 
-  }, {
-    key: "expandCode",
-    value: function expandCode(code, args) {
-      this.log("libfaust.js version : " + this.getLibFaustVersion()); // Allocate strings on the HEAP
-
-      var codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
-
-      var $code = this.libFaust._malloc(codeSize);
-
-      var name = "FaustDSP";
-      var nameSize = this.libFaust.lengthBytesUTF8(name) + 1;
-
-      var $name = this.libFaust._malloc(nameSize);
-
-      var $shaKey = this.libFaust._malloc(64);
-
-      var $errorMsg = this.libFaust._malloc(4096);
-
-      this.libFaust.stringToUTF8(name, $name, nameSize);
-      this.libFaust.stringToUTF8(code, $code, codeSize);
-      var argvIn = args ? _utils__WEBPACK_IMPORTED_MODULE_11__["toArgv"](args) : []; // Force "wasm" compilation
-
-      var argv = [].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(argvIn), ["-lang", "wasm"]); // Prepare 'argv' array for C side
-
-      var ptrSize = 4;
-
-      var $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
-
-
-      var argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
-
-      for (var i = 0; i < argv.length; i++) {
-        var size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
-
-        var $arg = this.libFaust._malloc(size$arg);
-
-        this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
-        argvBuffer$[i] = $arg;
-      }
-
-      try {
-        var $expandedCode = this.expandCDSPFromString($name, $code, argv.length, $argv, $shaKey, $errorMsg);
-        var expandedCode = this.libFaust.UTF8ToString($expandedCode);
-        var errorMsg = this.libFaust.UTF8ToString($errorMsg);
-        if (errorMsg) this.error(errorMsg); // Free strings
-
-        this.libFaust._free($code);
-
-        this.libFaust._free($name);
-
-        this.libFaust._free($shaKey);
-
-        this.libFaust._free($errorMsg); // Free C allocated expanded string
-
-
-        this.freeCMemory($expandedCode); // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
-
-        argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Free 'argv' C side array
-
-        for (var _i3 = 0; _i3 < argv.length; _i3++) {
-          this.libFaust._free(argvBuffer$[_i3]);
-        }
-
-        this.libFaust._free($argv);
-
-        return expandedCode;
-      } catch (e) {
-        // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-        var _errorMsg2 = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
-
-
-        if (!_errorMsg2) _errorMsg2 = e;
-        this.cleanupAfterException();
-        throw _errorMsg2;
-      }
+      if (!errorMsg) errorMsg = e;
+      this.cleanupAfterException();
+      throw errorMsg;
     }
-    /**
-     * readDSPFactoryFromMachineAux
-     * Compile wasm modules from dsp and effect Uint8Arrays
-     *
-     * @private
-     * @param {TCompiledCodes} codes
-     * @param {string} shaKey
-     * @returns {Promise<TCompiledDsp>}
-     * @memberof Faust
-     */
 
-  }, {
-    key: "compileDsp",
-    value: function () {
-      var _compileDsp = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee5(codes, shaKey) {
-        var time1, dspModule, time2, compiledDsp, json, meta, effectModule, _json, _meta;
+    return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", {
+      encoding: "utf8"
+    });
+  }
+  /**
+   * Expose LibFaust Emscripten Module File System
+   *
+   * @param {string} path path string
+   * @returns {Emscripten.FS} Emscripten Module File System
+   * @memberof Faust
+   */
 
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee5$(_context5) {
-          while (1) {
-            switch (_context5.prev = _context5.next) {
-              case 0:
-                time1 = performance.now();
-                /*
-                if (typeof Binaryen !== "undefined") {
-                    try {
-                        const binaryenModule = Binaryen.readBinary(codes.dsp.ui8Code);
-                        this.log("Binaryen based optimisation");
-                        binaryenModule.optimize();
-                        // console.log(binaryen_module.emitText());
-                        codes.dsp.ui8Code = binaryenModule.emitBinary();
-                        binaryenModule.dispose();
-                    } catch (e) {
-                        this.log("Binaryen not available, no optimisation...");
-                    }
-                }
-                */
 
-                _context5.next = 3;
-                return WebAssembly.compile(codes.dsp.ui8Code);
+  get fs() {
+    return this.libFaust.FS;
+  }
 
-              case 3:
-                dspModule = _context5.sent;
-
-                if (dspModule) {
-                  _context5.next = 7;
-                  break;
-                }
-
-                this.error("Faust DSP factory cannot be compiled");
-                throw new Error("Faust DSP factory cannot be compiled");
-
-              case 7:
-                time2 = performance.now();
-                this.log("WASM compilation duration : " + (time2 - time1));
-                compiledDsp = {
-                  shaKey: shaKey,
-                  codes: codes,
-                  dspModule: dspModule,
-                  dspMeta: undefined
-                }; // Default mode
-                // 'libfaust.js' wasm backend generates UI methods, then we compile the code
-                // eval(helpers_code1);
-                // factory.getJSON = eval("getJSON" + dspName);
-                // factory.getBase64Code = eval("getBase64Code" + dspName);
-
-                _context5.prev = 10;
-                json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'"); // const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
-
-                meta = JSON.parse(json);
-                compiledDsp.dspMeta = meta;
-                _context5.next = 20;
-                break;
-
-              case 16:
-                _context5.prev = 16;
-                _context5.t0 = _context5["catch"](10);
-                this.error("Error in JSON.parse: " + _context5.t0);
-                throw _context5.t0;
-
-              case 20:
-                this.dspTable[shaKey] = compiledDsp; // Possibly compile effect
-
-                if (codes.effect) {
-                  _context5.next = 23;
-                  break;
-                }
-
-                return _context5.abrupt("return", compiledDsp);
-
-              case 23:
-                _context5.prev = 23;
-                _context5.next = 26;
-                return WebAssembly.compile(codes.effect.ui8Code);
-
-              case 26:
-                effectModule = _context5.sent;
-                compiledDsp.effectModule = effectModule; // 'libfaust.js' wasm backend generates UI methods, then we compile the code
-                // eval(helpers_code2);
-                // factory.getJSONeffect = eval("getJSON" + factory_name2);
-                // factory.getBase64Codeeffect = eval("getBase64Code" + factory_name2);
-
-                _context5.prev = 28;
-                _json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'"); // const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
-
-                _meta = JSON.parse(_json);
-                compiledDsp.effectMeta = _meta;
-                _context5.next = 38;
-                break;
-
-              case 34:
-                _context5.prev = 34;
-                _context5.t1 = _context5["catch"](28);
-                this.error("Error in JSON.parse: " + _context5.t1);
-                throw _context5.t1;
-
-              case 38:
-                _context5.next = 43;
-                break;
-
-              case 40:
-                _context5.prev = 40;
-                _context5.t2 = _context5["catch"](23);
-                return _context5.abrupt("return", compiledDsp);
-
-              case 43:
-                return _context5.abrupt("return", compiledDsp);
-
-              case 44:
-              case "end":
-                return _context5.stop();
-            }
-          }
-        }, _callee5, this, [[10, 16], [23, 40], [28, 34]]);
-      }));
-
-      function compileDsp(_x7, _x8) {
-        return _compileDsp.apply(this, arguments);
-      }
-
-      return compileDsp;
-    }()
-    /**
-     * Get a ScriptProcessorNode from compiled dsp
-     *
-     * @private
-     * @param {TCompiledDsp} compiledDsp - DSP compiled by libfaust
-     * @param {TAudioNodeOptions} optionsIn
-     * @returns {Promise<FaustScriptProcessorNode>}
-     * @memberof Faust
-     */
-
-  }, {
-    key: "getScriptProcessorNode",
-    value: function () {
-      var _getScriptProcessorNode = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee6(optionsIn) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee6$(_context6) {
-          while (1) {
-            switch (_context6.prev = _context6.next) {
-              case 0:
-                return _context6.abrupt("return", new _FaustWasmToScriptProcessor__WEBPACK_IMPORTED_MODULE_8__["FaustWasmToScriptProcessor"](this).getNode(optionsIn));
-
-              case 1:
-              case "end":
-                return _context6.stop();
-            }
-          }
-        }, _callee6, this);
-      }));
-
-      function getScriptProcessorNode(_x9) {
-        return _getScriptProcessorNode.apply(this, arguments);
-      }
-
-      return getScriptProcessorNode;
-    }() // deleteDSPInstance() {}
-
-    /**
-     * Get a AudioWorkletNode from compiled dsp
-     *
-     * @private
-     * @param {TAudioNodeOptions} optionsIn
-     * @returns {Promise<FaustAudioWorkletNode>}
-     * @memberof Faust
-     */
-
-  }, {
-    key: "getAudioWorkletNode",
-    value: function () {
-      var _getAudioWorkletNode = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_3___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.mark(function _callee7(optionsIn) {
-        var compiledDspWithCodes, audioCtx, voices, plotHandler, compiledDsp, id, strProcessor, url;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_2___default.a.wrap(function _callee7$(_context7) {
-          while (1) {
-            switch (_context7.prev = _context7.next) {
-              case 0:
-                compiledDspWithCodes = optionsIn.compiledDsp, audioCtx = optionsIn.audioCtx, voices = optionsIn.voices, plotHandler = optionsIn.plotHandler;
-                compiledDsp = _objectSpread({}, compiledDspWithCodes);
-                delete compiledDsp.codes;
-                id = compiledDsp.shaKey + "_" + voices;
-
-                if (!(this.workletProcessors.indexOf(id) === -1)) {
-                  _context7.next = 10;
-                  break;
-                }
-
-                strProcessor = "\nconst remap = ".concat(_utils__WEBPACK_IMPORTED_MODULE_11__["remap"].toString(), ";\nconst midiToFreq = ").concat(_utils__WEBPACK_IMPORTED_MODULE_11__["midiToFreq"].toString(), ";\nconst findPath = ").concat(_utils__WEBPACK_IMPORTED_MODULE_11__["findPath"].toString(), ";\nconst createWasmImport = ").concat(_utils__WEBPACK_IMPORTED_MODULE_11__["createWasmImport"].toString(), ";\nconst createWasmMemory = ").concat(_utils__WEBPACK_IMPORTED_MODULE_11__["createWasmMemory"].toString(), ";\nconst faustData = ").concat(JSON.stringify({
-                  id: id,
-                  dspMeta: compiledDsp.dspMeta,
-                  effectMeta: compiledDsp.effectMeta
-                }), ";\n(").concat(_FaustAudioWorkletProcessor__WEBPACK_IMPORTED_MODULE_9__["FaustAudioWorkletProcessorWrapper"].toString(), ")();\n");
-                url = window.URL.createObjectURL(new Blob([strProcessor], {
-                  type: "text/javascript"
-                }));
-                _context7.next = 9;
-                return audioCtx.audioWorklet.addModule(url);
-
-              case 9:
-                this.workletProcessors.push(id);
-
-              case 10:
-                return _context7.abrupt("return", new _FaustAudioWorkletNode__WEBPACK_IMPORTED_MODULE_10__["FaustAudioWorkletNode"]({
-                  audioCtx: audioCtx,
-                  id: id,
-                  voices: voices,
-                  compiledDsp: compiledDsp,
-                  plotHandler: plotHandler,
-                  mixer32Module: _utils__WEBPACK_IMPORTED_MODULE_11__["mixer32Module"]
-                }));
-
-              case 11:
-              case "end":
-                return _context7.stop();
-            }
-          }
-        }, _callee7, this);
-      }));
-
-      function getAudioWorkletNode(_x10) {
-        return _getAudioWorkletNode.apply(this, arguments);
-      }
-
-      return getAudioWorkletNode;
-    }()
-    /**
-     * Remove a DSP from registry
-     *
-     * @private
-     * @param {TCompiledDsp} compiledDsp
-     * @memberof Faust
-     */
-
-  }, {
-    key: "deleteDsp",
-    value: function deleteDsp(compiledDsp) {
-      // The JS side is cleared
-      delete this.dspTable[compiledDsp.shaKey]; // The native C++ is cleared each time (freeWasmCModule has been already called in faust.compile)
-
-      this.deleteAllWasmCDSPFactories();
+  log() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
     }
-    /**
-     * Stringify current storaged DSP Table.
-     *
-     * @returns {string}
-     * @memberof Faust
-     */
 
-  }, {
-    key: "stringifyDspTable",
-    value: function stringifyDspTable() {
-      var strTable = {};
+    if (this.debug) console.log(...args);
+    var msg = args.length === 1 && typeof args[0] === "string" ? args[0] : JSON.stringify(args.length !== 1 ? args : args[0]);
 
-      for (var key in this.dspTable) {
-        var codes = this.dspTable[key].codes;
-        strTable[key] = {
-          dsp: {
-            strCode: btoa(_utils__WEBPACK_IMPORTED_MODULE_11__["ab2str"](codes.dsp.ui8Code)),
-            code: codes.dsp.code,
-            helpersCode: codes.dsp.helpersCode
-          },
-          effect: codes.effect ? {
-            strCode: btoa(_utils__WEBPACK_IMPORTED_MODULE_11__["ab2str"](codes.effect.ui8Code)),
-            code: codes.effect.code,
-            helpersCode: codes.effect.helpersCode
-          } : undefined
-        };
-      }
+    this._log.push(msg);
 
-      return JSON.stringify(strTable);
+    if (typeof this.logHandler === "function") this.logHandler(msg, 0);
+  }
+
+  error() {
+    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
     }
-    /**
-     * parse and store a stringified DSP Table.
-     *
-     * @param {string} str
-     * @memberof Faust
-     */
 
-  }, {
-    key: "parseDspTable",
-    value: function parseDspTable(str) {
-      var _this2 = this;
+    console.error(...args);
+    var msg = args.length === 1 && typeof args[0] === "string" ? args[0] : JSON.stringify(args.length !== 1 ? args : args[0]);
 
-      var strTable = JSON.parse(str);
+    this._log.push(msg);
 
-      var _loop = function _loop(_shaKey) {
-        if (_this2.dspTable[_shaKey]) return "continue";
-        var strCodes = strTable[_shaKey];
-        var compiledCodes = {
-          dsp: {
-            ui8Code: _utils__WEBPACK_IMPORTED_MODULE_11__["str2ab"](atob(strCodes.dsp.strCode)),
-            code: strCodes.dsp.code,
-            helpersCode: strCodes.dsp.helpersCode
-          },
-          effect: strCodes.effect ? {
-            ui8Code: _utils__WEBPACK_IMPORTED_MODULE_11__["str2ab"](atob(strCodes.effect.strCode)),
-            code: strCodes.effect.code,
-            helpersCode: strCodes.effect.helpersCode
-          } : undefined
-        };
+    if (typeof this.logHandler === "function") this.logHandler(msg, 1);
+  }
 
-        _this2.compileDsp(compiledCodes, _shaKey).then(function (dsp) {
-          return _this2.dspTable[_shaKey] = dsp;
-        });
-      };
-
-      for (var _shaKey in strTable) {
-        var _ret = _loop(_shaKey);
-
-        if (_ret === "continue") continue;
-      }
-    } // deleteDSPWorkletInstance() {}
-
-    /**
-     * Get an SVG Diagram XML File as string
-     *
-     * @param {string} code faust source code
-     * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
-     * @returns {string} svg file as string
-     * @memberof Faust
-     */
-
-  }, {
-    key: "getDiagram",
-    value: function getDiagram(code, args) {
-      var codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
-
-      var $code = this.libFaust._malloc(codeSize);
-
-      var name = "FaustDSP";
-      var nameSize = this.libFaust.lengthBytesUTF8(name) + 1;
-
-      var $name = this.libFaust._malloc(nameSize);
-
-      var $errorMsg = this.libFaust._malloc(4096);
-
-      this.libFaust.stringToUTF8(name, $name, nameSize);
-      this.libFaust.stringToUTF8(code, $code, codeSize);
-      var argvIn = args ? _utils__WEBPACK_IMPORTED_MODULE_11__["toArgv"](args) : [];
-      var argv = [].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(argvIn), ["-lang", "wast", "-o", "/dev/null", "-svg"]); // Prepare 'argv' array for C side
-
-      var ptrSize = 4;
-
-      var $argv = this.libFaust._malloc(argv.length * ptrSize); // Get buffer from emscripten.
-
-
-      var argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Get a integer view on the newly allocated buffer.
-
-      for (var i = 0; i < argv.length; i++) {
-        var size$arg = this.libFaust.lengthBytesUTF8(argv[i]) + 1;
-
-        var $arg = this.libFaust._malloc(size$arg);
-
-        this.libFaust.stringToUTF8(argv[i], $arg, size$arg);
-        argvBuffer$[i] = $arg;
-      }
-
-      try {
-        this.generateCAuxFilesFromString($name, $code, argv.length, $argv, $errorMsg); // Free strings
-
-        this.libFaust._free($code);
-
-        this.libFaust._free($name);
-
-        this.libFaust._free($errorMsg); // Get an updated integer view on the newly allocated buffer after possible emscripten memory grow
-
-
-        argvBuffer$ = new Int32Array(this.libFaust.HEAP32.buffer, $argv, argv.length); // Free 'argv' C side array
-
-        for (var _i4 = 0; _i4 < argv.length; _i4++) {
-          this.libFaust._free(argvBuffer$[_i4]);
-        }
-
-        this.libFaust._free($argv);
-      } catch (e) {
-        // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-        var errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
-
-        if (!errorMsg) errorMsg = e;
-        this.cleanupAfterException();
-        throw errorMsg;
-      }
-
-      return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", {
-        encoding: "utf8"
-      });
-    }
-    /**
-     * Expose LibFaust Emscripten Module File System
-     *
-     * @param {string} path path string
-     * @returns {Emscripten.FS} Emscripten Module File System
-     * @memberof Faust
-     */
-
-  }, {
-    key: "log",
-    value: function log() {
-      var _console;
-
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      if (this.debug) (_console = console).log.apply(_console, args);
-      var msg = args.length === 1 && typeof args[0] === "string" ? args[0] : JSON.stringify(args.length !== 1 ? args : args[0]);
-
-      this._log.push(msg);
-
-      if (typeof this.logHandler === "function") this.logHandler(msg, 0);
-    }
-  }, {
-    key: "error",
-    value: function error() {
-      var _console2;
-
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-
-      (_console2 = console).error.apply(_console2, args);
-
-      var msg = args.length === 1 && typeof args[0] === "string" ? args[0] : JSON.stringify(args.length !== 1 ? args : args[0]);
-
-      this._log.push(msg);
-
-      if (typeof this.logHandler === "function") this.logHandler(msg, 1);
-    }
-  }, {
-    key: "ready",
-    get: function get() {
-      return this.loadLibFaust();
-    }
-  }, {
-    key: "fs",
-    get: function get() {
-      return this.libFaust.FS;
-    }
-  }]);
-
-  return Faust;
-}();
+}
 
 /***/ }),
 
@@ -26385,21 +25961,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FaustAudioWorkletNode", function() { return FaustAudioWorkletNode; });
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_5__);
-
-
-
-
-
 
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -26409,11 +25970,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 /* eslint-disable object-curly-newline */
 
 /* eslint-disable object-property-newline */
-var FaustAudioWorkletNode =
-/*#__PURE__*/
-function (_ref) {
-  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_5___default()(FaustAudioWorkletNode, _ref);
-
+class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode : null) {
   /* WAP ??
   getMetadata = this.getJSON;
   setParam = this.setParamValue;
@@ -26444,12 +26001,8 @@ function (_ref) {
   gui: any;
   presets: any;
   */
-  function FaustAudioWorkletNode(options) {
-    var _this;
-
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_1___default()(this, FaustAudioWorkletNode);
-
-    _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(FaustAudioWorkletNode).call(this, options.audioCtx, options.id, {
+  constructor(options) {
+    super(options.audioCtx, options.id, {
       numberOfInputs: options.compiledDsp.dspMeta.inputs > 0 ? 1 : 0,
       numberOfOutputs: options.compiledDsp.dspMeta.outputs > 0 ? 1 : 0,
       channelCount: Math.max(1, options.compiledDsp.dspMeta.inputs),
@@ -26462,210 +26015,1726 @@ function (_ref) {
         compiledDsp: options.compiledDsp,
         mixer32Module: options.mixer32Module
       }
-    })); // Patch it with additional functions
+    }); // Patch it with additional functions
 
-    _this.onprocessorerror = function (e) {
-      console.error("Error from " + _this.dspMeta.name + " AudioWorkletNode: "); // eslint-disable-line no-console
+    this.onprocessorerror = e => {
+      console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: "); // eslint-disable-line no-console
 
       throw e;
     };
 
-    _this.voices = void 0;
-    _this.dspMeta = void 0;
-    _this.effectMeta = void 0;
-    _this.outputHandler = void 0;
-    _this.inputsItems = void 0;
-    _this.outputsItems = void 0;
-    _this.plotHandler = void 0;
+    this.voices = void 0;
+    this.dspMeta = void 0;
+    this.effectMeta = void 0;
+    this.outputHandler = void 0;
+    this.inputsItems = void 0;
+    this.outputsItems = void 0;
+    this.plotHandler = void 0;
 
-    _this.port.onmessage = function (e) {
-      if (e.data.type === "param" && _this.outputHandler) {
-        _this.outputHandler(e.data.path, e.data.value);
+    this.port.onmessage = e => {
+      if (e.data.type === "param" && this.outputHandler) {
+        this.outputHandler(e.data.path, e.data.value);
       } else if (e.data.type === "plot") {
-        if (_this.plotHandler) _this.plotHandler(e.data.value, e.data.index, e.data.events);
+        if (this.plotHandler) this.plotHandler(e.data.value, e.data.index, e.data.events);
       }
     };
 
-    _this.voices = options.voices;
-    _this.dspMeta = options.compiledDsp.dspMeta;
-    _this.effectMeta = options.compiledDsp.effectMeta;
-    _this.outputHandler = null;
-    _this.inputsItems = [];
-    _this.outputsItems = [];
-    _this.plotHandler = options.plotHandler;
-
-    _this.parseUI(_this.dspMeta.ui);
-
-    return _this;
+    this.voices = options.voices;
+    this.dspMeta = options.compiledDsp.dspMeta;
+    this.effectMeta = options.compiledDsp.effectMeta;
+    this.outputHandler = null;
+    this.inputsItems = [];
+    this.outputsItems = [];
+    this.plotHandler = options.plotHandler;
+    this.parseUI(this.dspMeta.ui);
   }
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(FaustAudioWorkletNode, [{
-    key: "parseUI",
-    value: function parseUI(ui) {
-      var _this2 = this;
+  parseUI(ui) {
+    ui.forEach(group => this.parseGroup(group));
+  }
 
-      ui.forEach(function (group) {
-        return _this2.parseGroup(group);
-      });
-    }
-  }, {
-    key: "parseGroup",
-    value: function parseGroup(group) {
-      if (group.items) this.parseItems(group.items);
-    }
-  }, {
-    key: "parseItems",
-    value: function parseItems(items) {
-      var _this3 = this;
+  parseGroup(group) {
+    if (group.items) this.parseItems(group.items);
+  }
 
-      items.forEach(function (item) {
-        return _this3.parseItem(item);
-      });
+  parseItems(items) {
+    items.forEach(item => this.parseItem(item));
+  }
+
+  parseItem(item) {
+    if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
+      this.parseItems(item.items);
+    } else if (item.type === "hbargraph" || item.type === "vbargraph") {
+      // Keep bargraph adresses
+      this.outputsItems.push(item.address);
+    } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
+      // Keep inputs adresses
+      this.inputsItems.push(item.address);
     }
-  }, {
-    key: "parseItem",
-    value: function parseItem(item) {
-      if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
-        this.parseItems(item.items);
-      } else if (item.type === "hbargraph" || item.type === "vbargraph") {
-        // Keep bargraph adresses
-        this.outputsItems.push(item.address);
-      } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
-        // Keep inputs adresses
-        this.inputsItems.push(item.address);
+  }
+  /**
+   * Instantiates a new polyphonic voice.
+   *
+   * @param {number} channel - the MIDI channel (0..15, not used for now)
+   * @param {number} pitch - the MIDI pitch (0..127)
+   * @param {number} velocity - the MIDI velocity (0..127)
+   * @memberof FaustAudioWorkletNode
+   */
+
+
+  keyOn(channel, pitch, velocity) {
+    var e = {
+      type: "keyOn",
+      data: [channel, pitch, velocity]
+    };
+    this.port.postMessage(e);
+  }
+  /**
+   * De-instantiates a polyphonic voice.
+   *
+   * @param {number} channel - the MIDI channel (0..15, not used for now)
+   * @param {number} pitch - the MIDI pitch (0..127)
+   * @param {number} velocity - the MIDI velocity (0..127)
+   * @memberof FaustAudioWorkletNode
+   */
+
+
+  keyOff(channel, pitch, velocity) {
+    var e = {
+      type: "keyOff",
+      data: [channel, pitch, velocity]
+    };
+    this.port.postMessage(e);
+  }
+  /**
+   * Gently terminates all the active voices.
+   *
+   * @memberof FaustAudioWorkletNode
+   */
+
+
+  allNotesOff() {
+    var e = {
+      type: "ctrlChange",
+      data: [0, 123, 0]
+    };
+    this.port.postMessage(e);
+  }
+
+  ctrlChange(channel, ctrl, value) {
+    var e = {
+      type: "ctrlChange",
+      data: [channel, ctrl, value]
+    };
+    this.port.postMessage(e);
+  }
+
+  pitchWheel(channel, wheel) {
+    var e = {
+      type: "pitchWheel",
+      data: [channel, wheel]
+    };
+    this.port.postMessage(e);
+  }
+
+  midiMessage(data) {
+    var e = {
+      data,
+      type: "midi"
+    };
+    this.port.postMessage(e);
+  }
+
+  metadata() {} // eslint-disable-line class-methods-use-this
+
+
+  setParamValue(path, value) {
+    var e = {
+      type: "param",
+      data: {
+        path,
+        value
+      }
+    };
+    this.port.postMessage(e);
+    this.parameters.get(path).setValueAtTime(value, 0);
+  }
+
+  getParamValue(path) {
+    return this.parameters.get(path).value;
+  }
+
+  setOutputParamHandler(handler) {
+    this.outputHandler = handler;
+  }
+
+  getOutputParamHandler() {
+    return this.outputHandler;
+  }
+
+  getNumInputs() {
+    return this.dspMeta.inputs;
+  }
+
+  getNumOutputs() {
+    return this.dspMeta.outputs;
+  }
+
+  getParams() {
+    return this.inputsItems;
+  }
+
+  getJSON() {
+    if (this.voices) {
+      var o = this.dspMeta;
+      var e = this.effectMeta;
+
+      var r = _objectSpread({}, o);
+
+      if (e) {
+        r.ui = [{
+          type: "tgroup",
+          label: "Sequencer",
+          items: [{
+            type: "vgroup",
+            label: "Instrument",
+            items: o.ui
+          }, {
+            type: "vgroup",
+            label: "Effect",
+            items: e.ui
+          }]
+        }];
+      } else {
+        r.ui = [{
+          type: "tgroup",
+          label: "Polyphonic",
+          items: [{
+            type: "vgroup",
+            label: "Voices",
+            items: o.ui
+          }]
+        }];
+      }
+
+      return JSON.stringify(r);
+    }
+
+    return JSON.stringify(this.dspMeta);
+  }
+
+  getUI() {
+    if (this.voices) {
+      var o = this.dspMeta;
+      var e = this.effectMeta;
+
+      if (e) {
+        return [{
+          type: "tgroup",
+          label: "Sequencer",
+          items: [{
+            type: "vgroup",
+            label: "Instrument",
+            items: o.ui
+          }, {
+            type: "vgroup",
+            label: "Effect",
+            items: e.ui
+          }]
+        }];
+      }
+
+      return [{
+        type: "tgroup",
+        label: "Polyphonic",
+        items: [{
+          type: "vgroup",
+          label: "Voices",
+          items: o.ui
+        }]
+      }];
+    }
+
+    return this.dspMeta.ui;
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/FaustAudioWorkletProcessor.ts":
+/*!*******************************************!*\
+  !*** ./src/FaustAudioWorkletProcessor.ts ***!
+  \*******************************************/
+/*! exports provided: FaustAudioWorkletProcessorWrapper */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FaustAudioWorkletProcessorWrapper", function() { return FaustAudioWorkletProcessorWrapper; });
+/* eslint-disable no-console */
+
+/* eslint-disable no-restricted-properties */
+
+/* eslint-disable @typescript-eslint/camelcase */
+
+/* eslint-disable object-property-newline */
+
+/* eslint-env worker */
+// AudioWorklet Globals
+// Injected by Faust
+var FaustAudioWorkletProcessorWrapper = () => {
+  class FaustConst {}
+
+  FaustConst.id = faustData.id;
+  FaustConst.dspMeta = faustData.dspMeta;
+  FaustConst.effectMeta = faustData.effectMeta;
+
+  class FaustAudioWorkletProcessor extends AudioWorkletProcessor {
+    // JSON parsing functions
+    static parseUI(ui, obj, callback) {
+      for (var i = 0; i < ui.length; i++) {
+        this.parseGroup(ui[i], obj, callback);
       }
     }
-    /**
-     * Instantiates a new polyphonic voice.
-     *
-     * @param {number} channel - the MIDI channel (0..15, not used for now)
-     * @param {number} pitch - the MIDI pitch (0..127)
-     * @param {number} velocity - the MIDI velocity (0..127)
-     * @memberof FaustAudioWorkletNode
-     */
 
-  }, {
-    key: "keyOn",
-    value: function keyOn(channel, pitch, velocity) {
-      var e = {
-        type: "keyOn",
-        data: [channel, pitch, velocity]
-      };
-      this.port.postMessage(e);
+    static parseGroup(group, obj, callback) {
+      if (group.items) {
+        this.parseItems(group.items, obj, callback);
+      }
     }
-    /**
-     * De-instantiates a polyphonic voice.
-     *
-     * @param {number} channel - the MIDI channel (0..15, not used for now)
-     * @param {number} pitch - the MIDI pitch (0..127)
-     * @param {number} velocity - the MIDI velocity (0..127)
-     * @memberof FaustAudioWorkletNode
-     */
 
-  }, {
-    key: "keyOff",
-    value: function keyOff(channel, pitch, velocity) {
-      var e = {
-        type: "keyOff",
-        data: [channel, pitch, velocity]
-      };
-      this.port.postMessage(e);
+    static parseItems(items, obj, callback) {
+      for (var i = 0; i < items.length; i++) {
+        callback(items[i], obj, callback);
+      }
     }
-    /**
-     * Gently terminates all the active voices.
-     *
-     * @memberof FaustAudioWorkletNode
-     */
 
-  }, {
-    key: "allNotesOff",
-    value: function allNotesOff() {
-      var e = {
-        type: "ctrlChange",
-        data: [0, 123, 0]
-      };
-      this.port.postMessage(e);
+    static parseItem(item, obj, callback) {
+      if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
+        FaustAudioWorkletProcessor.parseItems(item.items, obj, callback); // callback may not binded to this
+      } else if (item.type === "hbargraph" || item.type === "vbargraph") {// Nothing
+      } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
+        obj.push({
+          name: item.address,
+          defaultValue: item.init || 0,
+          minValue: item.min || 0,
+          maxValue: item.max || 0
+        });
+      } else if (item.type === "button" || item.type === "checkbox") {
+        obj.push({
+          name: item.address,
+          defaultValue: item.init || 0,
+          minValue: 0,
+          maxValue: 1
+        });
+      }
     }
-  }, {
-    key: "ctrlChange",
-    value: function ctrlChange(channel, ctrl, value) {
-      var e = {
-        type: "ctrlChange",
-        data: [channel, ctrl, value]
-      };
-      this.port.postMessage(e);
-    }
-  }, {
-    key: "pitchWheel",
-    value: function pitchWheel(channel, wheel) {
-      var e = {
-        type: "pitchWheel",
-        data: [channel, wheel]
-      };
-      this.port.postMessage(e);
-    }
-  }, {
-    key: "midiMessage",
-    value: function midiMessage(data) {
-      var e = {
-        data: data,
-        type: "midi"
-      };
-      this.port.postMessage(e);
-    }
-  }, {
-    key: "metadata",
-    value: function metadata() {} // eslint-disable-line class-methods-use-this
 
-  }, {
-    key: "setParamValue",
-    value: function setParamValue(path, value) {
-      var e = {
-        type: "param",
-        data: {
-          path: path,
-          value: value
+    static parseItem2(item, obj, callback) {
+      if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
+        FaustAudioWorkletProcessor.parseItems(item.items, obj, callback); // callback may not binded to this
+      } else if (item.type === "hbargraph" || item.type === "vbargraph") {
+        // Keep bargraph adresses
+        obj.outputsItems.push(item.address);
+        obj.pathTable$[item.address] = item.index; // eslint-disable-line no-param-reassign
+      } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
+        // Keep inputs adresses
+        obj.inputsItems.push(item.address);
+        obj.pathTable$[item.address] = item.index; // eslint-disable-line no-param-reassign
+
+        if (!item.meta) return;
+        item.meta.forEach(meta => {
+          var midi = meta.midi;
+          if (!midi) return;
+          var strMidi = midi.trim();
+
+          if (strMidi === "pitchwheel") {
+            obj.fPitchwheelLabel.push({
+              path: item.address,
+              min: item.min,
+              max: item.max
+            });
+          } else {
+            var matched = strMidi.match(/^ctrl\s(\d+)/);
+            if (!matched) return;
+            obj.fCtrlLabel[parseInt(matched[1])].push({
+              path: item.address,
+              min: item.min,
+              max: item.max
+            });
+          }
+        });
+      }
+    }
+
+    static get parameterDescriptors() {
+      // Analyse JSON to generate AudioParam parameters
+      var params = [];
+      this.parseUI(FaustConst.dspMeta.ui, params, this.parseItem);
+      if (FaustConst.effectMeta) this.parseUI(FaustConst.effectMeta.ui, params, this.parseItem);
+      return params;
+    }
+
+    constructor(options) {
+      super(options);
+      this.dspInstance = void 0;
+      this.effectInstance = void 0;
+      this.mixerInstance = void 0;
+      this.memory = void 0;
+      this.bufferSize = void 0;
+      this.voices = void 0;
+      this.dspMeta = void 0;
+      this.$ins = void 0;
+      this.$outs = void 0;
+      this.dspInChannnels = void 0;
+      this.dspOutChannnels = void 0;
+      this.fPitchwheelLabel = void 0;
+      this.fCtrlLabel = void 0;
+      this.numIn = void 0;
+      this.numOut = void 0;
+      this.ptrSize = void 0;
+      this.sampleSize = void 0;
+      this.outputsTimer = void 0;
+      this.inputsItems = void 0;
+      this.outputsItems = void 0;
+      this.pathTable$ = void 0;
+      this.$audioHeap = void 0;
+      this.$$audioHeapInputs = void 0;
+      this.$$audioHeapOutputs = void 0;
+      this.$audioHeapInputs = void 0;
+      this.$audioHeapOutputs = void 0;
+      this.$dsp = void 0;
+      this.factory = void 0;
+      this.HEAP = void 0;
+      this.HEAP32 = void 0;
+      this.HEAPF32 = void 0;
+      this.effectMeta = void 0;
+      this.$effect = void 0;
+      this.$mixing = void 0;
+      this.fFreqLabel$ = void 0;
+      this.fGateLabel$ = void 0;
+      this.fGainLabel$ = void 0;
+      this.fDate = void 0;
+      this.$$audioHeapMixing = void 0;
+      this.$audioHeapMixing = void 0;
+      this.mixer = void 0;
+      this.effect = void 0;
+      this.dspVoices$ = void 0;
+      this.dspVoicesState = void 0;
+      this.dspVoicesLevel = void 0;
+      this.dspVoicesDate = void 0;
+      this.kActiveVoice = void 0;
+      this.kFreeVoice = void 0;
+      this.kReleaseVoice = void 0;
+      this.kNoVoice = void 0;
+      this.$buffer = void 0;
+      this.cachedEvents = void 0;
+      this.outputHandler = void 0;
+      this.computeHandler = void 0;
+
+      this.handleMessage = e => {
+        // use arrow function for binding
+        var msg = e.data;
+        this.cachedEvents.push({
+          type: e.data.type,
+          data: e.data.data
+        });
+
+        switch (msg.type) {
+          // Generic MIDI message
+          case "midi":
+            this.midiMessage(msg.data);
+            break;
+          // Typed MIDI message
+
+          case "keyOn":
+            this.keyOn(msg.data[0], msg.data[1], msg.data[2]);
+            break;
+
+          case "keyOff":
+            this.keyOff(msg.data[0], msg.data[1], msg.data[2]);
+            break;
+
+          case "ctrlChange":
+            this.ctrlChange(msg.data[0], msg.data[1], msg.data[2]);
+            break;
+
+          case "pitchWheel":
+            this.pitchWheel(msg.data[0], msg.data[1]);
+            break;
+          // Generic data message
+
+          case "param":
+            this.setParamValue(msg.data.path, msg.data.value);
+            break;
+          // case "patch": this.onpatch(msg.data); break;
+
+          default:
         }
       };
-      this.port.postMessage(e);
-      this.parameters.get(path).setValueAtTime(value, 0);
-    }
-  }, {
-    key: "getParamValue",
-    value: function getParamValue(path) {
-      return this.parameters.get(path).value;
-    }
-  }, {
-    key: "setOutputParamHandler",
-    value: function setOutputParamHandler(handler) {
-      this.outputHandler = handler;
-    }
-  }, {
-    key: "getOutputParamHandler",
-    value: function getOutputParamHandler() {
-      return this.outputHandler;
-    }
-  }, {
-    key: "getNumInputs",
-    value: function getNumInputs() {
-      return this.dspMeta.inputs;
-    }
-  }, {
-    key: "getNumOutputs",
-    value: function getNumOutputs() {
-      return this.dspMeta.outputs;
-    }
-  }, {
-    key: "getParams",
-    value: function getParams() {
-      return this.inputsItems;
-    }
-  }, {
-    key: "getJSON",
-    value: function getJSON() {
+
+      var processorOptions = options.processorOptions;
+      this.instantiateWasm(processorOptions);
+      this.port.onmessage = this.handleMessage; // Naturally binded with arrow function property
+
+      this.bufferSize = 128;
+      this.voices = processorOptions.voices;
+      this.dspMeta = processorOptions.compiledDsp.dspMeta;
+
+      this.outputHandler = (path, value) => this.port.postMessage({
+        path,
+        value,
+        type: "param"
+      });
+
+      this.computeHandler = null;
+      this.$ins = null;
+      this.$outs = null;
+      this.dspInChannnels = [];
+      this.dspOutChannnels = [];
+      this.fPitchwheelLabel = [];
+      this.fCtrlLabel = new Array(128).fill(null).map(() => []);
+      this.numIn = this.dspMeta.inputs;
+      this.numOut = this.dspMeta.outputs; // Memory allocator
+
+      this.ptrSize = 4;
+      this.sampleSize = 4; // Create the WASM instance
+
+      this.factory = this.dspInstance.exports;
+      this.HEAP = this.voices ? this.memory.buffer : this.factory.memory.buffer;
+      this.HEAP32 = new Int32Array(this.HEAP);
+      this.HEAPF32 = new Float32Array(this.HEAP); // console.log(this.HEAP);
+      // console.log(this.HEAP32);
+      // console.log(this.HEAPF32);
+      // bargraph
+
+      this.outputsTimer = 5;
+      this.outputsItems = []; // input items
+
+      this.inputsItems = []; // Start of HEAP index
+      // DSP is placed first with index 0. Audio buffer start at the end of DSP.
+
+      this.$audioHeap = this.voices ? 0 : this.dspMeta.size; // Setup pointers offset
+
+      this.$$audioHeapInputs = this.$audioHeap;
+      this.$$audioHeapOutputs = this.$$audioHeapInputs + this.numIn * this.ptrSize; // Setup buffer offset
+
+      this.$audioHeapInputs = this.$$audioHeapOutputs + this.numOut * this.ptrSize;
+      this.$audioHeapOutputs = this.$audioHeapInputs + this.numIn * this.bufferSize * this.sampleSize;
+
       if (this.voices) {
-        var o = this.dspMeta;
-        var e = this.effectMeta;
+        this.$$audioHeapMixing = this.$$audioHeapOutputs + this.numOut * this.ptrSize; // Setup buffer offset
+
+        this.$audioHeapInputs = this.$$audioHeapMixing + this.numOut * this.ptrSize;
+        this.$audioHeapOutputs = this.$audioHeapInputs + this.numIn * this.bufferSize * this.sampleSize;
+        this.$audioHeapMixing = this.$audioHeapOutputs + this.numOut * this.bufferSize * this.sampleSize;
+        this.$dsp = this.$audioHeapMixing + this.numOut * this.bufferSize * this.sampleSize;
+      } else {
+        this.$audioHeapInputs = this.$$audioHeapOutputs + this.numOut * this.ptrSize;
+        this.$audioHeapOutputs = this.$audioHeapInputs + this.numIn * this.bufferSize * this.sampleSize; // Start of DSP memory : Mono DSP is placed first with index 0
+
+        this.$dsp = 0;
+      }
+
+      if (this.voices) {
+        this.effectMeta = FaustConst.effectMeta;
+        this.$mixing = null;
+        this.fFreqLabel$ = [];
+        this.fGateLabel$ = [];
+        this.fGainLabel$ = [];
+        this.fDate = 0;
+        this.mixer = this.mixerInstance.exports;
+        this.effect = this.effectInstance ? this.effectInstance.exports : null; // Start of DSP memory ('polyphony' DSP voices)
+
+        this.dspVoices$ = [];
+        this.dspVoicesState = [];
+        this.dspVoicesLevel = [];
+        this.dspVoicesDate = [];
+        this.kActiveVoice = 0;
+        this.kFreeVoice = -1;
+        this.kReleaseVoice = -2;
+        this.kNoVoice = -3;
+
+        for (var i = 0; i < this.voices; i++) {
+          this.dspVoices$[i] = this.$dsp + i * this.dspMeta.size;
+          this.dspVoicesState[i] = this.kFreeVoice;
+          this.dspVoicesLevel[i] = 0;
+          this.dspVoicesDate[i] = 0;
+        } // Effect memory starts after last voice
+
+
+        this.$effect = this.dspVoices$[this.voices - 1] + this.dspMeta.size;
+      }
+
+      this.pathTable$ = {};
+      this.$buffer = 0;
+      this.cachedEvents = []; // Init resulting DSP
+
+      this.setup();
+    }
+
+    instantiateWasm(options) {
+      var memory = createWasmMemory(options.voices, options.compiledDsp.dspMeta, options.compiledDsp.effectMeta, 128);
+      this.memory = memory;
+      var imports = createWasmImport(options.voices, memory);
+      this.dspInstance = new WebAssembly.Instance(options.compiledDsp.dspModule, imports);
+
+      if (options.compiledDsp.effectModule) {
+        this.effectInstance = new WebAssembly.Instance(options.compiledDsp.effectModule, imports);
+      }
+
+      if (options.voices) {
+        var mixerImports = {
+          imports: {
+            print: console.log
+          },
+          memory: {
+            memory
+          }
+        };
+        this.mixerInstance = new WebAssembly.Instance(options.mixer32Module, mixerImports);
+      }
+    }
+
+    updateOutputs() {
+      if (this.outputsItems.length > 0 && this.outputHandler && this.outputsTimer-- === 0) {
+        this.outputsTimer = 5;
+        this.outputsItems.forEach(item => this.outputHandler(item, this.factory.getParamValue(this.$dsp, this.pathTable$[item])));
+      }
+    }
+
+    parseUI(ui) {
+      return FaustAudioWorkletProcessor.parseUI(ui, this, FaustAudioWorkletProcessor.parseItem2);
+    }
+
+    parseGroup(group) {
+      return FaustAudioWorkletProcessor.parseGroup(group, this, FaustAudioWorkletProcessor.parseItem2);
+    }
+
+    parseItems(items) {
+      return FaustAudioWorkletProcessor.parseItems(items, this, FaustAudioWorkletProcessor.parseItem2);
+    }
+
+    parseItem(item) {
+      return FaustAudioWorkletProcessor.parseItem2(item, this, FaustAudioWorkletProcessor.parseItem2);
+    }
+
+    setParamValue(path, val) {
+      if (this.voices) {
+        if (this.effect && findPath(this.effectMeta.ui, path)) this.effect.setParamValue(this.$effect, this.pathTable$[path], val);else this.dspVoices$.forEach($voice => this.factory.setParamValue($voice, this.pathTable$[path], val));
+      } else {
+        this.factory.setParamValue(this.$dsp, this.pathTable$[path], val);
+      }
+    }
+
+    getParamValue(path) {
+      if (this.voices) {
+        if (this.effect && findPath(this.effectMeta.ui, path)) return this.effect.getParamValue(this.$effect, this.pathTable$[path]);
+        return this.factory.getParamValue(this.dspVoices$[0], this.pathTable$[path]);
+      }
+
+      return this.factory.getParamValue(this.$dsp, this.pathTable$[path]);
+    }
+
+    setup() {
+      if (this.numIn > 0) {
+        this.$ins = this.$$audioHeapInputs;
+
+        for (var i = 0; i < this.numIn; i++) {
+          this.HEAP32[(this.$ins >> 2) + i] = this.$audioHeapInputs + this.bufferSize * this.sampleSize * i;
+        } // Prepare Ins buffer tables
+
+
+        var dspInChans = this.HEAP32.subarray(this.$ins >> 2, this.$ins + this.numIn * this.ptrSize >> 2);
+
+        for (var _i = 0; _i < this.numIn; _i++) {
+          this.dspInChannnels[_i] = this.HEAPF32.subarray(dspInChans[_i] >> 2, dspInChans[_i] + this.bufferSize * this.sampleSize >> 2);
+        }
+      }
+
+      if (this.numOut > 0) {
+        this.$outs = this.$$audioHeapOutputs;
+        if (this.voices) this.$mixing = this.$$audioHeapMixing;
+
+        for (var _i2 = 0; _i2 < this.numOut; _i2++) {
+          this.HEAP32[(this.$outs >> 2) + _i2] = this.$audioHeapOutputs + this.bufferSize * this.sampleSize * _i2;
+          if (this.voices) this.HEAP32[(this.$mixing >> 2) + _i2] = this.$audioHeapMixing + this.bufferSize * this.sampleSize * _i2;
+        } // Prepare Out buffer tables
+
+
+        var dspOutChans = this.HEAP32.subarray(this.$outs >> 2, this.$outs + this.numOut * this.ptrSize >> 2);
+
+        for (var _i3 = 0; _i3 < this.numOut; _i3++) {
+          this.dspOutChannnels[_i3] = this.HEAPF32.subarray(dspOutChans[_i3] >> 2, dspOutChans[_i3] + this.bufferSize * this.sampleSize >> 2);
+        }
+      } // Parse UI
+
+
+      this.parseUI(this.dspMeta.ui);
+      if (this.effect) this.parseUI(this.effectMeta.ui); // keep 'keyOn/keyOff' labels
+
+      if (this.voices) {
+        this.inputsItems.forEach(item => {
+          if (item.endsWith("/gate")) this.fGateLabel$.push(this.pathTable$[item]);else if (item.endsWith("/freq")) this.fFreqLabel$.push(this.pathTable$[item]);else if (item.endsWith("/gain")) this.fGainLabel$.push(this.pathTable$[item]);
+        }); // Init DSP voices
+
+        this.dspVoices$.forEach($voice => this.factory.init($voice, sampleRate)); // Init effect
+
+        if (this.effect) this.effect.init(this.$effect, sampleRate);
+      } else {
+        // Init DSP
+        this.factory.init(this.$dsp, sampleRate); // 'sampleRate' is defined in AudioWorkletGlobalScope
+      }
+    } // Poly only methods
+
+
+    getPlayingVoice(pitch) {
+      if (!this.voices) return null;
+      var voice = this.kNoVoice;
+      var oldestDatePlaying = Number.MAX_VALUE;
+
+      for (var i = 0; i < this.voices; i++) {
+        if (this.dspVoicesState[i] === pitch) {
+          // Keeps oldest playing voice
+          if (this.dspVoicesDate[i] < oldestDatePlaying) {
+            oldestDatePlaying = this.dspVoicesDate[i];
+            voice = i;
+          }
+        }
+      }
+
+      return voice;
+    }
+
+    allocVoice(voice) {
+      if (!this.voices) return null; // so that envelop is always re-initialized
+
+      this.factory.instanceClear(this.dspVoices$[voice]);
+      this.dspVoicesDate[voice] = this.fDate++;
+      this.dspVoicesState[voice] = this.kActiveVoice;
+      return voice;
+    }
+
+    getFreeVoice() {
+      if (!this.voices) return null;
+
+      for (var i = 0; i < this.voices; i++) {
+        if (this.dspVoicesState[i] === this.kFreeVoice) return this.allocVoice(i);
+      }
+
+      var voiceRelease = this.kNoVoice;
+      var voicePlaying = this.kNoVoice;
+      var oldestDateRelease = Number.MAX_VALUE;
+      var oldestDatePlaying = Number.MAX_VALUE;
+
+      for (var _i4 = 0; _i4 < this.voices; _i4++) {
+        // Scan all voices
+        // Try to steal a voice in kReleaseVoice mode...
+        if (this.dspVoicesState[_i4] === this.kReleaseVoice) {
+          // Keeps oldest release voice
+          if (this.dspVoicesDate[_i4] < oldestDateRelease) {
+            oldestDateRelease = this.dspVoicesDate[_i4];
+            voiceRelease = _i4;
+          }
+        } else if (this.dspVoicesDate[_i4] < oldestDatePlaying) {
+          oldestDatePlaying = this.dspVoicesDate[_i4];
+          voicePlaying = _i4;
+        }
+      } // Then decide which one to steal
+
+
+      if (oldestDateRelease !== Number.MAX_VALUE) {
+        // console.log(`Steal release voice : voice_date = ${this.dspVoicesDate[voiceRelease]} cur_date = ${this.fDate} voice = ${voiceRelease}`);
+        return this.allocVoice(voiceRelease);
+      }
+
+      if (oldestDatePlaying !== Number.MAX_VALUE) {
+        // console.log(`Steal playing voice : voice_date = ${this.dspVoicesDate[voicePlaying]} cur_date = ${this.fDate} voice = ${voicePlaying}`);
+        return this.allocVoice(voicePlaying);
+      }
+
+      return this.kNoVoice;
+    }
+
+    keyOn(channel, pitch, velocity) {
+      if (!this.voices) return;
+      var voice = this.getFreeVoice(); // console.log("keyOn voice " + voice);
+
+      this.fFreqLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, midiToFreq(pitch)));
+      this.fGateLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, 1));
+      this.fGainLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, velocity / 127));
+      this.dspVoicesState[voice] = pitch;
+    }
+
+    keyOff(channel, pitch, velocity) {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
+      if (!this.voices) return;
+      var voice = this.getPlayingVoice(pitch);
+      if (voice === this.kNoVoice) return; // console.log("Playing voice not found...");
+      // console.log("keyOff voice " + voice);
+
+      this.fGateLabel$.forEach($ => this.factory.setParamValue(this.dspVoices$[voice], $, 0)); // No use of velocity for now...
+
+      this.dspVoicesState[voice] = this.kReleaseVoice; // Release voice
+    }
+
+    allNotesOff() {
+      var _this = this;
+
+      if (!this.voices) return;
+
+      var _loop = function _loop(i) {
+        _this.fGateLabel$.forEach($gate => _this.factory.setParamValue(_this.dspVoices$[i], $gate, 0));
+
+        _this.dspVoicesState[i] = _this.kReleaseVoice;
+      };
+
+      for (var i = 0; i < this.voices; i++) {
+        _loop(i);
+      }
+    }
+
+    midiMessage(data) {
+      var cmd = data[0] >> 4;
+      var channel = data[0] & 0xf;
+      var data1 = data[1];
+      var data2 = data[2];
+      if (channel === 9) return undefined;
+      if (cmd === 8 || cmd === 9 && data2 === 0) return this.keyOff(channel, data1, data2);
+      if (cmd === 9) return this.keyOn(channel, data1, data2);
+      if (cmd === 11) return this.ctrlChange(channel, data1, data2);
+      if (cmd === 14) return this.pitchWheel(channel, data2 * 128.0 + data1);
+      return undefined;
+    }
+
+    ctrlChange(channel, ctrl, value) {
+      if (!this.fCtrlLabel[ctrl].length) return;
+      this.fCtrlLabel[ctrl].forEach(ctrl => {
+        var path = ctrl.path;
+        this.setParamValue(path, remap(value, 0, 127, ctrl.min, ctrl.max));
+        if (this.outputHandler) this.outputHandler(path, this.getParamValue(path));
+      });
+    }
+
+    pitchWheel(channel, wheel) {
+      this.fPitchwheelLabel.forEach(pw => {
+        this.setParamValue(pw.path, remap(wheel, 0, 16383, pw.min, pw.max));
+        if (this.outputHandler) this.outputHandler(pw.path, this.getParamValue(pw.path));
+      });
+    }
+
+    process(inputs, outputs, parameters) {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
+      var input = inputs[0];
+      var output = outputs[0]; // Check inputs
+
+      if (this.numIn > 0 && (input === undefined || input[0].length === 0)) {
+        // console.log("Process input error");
+        return true;
+      } // Check outputs
+
+
+      if (this.numOut > 0 && (output === undefined || output[0].length === 0)) {
+        // console.log("Process output error");
+        return true;
+      } // Copy inputs
+
+
+      if (input !== undefined) {
+        for (var chan = 0; chan < Math.min(this.numIn, input.length); ++chan) {
+          var dspInput = this.dspInChannnels[chan];
+          dspInput.set(input[chan]);
+        }
+      }
+      /*
+      // Update controls (possibly needed for sample accurate control)
+      for (const key in parameters) {
+          const value = parameters[key];
+          this.HEAPF32[this.pathTable$[key] >> 2] = value[0];
+      }*/
+      // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
+
+
+      if (this.computeHandler) this.computeHandler(this.bufferSize);
+
+      if (this.voices) {
+        this.mixer.clearOutput(this.bufferSize, this.numOut, this.$outs); // First clear the outputs
+
+        for (var i = 0; i < this.voices; i++) {
+          // Compute all running voices
+          this.factory.compute(this.dspVoices$[i], this.bufferSize, this.$ins, this.$mixing); // Compute voice
+
+          this.mixer.mixVoice(this.bufferSize, this.numOut, this.$mixing, this.$outs); // Mix it in result
+        }
+
+        if (this.effect) this.effect.compute(this.$effect, this.bufferSize, this.$outs, this.$outs); // Apply effect. Not a typo, effect is applied on the outs.
+      } else {
+        this.factory.compute(this.$dsp, this.bufferSize, this.$ins, this.$outs); // Compute
+      } // Update bargraph
+
+
+      this.updateOutputs(); // Copy outputs
+
+      if (output !== undefined) {
+        for (var _i5 = 0; _i5 < Math.min(this.numOut, output.length); _i5++) {
+          var dspOutput = this.dspOutChannnels[_i5];
+
+          output[_i5].set(dspOutput);
+        }
+
+        this.port.postMessage({
+          type: "plot",
+          value: output,
+          index: this.$buffer++,
+          events: this.cachedEvents
+        });
+        this.cachedEvents = [];
+      }
+
+      return true;
+    }
+
+    printMemory() {
+      console.log("============== Memory layout ==============");
+      console.log("dspMeta.size: " + this.dspMeta.size);
+      console.log("$audioHeap: " + this.$audioHeap);
+      console.log("$$audioHeapInputs: " + this.$$audioHeapInputs);
+      console.log("$$audioHeapOutputs: " + this.$$audioHeapOutputs);
+      console.log("$$audioHeapMixing: " + this.$$audioHeapMixing);
+      console.log("$audioHeapInputs: " + this.$audioHeapInputs);
+      console.log("$audioHeapOutputs: " + this.$audioHeapOutputs);
+      console.log("$audioHeapMixing: " + this.$audioHeapMixing);
+      console.log("$dsp: " + this.$dsp);
+      if (this.dspVoices$) this.dspVoices$.forEach(($voice, i) => console.log("dspVoices$[" + i + "]: " + $voice));
+      console.log("$effect: " + this.$effect);
+      console.log("$mixing: " + this.$mixing);
+    }
+
+  } // Globals
+  // Synchronously compile and instantiate the WASM module
+
+
+  FaustAudioWorkletProcessor.bufferSize = 128;
+  registerProcessor(FaustConst.id || "mydsp", FaustAudioWorkletProcessor);
+};
+
+/***/ }),
+
+/***/ "./src/FaustOfflineProcessor.ts":
+/*!**************************************!*\
+  !*** ./src/FaustOfflineProcessor.ts ***!
+  \**************************************/
+/*! exports provided: FaustOfflineProcessor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FaustOfflineProcessor", function() { return FaustOfflineProcessor; });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+/* eslint-disable no-restricted-properties */
+
+/* eslint-disable @typescript-eslint/camelcase */
+
+/* eslint-disable object-property-newline */
+class FaustOfflineProcessor {
+  constructor() {
+    this.bufferSize = 1024;
+    this.sampleRate = void 0;
+    this.dspMeta = void 0;
+    this.$ins = void 0;
+    this.$outs = void 0;
+    this.dspInChannnels = void 0;
+    this.dspOutChannnels = void 0;
+    this.numIn = void 0;
+    this.numOut = void 0;
+    this.ptrSize = void 0;
+    this.sampleSize = void 0;
+    this.$audioHeap = void 0;
+    this.$$audioHeapInputs = void 0;
+    this.$$audioHeapOutputs = void 0;
+    this.$audioHeapInputs = void 0;
+    this.$audioHeapOutputs = void 0;
+    this.$dsp = void 0;
+    this.factory = void 0;
+    this.HEAP = void 0;
+    this.HEAP32 = void 0;
+    this.HEAPF32 = void 0;
+    this.output = void 0;
+  }
+
+  static get importObject() {
+    return {
+      env: {
+        memory: undefined,
+        memoryBase: 0,
+        tableBase: 0,
+        _abs: Math.abs,
+        // Float version
+        _acosf: Math.acos,
+        _asinf: Math.asin,
+        _atanf: Math.atan,
+        _atan2f: Math.atan2,
+        _ceilf: Math.ceil,
+        _cosf: Math.cos,
+        _expf: Math.exp,
+        _floorf: Math.floor,
+        _fmodf: (x, y) => x % y,
+        _logf: Math.log,
+        _log10f: Math.log10,
+        _max_f: Math.max,
+        _min_f: Math.min,
+        _remainderf: (x, y) => x - Math.round(x / y) * y,
+        _powf: Math.pow,
+        _roundf: Math.fround,
+        _sinf: Math.sin,
+        _sqrtf: Math.sqrt,
+        _tanf: Math.tan,
+        _acosfh: Math.acosh,
+        _asinfh: Math.asinh,
+        _atanfh: Math.atanh,
+        _cosfh: Math.cosh,
+        _sinfh: Math.sinh,
+        _tanfh: Math.tanh,
+        // Double version
+        _acos: Math.acos,
+        _asin: Math.asin,
+        _atan: Math.atan,
+        _atan2: Math.atan2,
+        _ceil: Math.ceil,
+        _cos: Math.cos,
+        _exp: Math.exp,
+        _floor: Math.floor,
+        _fmod: (x, y) => x % y,
+        _log: Math.log,
+        _log10: Math.log10,
+        _max_: Math.max,
+        _min_: Math.min,
+        _remainder: (x, y) => x - Math.round(x / y) * y,
+        _pow: Math.pow,
+        _round: Math.fround,
+        _sin: Math.sin,
+        _sqrt: Math.sqrt,
+        _tan: Math.tan,
+        _acosh: Math.acosh,
+        _asinh: Math.asinh,
+        _atanh: Math.atanh,
+        _cosh: Math.cosh,
+        _sinh: Math.sinh,
+        _tanh: Math.tanh,
+        table: new WebAssembly.Table({
+          initial: 0,
+          element: "anyfunc"
+        })
+      }
+    };
+  }
+
+  init(options) {
+    var _this = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      var compiledDsp, dspInstance;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              compiledDsp = options.compiledDsp;
+
+              if (compiledDsp) {
+                _context.next = 3;
+                break;
+              }
+
+              throw new Error("No Dsp input");
+
+            case 3:
+              _this.dspMeta = compiledDsp.dspMeta;
+              _this.$ins = null;
+              _this.$outs = null;
+              _this.dspInChannnels = [];
+              _this.dspOutChannnels = [];
+              _this.numIn = _this.dspMeta.inputs;
+              _this.numOut = _this.dspMeta.outputs; // Memory allocator
+
+              _this.ptrSize = 4;
+              _this.sampleSize = 4; // Create the WASM instance
+
+              _context.next = 14;
+              return WebAssembly.instantiate(compiledDsp.dspModule, FaustOfflineProcessor.importObject);
+
+            case 14:
+              dspInstance = _context.sent;
+              _this.factory = dspInstance.exports;
+              _this.HEAP = _this.factory.memory.buffer;
+              _this.HEAP32 = new Int32Array(_this.HEAP);
+              _this.HEAPF32 = new Float32Array(_this.HEAP);
+              _this.output = new Array(_this.numOut).fill(null).map(() => new Float32Array(_this.bufferSize));
+
+            case 20:
+            case "end":
+              return _context.stop();
+          }
+        }
+      }, _callee);
+    }))();
+  }
+
+  setup(options) {
+    if (!this.dspMeta) throw Error("No Dsp");
+    this.sampleRate = options && options.sampleRate || 48000; // DSP is placed first with index 0. Audio buffer start at the end of DSP.
+
+    this.$audioHeap = this.dspMeta.size; // Setup pointers offset
+
+    this.$$audioHeapInputs = this.$audioHeap;
+    this.$$audioHeapOutputs = this.$$audioHeapInputs + this.numIn * this.ptrSize; // Setup buffer offset
+
+    this.$audioHeapInputs = this.$$audioHeapOutputs + this.numOut * this.ptrSize;
+    this.$audioHeapOutputs = this.$audioHeapInputs + this.numIn * this.bufferSize * this.sampleSize; // Start of DSP memory : Mono DSP is placed first with index 0
+
+    this.$dsp = 0;
+
+    if (this.numIn > 0) {
+      this.$ins = this.$$audioHeapInputs;
+
+      for (var i = 0; i < this.numIn; i++) {
+        this.HEAP32[(this.$ins >> 2) + i] = this.$audioHeapInputs + this.bufferSize * this.sampleSize * i;
+      } // Prepare Ins buffer tables
+
+
+      var dspInChans = this.HEAP32.subarray(this.$ins >> 2, this.$ins + this.numIn * this.ptrSize >> 2);
+
+      for (var _i = 0; _i < this.numIn; _i++) {
+        this.dspInChannnels[_i] = this.HEAPF32.subarray(dspInChans[_i] >> 2, dspInChans[_i] + this.bufferSize * this.sampleSize >> 2);
+      }
+    }
+
+    if (this.numOut > 0) {
+      this.$outs = this.$$audioHeapOutputs;
+
+      for (var _i2 = 0; _i2 < this.numOut; _i2++) {
+        this.HEAP32[(this.$outs >> 2) + _i2] = this.$audioHeapOutputs + this.bufferSize * this.sampleSize * _i2;
+      } // Prepare Out buffer tables
+
+
+      var dspOutChans = this.HEAP32.subarray(this.$outs >> 2, this.$outs + this.numOut * this.ptrSize >> 2);
+
+      for (var _i3 = 0; _i3 < this.numOut; _i3++) {
+        this.dspOutChannnels[_i3] = this.HEAPF32.subarray(dspOutChans[_i3] >> 2, dspOutChans[_i3] + this.bufferSize * this.sampleSize >> 2);
+      }
+    } // Init DSP
+
+
+    this.factory.init(this.$dsp, this.sampleRate);
+  }
+
+  compute() {
+    if (!this.factory) return this.output;
+
+    for (var i = 0; i < this.numIn; i++) {
+      this.dspInChannnels[i].fill(0);
+    }
+
+    this.factory.compute(this.$dsp, this.bufferSize, this.$ins, this.$outs); // Compute
+    // Copy outputs
+
+    if (this.output !== undefined) {
+      for (var _i4 = 0; _i4 < this.numOut; _i4++) {
+        this.output[_i4].set(this.dspOutChannnels[_i4]);
+      }
+    }
+
+    return this.output;
+  }
+
+  plot(options) {
+    var _this2 = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+      var size, plotted, i, computed, j;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+        while (1) {
+          switch (_context2.prev = _context2.next) {
+            case 0:
+              if (!(options && options.compiledDsp)) {
+                _context2.next = 3;
+                break;
+              }
+
+              _context2.next = 3;
+              return _this2.init(options);
+
+            case 3:
+              _this2.setup(options);
+
+              size = options && options.size || 128;
+              plotted = new Array(_this2.numOut).fill(null).map(() => new Float32Array(size));
+
+              for (i = 0; i < size; i += _this2.bufferSize) {
+                computed = _this2.compute();
+
+                for (j = 0; j < plotted.length; j++) {
+                  plotted[j].set(size - i > _this2.bufferSize ? computed[j] : computed[j].subarray(0, size - i), i);
+                }
+              }
+
+              return _context2.abrupt("return", plotted);
+
+            case 8:
+            case "end":
+              return _context2.stop();
+          }
+        }
+      }, _callee2);
+    }))();
+  }
+
+}
+
+/***/ }),
+
+/***/ "./src/FaustWasmToScriptProcessor.ts":
+/*!*******************************************!*\
+  !*** ./src/FaustWasmToScriptProcessor.ts ***!
+  \*******************************************/
+/*! exports provided: FaustWasmToScriptProcessor */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FaustWasmToScriptProcessor", function() { return FaustWasmToScriptProcessor; });
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
+/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
+
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+/* eslint-disable no-restricted-properties */
+
+/* eslint-disable @typescript-eslint/camelcase */
+
+/* eslint-disable object-property-newline */
+
+/* eslint-disable object-curly-newline */
+
+class FaustWasmToScriptProcessor {
+  constructor(faust) {
+    this.faust = void 0;
+    this.faust = faust;
+  }
+
+  initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plotHandler) {
+    var node;
+    var dspMeta = compiledDsp.dspMeta;
+    var inputs = dspMeta.inputs;
+    var outputs = dspMeta.outputs;
+
+    try {
+      node = audioCtx.createScriptProcessor(bufferSize, inputs, outputs);
+    } catch (e) {
+      this.faust.error("Error in createScriptProcessor: " + e);
+      throw e;
+    }
+
+    node.voices = voices;
+    node.dspMeta = dspMeta;
+    node.outputHandler = null;
+    node.computeHandler = null;
+    node.$ins = null;
+    node.$outs = null;
+    node.dspInChannnels = [];
+    node.dspOutChannnels = [];
+    node.fPitchwheelLabel = [];
+    node.fCtrlLabel = new Array(128).fill(null).map(() => []);
+    node.numIn = inputs;
+    node.numOut = outputs;
+    this.faust.log(node.numIn);
+    this.faust.log(node.numOut); // Memory allocator
+
+    node.ptrSize = 4;
+    node.sampleSize = 4;
+    node.factory = dspInstance.exports;
+    node.HEAP = node.voices ? memory.buffer : node.factory.memory.buffer;
+    node.HEAP32 = new Int32Array(node.HEAP);
+    node.HEAPF32 = new Float32Array(node.HEAP);
+    this.faust.log(node.HEAP);
+    this.faust.log(node.HEAP32);
+    this.faust.log(node.HEAPF32); // JSON is as offset 0
+
+    /*
+    var HEAPU8 = new Uint8Array(sp.HEAP);
+    console.log(this.Heap2Str(HEAPU8));
+    */
+    // bargraph
+
+    node.outputsTimer = 5;
+    node.outputsItems = []; // input items
+
+    node.inputsItems = []; // Start of HEAP index
+    // DSP is placed first with index 0. Audio buffer start at the end of DSP.
+
+    node.$audioHeap = node.voices ? 0 : node.dspMeta.size; // Setup pointers offset
+
+    node.$$audioHeapInputs = node.$audioHeap;
+    node.$$audioHeapOutputs = node.$$audioHeapInputs + node.numIn * node.ptrSize;
+
+    if (node.voices) {
+      node.$$audioHeapMixing = node.$$audioHeapOutputs + node.numOut * node.ptrSize; // Setup buffer offset
+
+      node.$audioHeapInputs = node.$$audioHeapMixing + node.numOut * node.ptrSize;
+      node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * node.bufferSize * node.sampleSize;
+      node.$audioHeapMixing = node.$audioHeapOutputs + node.numOut * node.bufferSize * node.sampleSize;
+      node.$dsp = node.$audioHeapMixing + node.numOut * node.bufferSize * node.sampleSize;
+    } else {
+      node.$audioHeapInputs = node.$$audioHeapOutputs + node.numOut * node.ptrSize;
+      node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * node.bufferSize * node.sampleSize; // Start of DSP memory : Mono DSP is placed first with index 0
+
+      node.$dsp = 0;
+    }
+
+    if (node.voices) {
+      node.effectMeta = compiledDsp.effectMeta;
+      node.$mixing = null;
+      node.fFreqLabel$ = [];
+      node.fGateLabel$ = [];
+      node.fGainLabel$ = [];
+      node.fDate = 0;
+      node.mixer = mixerInstance.exports;
+      node.effect = effectInstance ? effectInstance.exports : null;
+      this.faust.log(node.mixer);
+      this.faust.log(node.factory);
+      this.faust.log(node.effect); // Start of DSP memory ('polyphony' DSP voices)
+
+      node.dspVoices$ = [];
+      node.dspVoicesState = [];
+      node.dspVoicesLevel = [];
+      node.dspVoicesDate = [];
+      node.kActiveVoice = 0;
+      node.kFreeVoice = -1;
+      node.kReleaseVoice = -2;
+      node.kNoVoice = -3;
+
+      for (var i = 0; i < node.voices; i++) {
+        node.dspVoices$[i] = node.$dsp + i * node.dspMeta.size;
+        node.dspVoicesState[i] = node.kFreeVoice;
+        node.dspVoicesLevel[i] = 0;
+        node.dspVoicesDate[i] = 0;
+      } // Effect memory starts after last voice
+
+
+      node.$effect = node.dspVoices$[node.voices - 1] + node.dspMeta.size;
+    }
+
+    node.pathTable$ = {};
+    node.$buffer = 0;
+    node.cachedEvents = [];
+    node.plotHandler = plotHandler;
+
+    node.updateOutputs = () => {
+      if (node.outputsItems.length > 0 && node.outputHandler && node.outputsTimer-- === 0) {
+        node.outputsTimer = 5;
+        node.outputsItems.forEach(item => node.outputHandler(item, node.factory.getParamValue(node.$dsp, node.pathTable$[item])));
+      }
+    }; // JSON parsing
+
+
+    node.parseUI = ui => ui.forEach(group => node.parseGroup(group));
+
+    node.parseGroup = group => group.items ? node.parseItems(group.items) : null;
+
+    node.parseItems = items => items.forEach(item => node.parseItem(item));
+
+    node.parseItem = item => {
+      if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
+        node.parseItems(item.items);
+      } else if (item.type === "hbargraph" || item.type === "vbargraph") {
+        // Keep bargraph adresses
+        node.outputsItems.push(item.address);
+        node.pathTable$[item.address] = item.index;
+      } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
+        // Keep inputs adresses
+        node.inputsItems.push(item.address);
+        node.pathTable$[item.address] = item.index;
+        if (!item.meta) return;
+        item.meta.forEach(meta => {
+          var midi = meta.midi;
+          if (!midi) return;
+          var strMidi = midi.trim();
+
+          if (strMidi === "pitchwheel") {
+            node.fPitchwheelLabel.push({
+              path: item.address,
+              min: item.min,
+              max: item.max
+            });
+          } else {
+            var matched = strMidi.match(/^ctrl\s(\d+)/);
+            if (!matched) return;
+            node.fCtrlLabel[parseInt(matched[1])].push({
+              path: item.address,
+              min: item.min,
+              max: item.max
+            });
+          }
+        });
+      }
+    };
+
+    if (node.voices) {
+      node.getPlayingVoice = pitch => {
+        var voice = node.kNoVoice;
+        var oldestDatePlaying = Number.MAX_VALUE;
+
+        for (var _i = 0; _i < node.voices; _i++) {
+          if (node.dspVoicesState[_i] === pitch) {
+            // Keeps oldest playing voice
+            if (node.dspVoicesDate[_i] < oldestDatePlaying) {
+              oldestDatePlaying = node.dspVoicesDate[_i];
+              voice = _i;
+            }
+          }
+        }
+
+        return voice;
+      }; // Always returns a voice
+
+
+      node.allocVoice = voice => {
+        // so that envelop is always re-initialized
+        node.factory.instanceClear(node.dspVoices$[voice]);
+        node.dspVoicesDate[voice] = node.fDate++;
+        node.dspVoicesState[voice] = node.kActiveVoice;
+        return voice;
+      };
+
+      node.getFreeVoice = () => {
+        for (var _i2 = 0; _i2 < node.voices; _i2++) {
+          if (node.dspVoicesState[_i2] === node.kFreeVoice) return node.allocVoice(_i2);
+        }
+
+        var voiceRelease = node.kNoVoice;
+        var voicePlaying = node.kNoVoice;
+        var oldestDateRelease = Number.MAX_VALUE;
+        var oldestDatePlaying = Number.MAX_VALUE;
+
+        for (var _i3 = 0; _i3 < node.voices; _i3++) {
+          // Scan all voices
+          // Try to steal a voice in kReleaseVoice mode...
+          if (node.dspVoicesState[_i3] === node.kReleaseVoice) {
+            // Keeps oldest release voice
+            if (node.dspVoicesDate[_i3] < oldestDateRelease) {
+              oldestDateRelease = node.dspVoicesDate[_i3];
+              voiceRelease = _i3;
+            }
+          } else if (node.dspVoicesDate[_i3] < oldestDatePlaying) {
+            oldestDatePlaying = node.dspVoicesDate[_i3];
+            voicePlaying = _i3;
+          }
+        } // Then decide which one to steal
+
+
+        if (oldestDateRelease !== Number.MAX_VALUE) {
+          this.faust.log("Steal release voice : voice_date = ".concat(node.dspVoicesDate[voiceRelease], " cur_date = ").concat(node.fDate, " voice = ").concat(voiceRelease));
+          return node.allocVoice(voiceRelease);
+        }
+
+        if (oldestDatePlaying !== Number.MAX_VALUE) {
+          this.faust.log("Steal playing voice : voice_date = ".concat(node.dspVoicesDate[voicePlaying], " cur_date = ").concat(node.fDate, " voice = ").concat(voicePlaying));
+          return node.allocVoice(voicePlaying);
+        }
+
+        return node.kNoVoice;
+      };
+
+      node.keyOn = (channel, pitch, velocity) => {
+        node.cachedEvents.push({
+          type: "keyOn",
+          data: [channel, pitch, velocity]
+        });
+        var voice = node.getFreeVoice();
+        this.faust.log("keyOn voice " + voice);
+        node.fFreqLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, Object(_utils__WEBPACK_IMPORTED_MODULE_3__["midiToFreq"])(pitch)));
+        node.fGateLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, 1));
+        node.fGainLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, velocity / 127));
+        node.dspVoicesState[voice] = pitch;
+      };
+
+      node.keyOff = (channel, pitch, velocity) => {
+        // eslint-disable-line @typescript-eslint/no-unused-vars
+        node.cachedEvents.push({
+          type: "keyOff",
+          data: [channel, pitch, velocity]
+        });
+        var voice = node.getPlayingVoice(pitch);
+        if (voice === node.kNoVoice) return this.faust.log("Playing voice not found...");
+        node.fGateLabel$.forEach($ => node.factory.setParamValue(node.dspVoices$[voice], $, 0)); // No use of velocity for now...
+
+        node.dspVoicesState[voice] = node.kReleaseVoice; // Release voice
+
+        return this.faust.log("keyOff voice " + voice);
+      };
+
+      node.allNotesOff = () => {
+        node.cachedEvents.push({
+          type: "ctrlChange",
+          data: [0, 123, 0]
+        });
+
+        var _loop = function _loop(_i4) {
+          node.fGateLabel$.forEach($gate => node.factory.setParamValue(node.dspVoices$[_i4], $gate, 0));
+          node.dspVoicesState[_i4] = node.kReleaseVoice;
+        };
+
+        for (var _i4 = 0; _i4 < node.voices; _i4++) {
+          _loop(_i4);
+        }
+      };
+    }
+
+    node.midiMessage = data => {
+      node.cachedEvents.push({
+        data,
+        type: "midi"
+      });
+      var cmd = data[0] >> 4;
+      var channel = data[0] & 0xf;
+      var data1 = data[1];
+      var data2 = data[2];
+      if (channel === 9) return undefined;
+
+      if (node.voices) {
+        if (cmd === 8 || cmd === 9 && data2 === 0) return node.keyOff(channel, data1, data2);
+        if (cmd === 9) return node.keyOn(channel, data1, data2);
+      }
+
+      if (cmd === 11) return node.ctrlChange(channel, data1, data2);
+      if (cmd === 14) return node.pitchWheel(channel, data2 * 128.0 + data1);
+      return undefined;
+    };
+
+    node.ctrlChange = (channel, ctrl, value) => {
+      node.cachedEvents.push({
+        type: "ctrlChange",
+        data: [channel, ctrl, value]
+      });
+      if (!node.fCtrlLabel[ctrl].length) return;
+      node.fCtrlLabel[ctrl].forEach(ctrl => {
+        var path = ctrl.path;
+        node.setParamValue(path, Object(_utils__WEBPACK_IMPORTED_MODULE_3__["remap"])(value, 0, 127, ctrl.min, ctrl.max));
+        if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
+      });
+    };
+
+    node.pitchWheel = (channel, wheel) => {
+      node.cachedEvents.push({
+        type: "pitchWheel",
+        data: [channel, wheel]
+      });
+      node.fPitchwheelLabel.forEach(pw => {
+        node.setParamValue(pw.path, Object(_utils__WEBPACK_IMPORTED_MODULE_3__["remap"])(wheel, 0, 16383, pw.min, pw.max));
+        if (node.outputHandler) node.outputHandler(pw.path, node.getParamValue(pw.path));
+      });
+    };
+
+    node.compute = e => {
+      for (var _i5 = 0; _i5 < node.numIn; _i5++) {
+        // Read inputs
+        var input = e.inputBuffer.getChannelData(_i5);
+        var dspInput = node.dspInChannnels[_i5];
+        dspInput.set(input);
+      } // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
+
+
+      if (node.computeHandler) node.computeHandler(node.bufferSize);
+
+      if (node.voices) {
+        node.mixer.clearOutput(node.bufferSize, node.numOut, node.$outs); // First clear the outputs
+
+        for (var _i6 = 0; _i6 < node.voices; _i6++) {
+          // Compute all running voices
+          node.factory.compute(node.dspVoices$[_i6], node.bufferSize, node.$ins, node.$mixing); // Compute voice
+
+          node.mixer.mixVoice(node.bufferSize, node.numOut, node.$mixing, node.$outs); // Mix it in result
+        }
+
+        if (node.effect) node.effect.compute(node.$effect, node.bufferSize, node.$outs, node.$outs); // Apply effect. Not a typo, effect is applied on the outs.
+      } else {
+        node.factory.compute(node.$dsp, node.bufferSize, node.$ins, node.$outs); // Compute
+      }
+
+      node.updateOutputs(); // Update bargraph
+
+      var outputs = new Array(node.numOut).fill(null).map(() => new Float32Array(node.bufferSize));
+
+      for (var _i7 = 0; _i7 < node.numOut; _i7++) {
+        // Write outputs
+        var output = e.outputBuffer.getChannelData(_i7);
+        var dspOutput = node.dspOutChannnels[_i7];
+        output.set(dspOutput);
+
+        outputs[_i7].set(dspOutput);
+      }
+
+      if (node.plotHandler) node.plotHandler(outputs, node.$buffer++, node.cachedEvents.length ? node.cachedEvents : undefined);
+      node.cachedEvents = [];
+    };
+
+    node.setup = () => {
+      // Setup web audio context
+      this.faust.log("buffer_size " + node.bufferSize);
+      node.onaudioprocess = node.compute;
+
+      if (node.numIn > 0) {
+        node.$ins = node.$$audioHeapInputs;
+
+        for (var _i8 = 0; _i8 < node.numIn; _i8++) {
+          node.HEAP32[(node.$ins >> 2) + _i8] = node.$audioHeapInputs + node.bufferSize * node.sampleSize * _i8;
+        } // Prepare Ins buffer tables
+
+
+        var dspInChans = node.HEAP32.subarray(node.$ins >> 2, node.$ins + node.numIn * node.ptrSize >> 2);
+
+        for (var _i9 = 0; _i9 < node.numIn; _i9++) {
+          node.dspInChannnels[_i9] = node.HEAPF32.subarray(dspInChans[_i9] >> 2, dspInChans[_i9] + node.bufferSize * node.sampleSize >> 2);
+        }
+      }
+
+      if (node.numOut > 0) {
+        node.$outs = node.$$audioHeapOutputs;
+        if (node.voices) node.$mixing = node.$$audioHeapMixing;
+
+        for (var _i10 = 0; _i10 < node.numOut; _i10++) {
+          node.HEAP32[(node.$outs >> 2) + _i10] = node.$audioHeapOutputs + node.bufferSize * node.sampleSize * _i10;
+          if (node.voices) node.HEAP32[(node.$mixing >> 2) + _i10] = node.$audioHeapMixing + node.bufferSize * node.sampleSize * _i10;
+        } // Prepare Out buffer tables
+
+
+        var dspOutChans = node.HEAP32.subarray(node.$outs >> 2, node.$outs + node.numOut * node.ptrSize >> 2);
+
+        for (var _i11 = 0; _i11 < node.numOut; _i11++) {
+          node.dspOutChannnels[_i11] = node.HEAPF32.subarray(dspOutChans[_i11] >> 2, dspOutChans[_i11] + node.bufferSize * node.sampleSize >> 2);
+        }
+      } // Parse JSON UI part
+
+
+      node.parseUI(node.dspMeta.ui);
+      if (node.effect) node.parseUI(node.effectMeta.ui); // keep 'keyOn/keyOff' labels
+
+      if (node.voices) {
+        node.inputsItems.forEach(item => {
+          if (item.endsWith("/gate")) node.fGateLabel$.push(node.pathTable$[item]);else if (item.endsWith("/freq")) node.fFreqLabel$.push(node.pathTable$[item]);else if (item.endsWith("/gain")) node.fGainLabel$.push(node.pathTable$[item]);
+        }); // Init DSP voices
+
+        node.dspVoices$.forEach($voice => node.factory.init($voice, audioCtx.sampleRate)); // Init effect
+
+        if (node.effect) node.effect.init(node.$effect, audioCtx.sampleRate);
+      } else {
+        // Init DSP
+        node.factory.init(node.$dsp, audioCtx.sampleRate);
+      }
+    };
+
+    node.getSampleRate = () => audioCtx.sampleRate;
+
+    node.getNumInputs = () => node.numIn;
+
+    node.getNumOutputs = () => node.numOut;
+
+    node.init = sampleRate => {
+      if (node.voices) node.dspVoices$.forEach($voice => node.factory.init($voice, sampleRate));else node.factory.init(node.$dsp, sampleRate);
+    };
+
+    node.instanceInit = sampleRate => {
+      if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceInit($voice, sampleRate));else node.factory.instanceInit(node.$dsp, sampleRate);
+    };
+
+    node.instanceConstants = sampleRate => {
+      if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceConstants($voice, sampleRate));else node.factory.instanceConstants(node.$dsp, sampleRate);
+    };
+
+    node.instanceResetUserInterface = () => {
+      if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceResetUserInterface($voice));else node.factory.instanceResetUserInterface(node.$dsp);
+    };
+
+    node.instanceClear = () => {
+      if (node.voices) node.dspVoices$.forEach($voice => node.factory.instanceClear($voice));else node.factory.instanceClear(node.$dsp);
+    };
+
+    node.metadata = handler => node.dspMeta.meta ? node.dspMeta.meta.forEach(meta => handler.declare(Object.keys(meta)[0], meta[Object.keys(meta)[0]])) : undefined;
+
+    node.setOutputParamHandler = handler => node.outputHandler = handler;
+
+    node.getOutputParamHandler = () => node.outputHandler;
+
+    node.setComputeHandler = handler => node.computeHandler = handler;
+
+    node.getComputeHandler = () => node.computeHandler;
+
+    var findPath = (o, p) => {
+      if (typeof o !== "object") return false;
+
+      if (o.address) {
+        if (o.address === p) return true;
+        return false;
+      }
+
+      for (var k in o) {
+        if (findPath(o[k], p)) return true;
+      }
+
+      return false;
+    };
+
+    node.setParamValue = (path, value) => {
+      node.cachedEvents.push({
+        type: "param",
+        data: {
+          path,
+          value
+        }
+      });
+
+      if (node.voices) {
+        if (node.effect && findPath(node.effectMeta.ui, path)) node.effect.setParamValue(node.$effect, node.pathTable$[path], value);else node.dspVoices$.forEach($voice => node.factory.setParamValue($voice, node.pathTable$[path], value));
+      } else {
+        node.factory.setParamValue(node.$dsp, node.pathTable$[path], value);
+      }
+    };
+
+    node.getParamValue = path => {
+      if (node.voices) {
+        if (node.effect && findPath(node.effectMeta.ui, path)) return node.effect.getParamValue(node.$effect, node.pathTable$[path]);
+        return node.factory.getParamValue(node.dspVoices$[0], node.pathTable$[path]);
+      }
+
+      return node.factory.getParamValue(node.$dsp, node.pathTable$[path]);
+    };
+
+    node.getParams = () => node.inputsItems;
+
+    node.getJSON = () => {
+      if (node.voices) {
+        var o = node.dspMeta;
+        var e = node.effectMeta;
 
         var r = _objectSpread({}, o);
 
@@ -26698,14 +27767,13 @@ function (_ref) {
         return JSON.stringify(r);
       }
 
-      return JSON.stringify(this.dspMeta);
-    }
-  }, {
-    key: "getUI",
-    value: function getUI() {
-      if (this.voices) {
-        var o = this.dspMeta;
-        var e = this.effectMeta;
+      return JSON.stringify(node.dspMeta);
+    };
+
+    node.getUI = () => {
+      if (node.voices) {
+        var o = node.dspMeta;
+        var e = node.effectMeta;
 
         if (e) {
           return [{
@@ -26734,1883 +27802,98 @@ function (_ref) {
         }];
       }
 
-      return this.dspMeta.ui;
-    }
-  }]);
+      return node.dspMeta.ui;
+    }; // Init resulting DSP
 
-  return FaustAudioWorkletNode;
-}(window.AudioWorkletNode ? AudioWorkletNode : null);
 
-/***/ }),
-
-/***/ "./src/FaustAudioWorkletProcessor.ts":
-/*!*******************************************!*\
-  !*** ./src/FaustAudioWorkletProcessor.ts ***!
-  \*******************************************/
-/*! exports provided: FaustAudioWorkletProcessorWrapper */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FaustAudioWorkletProcessorWrapper", function() { return FaustAudioWorkletProcessorWrapper; });
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
-/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js");
-/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js");
-/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/wrapNativeSuper */ "./node_modules/@babel/runtime/helpers/wrapNativeSuper.js");
-/* harmony import */ var _babel_runtime_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_5__);
-
-
-
-
-
-
-
-/* eslint-disable no-console */
-
-/* eslint-disable no-restricted-properties */
-
-/* eslint-disable @typescript-eslint/camelcase */
-
-/* eslint-disable object-property-newline */
-
-/* eslint-env worker */
-// AudioWorklet Globals
-// Injected by Faust
-var FaustAudioWorkletProcessorWrapper = function FaustAudioWorkletProcessorWrapper() {
-  var FaustConst = function FaustConst() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_5___default()(this, FaustConst);
-  };
-
-  FaustConst.id = faustData.id;
-  FaustConst.dspMeta = faustData.dspMeta;
-  FaustConst.effectMeta = faustData.effectMeta;
-
-  var FaustAudioWorkletProcessor =
-  /*#__PURE__*/
-  function (_AudioWorkletProcesso) {
-    _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_3___default()(FaustAudioWorkletProcessor, _AudioWorkletProcesso);
-
-    _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(FaustAudioWorkletProcessor, null, [{
-      key: "parseUI",
-      // JSON parsing functions
-      value: function parseUI(ui, obj, callback) {
-        for (var i = 0; i < ui.length; i++) {
-          this.parseGroup(ui[i], obj, callback);
-        }
-      }
-    }, {
-      key: "parseGroup",
-      value: function parseGroup(group, obj, callback) {
-        if (group.items) {
-          this.parseItems(group.items, obj, callback);
-        }
-      }
-    }, {
-      key: "parseItems",
-      value: function parseItems(items, obj, callback) {
-        for (var i = 0; i < items.length; i++) {
-          callback(items[i], obj, callback);
-        }
-      }
-    }, {
-      key: "parseItem",
-      value: function parseItem(item, obj, callback) {
-        if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
-          FaustAudioWorkletProcessor.parseItems(item.items, obj, callback); // callback may not binded to this
-        } else if (item.type === "hbargraph" || item.type === "vbargraph") {// Nothing
-        } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
-          obj.push({
-            name: item.address,
-            defaultValue: item.init || 0,
-            minValue: item.min || 0,
-            maxValue: item.max || 0
-          });
-        } else if (item.type === "button" || item.type === "checkbox") {
-          obj.push({
-            name: item.address,
-            defaultValue: item.init || 0,
-            minValue: 0,
-            maxValue: 1
-          });
-        }
-      }
-    }, {
-      key: "parseItem2",
-      value: function parseItem2(item, obj, callback) {
-        if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
-          FaustAudioWorkletProcessor.parseItems(item.items, obj, callback); // callback may not binded to this
-        } else if (item.type === "hbargraph" || item.type === "vbargraph") {
-          // Keep bargraph adresses
-          obj.outputsItems.push(item.address);
-          obj.pathTable$[item.address] = item.index; // eslint-disable-line no-param-reassign
-        } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
-          // Keep inputs adresses
-          obj.inputsItems.push(item.address);
-          obj.pathTable$[item.address] = item.index; // eslint-disable-line no-param-reassign
-
-          if (!item.meta) return;
-          item.meta.forEach(function (meta) {
-            var midi = meta.midi;
-            if (!midi) return;
-            var strMidi = midi.trim();
-
-            if (strMidi === "pitchwheel") {
-              obj.fPitchwheelLabel.push({
-                path: item.address,
-                min: item.min,
-                max: item.max
-              });
-            } else {
-              var matched = strMidi.match(/^ctrl\s(\d+)/);
-              if (!matched) return;
-              obj.fCtrlLabel[parseInt(matched[1])].push({
-                path: item.address,
-                min: item.min,
-                max: item.max
-              });
-            }
-          });
-        }
-      }
-    }, {
-      key: "parameterDescriptors",
-      get: function get() {
-        // Analyse JSON to generate AudioParam parameters
-        var params = [];
-        this.parseUI(FaustConst.dspMeta.ui, params, this.parseItem);
-        if (FaustConst.effectMeta) this.parseUI(FaustConst.effectMeta.ui, params, this.parseItem);
-        return params;
-      }
-    }]);
-
-    function FaustAudioWorkletProcessor(options) {
-      var _this;
-
-      _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_5___default()(this, FaustAudioWorkletProcessor);
-
-      _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_0___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_1___default()(FaustAudioWorkletProcessor).call(this, options));
-      _this.dspInstance = void 0;
-      _this.effectInstance = void 0;
-      _this.mixerInstance = void 0;
-      _this.memory = void 0;
-      _this.bufferSize = void 0;
-      _this.voices = void 0;
-      _this.dspMeta = void 0;
-      _this.$ins = void 0;
-      _this.$outs = void 0;
-      _this.dspInChannnels = void 0;
-      _this.dspOutChannnels = void 0;
-      _this.fPitchwheelLabel = void 0;
-      _this.fCtrlLabel = void 0;
-      _this.numIn = void 0;
-      _this.numOut = void 0;
-      _this.ptrSize = void 0;
-      _this.sampleSize = void 0;
-      _this.outputsTimer = void 0;
-      _this.inputsItems = void 0;
-      _this.outputsItems = void 0;
-      _this.pathTable$ = void 0;
-      _this.$audioHeap = void 0;
-      _this.$$audioHeapInputs = void 0;
-      _this.$$audioHeapOutputs = void 0;
-      _this.$audioHeapInputs = void 0;
-      _this.$audioHeapOutputs = void 0;
-      _this.$dsp = void 0;
-      _this.factory = void 0;
-      _this.HEAP = void 0;
-      _this.HEAP32 = void 0;
-      _this.HEAPF32 = void 0;
-      _this.effectMeta = void 0;
-      _this.$effect = void 0;
-      _this.$mixing = void 0;
-      _this.fFreqLabel$ = void 0;
-      _this.fGateLabel$ = void 0;
-      _this.fGainLabel$ = void 0;
-      _this.fDate = void 0;
-      _this.$$audioHeapMixing = void 0;
-      _this.$audioHeapMixing = void 0;
-      _this.mixer = void 0;
-      _this.effect = void 0;
-      _this.dspVoices$ = void 0;
-      _this.dspVoicesState = void 0;
-      _this.dspVoicesLevel = void 0;
-      _this.dspVoicesDate = void 0;
-      _this.kActiveVoice = void 0;
-      _this.kFreeVoice = void 0;
-      _this.kReleaseVoice = void 0;
-      _this.kNoVoice = void 0;
-      _this.$buffer = void 0;
-      _this.cachedEvents = void 0;
-      _this.outputHandler = void 0;
-      _this.computeHandler = void 0;
-
-      _this.handleMessage = function (e) {
-        // use arrow function for binding
-        var msg = e.data;
-
-        _this.cachedEvents.push({
-          type: e.data.type,
-          data: e.data.data
-        });
-
-        switch (msg.type) {
-          // Generic MIDI message
-          case "midi":
-            _this.midiMessage(msg.data);
-
-            break;
-          // Typed MIDI message
-
-          case "keyOn":
-            _this.keyOn(msg.data[0], msg.data[1], msg.data[2]);
-
-            break;
-
-          case "keyOff":
-            _this.keyOff(msg.data[0], msg.data[1], msg.data[2]);
-
-            break;
-
-          case "ctrlChange":
-            _this.ctrlChange(msg.data[0], msg.data[1], msg.data[2]);
-
-            break;
-
-          case "pitchWheel":
-            _this.pitchWheel(msg.data[0], msg.data[1]);
-
-            break;
-          // Generic data message
-
-          case "param":
-            _this.setParamValue(msg.data.path, msg.data.value);
-
-            break;
-          // case "patch": this.onpatch(msg.data); break;
-
-          default:
-        }
-      };
-
-      var processorOptions = options.processorOptions;
-
-      _this.instantiateWasm(processorOptions);
-
-      _this.port.onmessage = _this.handleMessage; // Naturally binded with arrow function property
-
-      _this.bufferSize = 128;
-      _this.voices = processorOptions.voices;
-      _this.dspMeta = processorOptions.compiledDsp.dspMeta;
-
-      _this.outputHandler = function (path, value) {
-        return _this.port.postMessage({
-          path: path,
-          value: value,
-          type: "param"
-        });
-      };
-
-      _this.computeHandler = null;
-      _this.$ins = null;
-      _this.$outs = null;
-      _this.dspInChannnels = [];
-      _this.dspOutChannnels = [];
-      _this.fPitchwheelLabel = [];
-      _this.fCtrlLabel = new Array(128).fill(null).map(function () {
-        return [];
-      });
-      _this.numIn = _this.dspMeta.inputs;
-      _this.numOut = _this.dspMeta.outputs; // Memory allocator
-
-      _this.ptrSize = 4;
-      _this.sampleSize = 4; // Create the WASM instance
-
-      _this.factory = _this.dspInstance.exports;
-      _this.HEAP = _this.voices ? _this.memory.buffer : _this.factory.memory.buffer;
-      _this.HEAP32 = new Int32Array(_this.HEAP);
-      _this.HEAPF32 = new Float32Array(_this.HEAP); // console.log(this.HEAP);
-      // console.log(this.HEAP32);
-      // console.log(this.HEAPF32);
-      // bargraph
-
-      _this.outputsTimer = 5;
-      _this.outputsItems = []; // input items
-
-      _this.inputsItems = []; // Start of HEAP index
-      // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-
-      _this.$audioHeap = _this.voices ? 0 : _this.dspMeta.size; // Setup pointers offset
-
-      _this.$$audioHeapInputs = _this.$audioHeap;
-      _this.$$audioHeapOutputs = _this.$$audioHeapInputs + _this.numIn * _this.ptrSize; // Setup buffer offset
-
-      _this.$audioHeapInputs = _this.$$audioHeapOutputs + _this.numOut * _this.ptrSize;
-      _this.$audioHeapOutputs = _this.$audioHeapInputs + _this.numIn * _this.bufferSize * _this.sampleSize;
-
-      if (_this.voices) {
-        _this.$$audioHeapMixing = _this.$$audioHeapOutputs + _this.numOut * _this.ptrSize; // Setup buffer offset
-
-        _this.$audioHeapInputs = _this.$$audioHeapMixing + _this.numOut * _this.ptrSize;
-        _this.$audioHeapOutputs = _this.$audioHeapInputs + _this.numIn * _this.bufferSize * _this.sampleSize;
-        _this.$audioHeapMixing = _this.$audioHeapOutputs + _this.numOut * _this.bufferSize * _this.sampleSize;
-        _this.$dsp = _this.$audioHeapMixing + _this.numOut * _this.bufferSize * _this.sampleSize;
-      } else {
-        _this.$audioHeapInputs = _this.$$audioHeapOutputs + _this.numOut * _this.ptrSize;
-        _this.$audioHeapOutputs = _this.$audioHeapInputs + _this.numIn * _this.bufferSize * _this.sampleSize; // Start of DSP memory : Mono DSP is placed first with index 0
-
-        _this.$dsp = 0;
-      }
-
-      if (_this.voices) {
-        _this.effectMeta = FaustConst.effectMeta;
-        _this.$mixing = null;
-        _this.fFreqLabel$ = [];
-        _this.fGateLabel$ = [];
-        _this.fGainLabel$ = [];
-        _this.fDate = 0;
-        _this.mixer = _this.mixerInstance.exports;
-        _this.effect = _this.effectInstance ? _this.effectInstance.exports : null; // Start of DSP memory ('polyphony' DSP voices)
-
-        _this.dspVoices$ = [];
-        _this.dspVoicesState = [];
-        _this.dspVoicesLevel = [];
-        _this.dspVoicesDate = [];
-        _this.kActiveVoice = 0;
-        _this.kFreeVoice = -1;
-        _this.kReleaseVoice = -2;
-        _this.kNoVoice = -3;
-
-        for (var i = 0; i < _this.voices; i++) {
-          _this.dspVoices$[i] = _this.$dsp + i * _this.dspMeta.size;
-          _this.dspVoicesState[i] = _this.kFreeVoice;
-          _this.dspVoicesLevel[i] = 0;
-          _this.dspVoicesDate[i] = 0;
-        } // Effect memory starts after last voice
-
-
-        _this.$effect = _this.dspVoices$[_this.voices - 1] + _this.dspMeta.size;
-      }
-
-      _this.pathTable$ = {};
-      _this.$buffer = 0;
-      _this.cachedEvents = []; // Init resulting DSP
-
-      _this.setup();
-
-      return _this;
-    }
-
-    _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_2___default()(FaustAudioWorkletProcessor, [{
-      key: "instantiateWasm",
-      value: function instantiateWasm(options) {
-        var memory = createWasmMemory(options.voices, options.compiledDsp.dspMeta, options.compiledDsp.effectMeta, 128);
-        this.memory = memory;
-        var imports = createWasmImport(options.voices, memory);
-        this.dspInstance = new WebAssembly.Instance(options.compiledDsp.dspModule, imports);
-
-        if (options.compiledDsp.effectModule) {
-          this.effectInstance = new WebAssembly.Instance(options.compiledDsp.effectModule, imports);
-        }
-
-        if (options.voices) {
-          var mixerImports = {
-            imports: {
-              print: console.log
-            },
-            memory: {
-              memory: memory
-            }
-          };
-          this.mixerInstance = new WebAssembly.Instance(options.mixer32Module, mixerImports);
-        }
-      }
-    }, {
-      key: "updateOutputs",
-      value: function updateOutputs() {
-        var _this2 = this;
-
-        if (this.outputsItems.length > 0 && this.outputHandler && this.outputsTimer-- === 0) {
-          this.outputsTimer = 5;
-          this.outputsItems.forEach(function (item) {
-            return _this2.outputHandler(item, _this2.factory.getParamValue(_this2.$dsp, _this2.pathTable$[item]));
-          });
-        }
-      }
-    }, {
-      key: "parseUI",
-      value: function parseUI(ui) {
-        return FaustAudioWorkletProcessor.parseUI(ui, this, FaustAudioWorkletProcessor.parseItem2);
-      }
-    }, {
-      key: "parseGroup",
-      value: function parseGroup(group) {
-        return FaustAudioWorkletProcessor.parseGroup(group, this, FaustAudioWorkletProcessor.parseItem2);
-      }
-    }, {
-      key: "parseItems",
-      value: function parseItems(items) {
-        return FaustAudioWorkletProcessor.parseItems(items, this, FaustAudioWorkletProcessor.parseItem2);
-      }
-    }, {
-      key: "parseItem",
-      value: function parseItem(item) {
-        return FaustAudioWorkletProcessor.parseItem2(item, this, FaustAudioWorkletProcessor.parseItem2);
-      }
-    }, {
-      key: "setParamValue",
-      value: function setParamValue(path, val) {
-        var _this3 = this;
-
-        if (this.voices) {
-          if (this.effect && findPath(this.effectMeta.ui, path)) this.effect.setParamValue(this.$effect, this.pathTable$[path], val);else this.dspVoices$.forEach(function ($voice) {
-            return _this3.factory.setParamValue($voice, _this3.pathTable$[path], val);
-          });
-        } else {
-          this.factory.setParamValue(this.$dsp, this.pathTable$[path], val);
-        }
-      }
-    }, {
-      key: "getParamValue",
-      value: function getParamValue(path) {
-        if (this.voices) {
-          if (this.effect && findPath(this.effectMeta.ui, path)) return this.effect.getParamValue(this.$effect, this.pathTable$[path]);
-          return this.factory.getParamValue(this.dspVoices$[0], this.pathTable$[path]);
-        }
-
-        return this.factory.getParamValue(this.$dsp, this.pathTable$[path]);
-      }
-    }, {
-      key: "setup",
-      value: function setup() {
-        var _this4 = this;
-
-        if (this.numIn > 0) {
-          this.$ins = this.$$audioHeapInputs;
-
-          for (var i = 0; i < this.numIn; i++) {
-            this.HEAP32[(this.$ins >> 2) + i] = this.$audioHeapInputs + this.bufferSize * this.sampleSize * i;
-          } // Prepare Ins buffer tables
-
-
-          var dspInChans = this.HEAP32.subarray(this.$ins >> 2, this.$ins + this.numIn * this.ptrSize >> 2);
-
-          for (var _i = 0; _i < this.numIn; _i++) {
-            this.dspInChannnels[_i] = this.HEAPF32.subarray(dspInChans[_i] >> 2, dspInChans[_i] + this.bufferSize * this.sampleSize >> 2);
-          }
-        }
-
-        if (this.numOut > 0) {
-          this.$outs = this.$$audioHeapOutputs;
-          if (this.voices) this.$mixing = this.$$audioHeapMixing;
-
-          for (var _i2 = 0; _i2 < this.numOut; _i2++) {
-            this.HEAP32[(this.$outs >> 2) + _i2] = this.$audioHeapOutputs + this.bufferSize * this.sampleSize * _i2;
-            if (this.voices) this.HEAP32[(this.$mixing >> 2) + _i2] = this.$audioHeapMixing + this.bufferSize * this.sampleSize * _i2;
-          } // Prepare Out buffer tables
-
-
-          var dspOutChans = this.HEAP32.subarray(this.$outs >> 2, this.$outs + this.numOut * this.ptrSize >> 2);
-
-          for (var _i3 = 0; _i3 < this.numOut; _i3++) {
-            this.dspOutChannnels[_i3] = this.HEAPF32.subarray(dspOutChans[_i3] >> 2, dspOutChans[_i3] + this.bufferSize * this.sampleSize >> 2);
-          }
-        } // Parse UI
-
-
-        this.parseUI(this.dspMeta.ui);
-        if (this.effect) this.parseUI(this.effectMeta.ui); // keep 'keyOn/keyOff' labels
-
-        if (this.voices) {
-          this.inputsItems.forEach(function (item) {
-            if (item.endsWith("/gate")) _this4.fGateLabel$.push(_this4.pathTable$[item]);else if (item.endsWith("/freq")) _this4.fFreqLabel$.push(_this4.pathTable$[item]);else if (item.endsWith("/gain")) _this4.fGainLabel$.push(_this4.pathTable$[item]);
-          }); // Init DSP voices
-
-          this.dspVoices$.forEach(function ($voice) {
-            return _this4.factory.init($voice, sampleRate);
-          }); // Init effect
-
-          if (this.effect) this.effect.init(this.$effect, sampleRate);
-        } else {
-          // Init DSP
-          this.factory.init(this.$dsp, sampleRate); // 'sampleRate' is defined in AudioWorkletGlobalScope
-        }
-      } // Poly only methods
-
-    }, {
-      key: "getPlayingVoice",
-      value: function getPlayingVoice(pitch) {
-        if (!this.voices) return null;
-        var voice = this.kNoVoice;
-        var oldestDatePlaying = Number.MAX_VALUE;
-
-        for (var i = 0; i < this.voices; i++) {
-          if (this.dspVoicesState[i] === pitch) {
-            // Keeps oldest playing voice
-            if (this.dspVoicesDate[i] < oldestDatePlaying) {
-              oldestDatePlaying = this.dspVoicesDate[i];
-              voice = i;
-            }
-          }
-        }
-
-        return voice;
-      }
-    }, {
-      key: "allocVoice",
-      value: function allocVoice(voice) {
-        if (!this.voices) return null; // so that envelop is always re-initialized
-
-        this.factory.instanceClear(this.dspVoices$[voice]);
-        this.dspVoicesDate[voice] = this.fDate++;
-        this.dspVoicesState[voice] = this.kActiveVoice;
-        return voice;
-      }
-    }, {
-      key: "getFreeVoice",
-      value: function getFreeVoice() {
-        if (!this.voices) return null;
-
-        for (var i = 0; i < this.voices; i++) {
-          if (this.dspVoicesState[i] === this.kFreeVoice) return this.allocVoice(i);
-        }
-
-        var voiceRelease = this.kNoVoice;
-        var voicePlaying = this.kNoVoice;
-        var oldestDateRelease = Number.MAX_VALUE;
-        var oldestDatePlaying = Number.MAX_VALUE;
-
-        for (var _i4 = 0; _i4 < this.voices; _i4++) {
-          // Scan all voices
-          // Try to steal a voice in kReleaseVoice mode...
-          if (this.dspVoicesState[_i4] === this.kReleaseVoice) {
-            // Keeps oldest release voice
-            if (this.dspVoicesDate[_i4] < oldestDateRelease) {
-              oldestDateRelease = this.dspVoicesDate[_i4];
-              voiceRelease = _i4;
-            }
-          } else if (this.dspVoicesDate[_i4] < oldestDatePlaying) {
-            oldestDatePlaying = this.dspVoicesDate[_i4];
-            voicePlaying = _i4;
-          }
-        } // Then decide which one to steal
-
-
-        if (oldestDateRelease !== Number.MAX_VALUE) {
-          // console.log(`Steal release voice : voice_date = ${this.dspVoicesDate[voiceRelease]} cur_date = ${this.fDate} voice = ${voiceRelease}`);
-          return this.allocVoice(voiceRelease);
-        }
-
-        if (oldestDatePlaying !== Number.MAX_VALUE) {
-          // console.log(`Steal playing voice : voice_date = ${this.dspVoicesDate[voicePlaying]} cur_date = ${this.fDate} voice = ${voicePlaying}`);
-          return this.allocVoice(voicePlaying);
-        }
-
-        return this.kNoVoice;
-      }
-    }, {
-      key: "keyOn",
-      value: function keyOn(channel, pitch, velocity) {
-        var _this5 = this;
-
-        if (!this.voices) return;
-        var voice = this.getFreeVoice(); // console.log("keyOn voice " + voice);
-
-        this.fFreqLabel$.forEach(function ($) {
-          return _this5.factory.setParamValue(_this5.dspVoices$[voice], $, midiToFreq(pitch));
-        });
-        this.fGateLabel$.forEach(function ($) {
-          return _this5.factory.setParamValue(_this5.dspVoices$[voice], $, 1);
-        });
-        this.fGainLabel$.forEach(function ($) {
-          return _this5.factory.setParamValue(_this5.dspVoices$[voice], $, velocity / 127);
-        });
-        this.dspVoicesState[voice] = pitch;
-      }
-    }, {
-      key: "keyOff",
-      value: function keyOff(channel, pitch, velocity) {
-        var _this6 = this;
-
-        // eslint-disable-line @typescript-eslint/no-unused-vars
-        if (!this.voices) return;
-        var voice = this.getPlayingVoice(pitch);
-        if (voice === this.kNoVoice) return; // console.log("Playing voice not found...");
-        // console.log("keyOff voice " + voice);
-
-        this.fGateLabel$.forEach(function ($) {
-          return _this6.factory.setParamValue(_this6.dspVoices$[voice], $, 0);
-        }); // No use of velocity for now...
-
-        this.dspVoicesState[voice] = this.kReleaseVoice; // Release voice
-      }
-    }, {
-      key: "allNotesOff",
-      value: function allNotesOff() {
-        var _this7 = this;
-
-        if (!this.voices) return;
-
-        var _loop = function _loop(i) {
-          _this7.fGateLabel$.forEach(function ($gate) {
-            return _this7.factory.setParamValue(_this7.dspVoices$[i], $gate, 0);
-          });
-
-          _this7.dspVoicesState[i] = _this7.kReleaseVoice;
-        };
-
-        for (var i = 0; i < this.voices; i++) {
-          _loop(i);
-        }
-      }
-    }, {
-      key: "midiMessage",
-      value: function midiMessage(data) {
-        var cmd = data[0] >> 4;
-        var channel = data[0] & 0xf;
-        var data1 = data[1];
-        var data2 = data[2];
-        if (channel === 9) return undefined;
-        if (cmd === 8 || cmd === 9 && data2 === 0) return this.keyOff(channel, data1, data2);
-        if (cmd === 9) return this.keyOn(channel, data1, data2);
-        if (cmd === 11) return this.ctrlChange(channel, data1, data2);
-        if (cmd === 14) return this.pitchWheel(channel, data2 * 128.0 + data1);
-        return undefined;
-      }
-    }, {
-      key: "ctrlChange",
-      value: function ctrlChange(channel, ctrl, value) {
-        var _this8 = this;
-
-        if (!this.fCtrlLabel[ctrl].length) return;
-        this.fCtrlLabel[ctrl].forEach(function (ctrl) {
-          var path = ctrl.path;
-
-          _this8.setParamValue(path, remap(value, 0, 127, ctrl.min, ctrl.max));
-
-          if (_this8.outputHandler) _this8.outputHandler(path, _this8.getParamValue(path));
-        });
-      }
-    }, {
-      key: "pitchWheel",
-      value: function pitchWheel(channel, wheel) {
-        var _this9 = this;
-
-        this.fPitchwheelLabel.forEach(function (pw) {
-          _this9.setParamValue(pw.path, remap(wheel, 0, 16383, pw.min, pw.max));
-
-          if (_this9.outputHandler) _this9.outputHandler(pw.path, _this9.getParamValue(pw.path));
-        });
-      }
-    }, {
-      key: "process",
-      value: function process(inputs, outputs, parameters) {
-        // eslint-disable-line @typescript-eslint/no-unused-vars
-        var input = inputs[0];
-        var output = outputs[0]; // Check inputs
-
-        if (this.numIn > 0 && (input === undefined || input[0].length === 0)) {
-          // console.log("Process input error");
-          return true;
-        } // Check outputs
-
-
-        if (this.numOut > 0 && (output === undefined || output[0].length === 0)) {
-          // console.log("Process output error");
-          return true;
-        } // Copy inputs
-
-
-        if (input !== undefined) {
-          for (var chan = 0; chan < Math.min(this.numIn, input.length); ++chan) {
-            var dspInput = this.dspInChannnels[chan];
-            dspInput.set(input[chan]);
-          }
-        }
-        /*
-        // Update controls (possibly needed for sample accurate control)
-        for (const key in parameters) {
-            const value = parameters[key];
-            this.HEAPF32[this.pathTable$[key] >> 2] = value[0];
-        }*/
-        // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
-
-
-        if (this.computeHandler) this.computeHandler(this.bufferSize);
-
-        if (this.voices) {
-          this.mixer.clearOutput(this.bufferSize, this.numOut, this.$outs); // First clear the outputs
-
-          for (var i = 0; i < this.voices; i++) {
-            // Compute all running voices
-            this.factory.compute(this.dspVoices$[i], this.bufferSize, this.$ins, this.$mixing); // Compute voice
-
-            this.mixer.mixVoice(this.bufferSize, this.numOut, this.$mixing, this.$outs); // Mix it in result
-          }
-
-          if (this.effect) this.effect.compute(this.$effect, this.bufferSize, this.$outs, this.$outs); // Apply effect. Not a typo, effect is applied on the outs.
-        } else {
-          this.factory.compute(this.$dsp, this.bufferSize, this.$ins, this.$outs); // Compute
-        } // Update bargraph
-
-
-        this.updateOutputs(); // Copy outputs
-
-        if (output !== undefined) {
-          for (var _i5 = 0; _i5 < Math.min(this.numOut, output.length); _i5++) {
-            var dspOutput = this.dspOutChannnels[_i5];
-
-            output[_i5].set(dspOutput);
-          }
-
-          this.port.postMessage({
-            type: "plot",
-            value: output,
-            index: this.$buffer++,
-            events: this.cachedEvents
-          });
-          this.cachedEvents = [];
-        }
-
-        return true;
-      }
-    }, {
-      key: "printMemory",
-      value: function printMemory() {
-        console.log("============== Memory layout ==============");
-        console.log("dspMeta.size: " + this.dspMeta.size);
-        console.log("$audioHeap: " + this.$audioHeap);
-        console.log("$$audioHeapInputs: " + this.$$audioHeapInputs);
-        console.log("$$audioHeapOutputs: " + this.$$audioHeapOutputs);
-        console.log("$$audioHeapMixing: " + this.$$audioHeapMixing);
-        console.log("$audioHeapInputs: " + this.$audioHeapInputs);
-        console.log("$audioHeapOutputs: " + this.$audioHeapOutputs);
-        console.log("$audioHeapMixing: " + this.$audioHeapMixing);
-        console.log("$dsp: " + this.$dsp);
-        if (this.dspVoices$) this.dspVoices$.forEach(function ($voice, i) {
-          return console.log("dspVoices$[" + i + "]: " + $voice);
-        });
-        console.log("$effect: " + this.$effect);
-        console.log("$mixing: " + this.$mixing);
-      }
-    }]);
-
-    return FaustAudioWorkletProcessor;
-  }(_babel_runtime_helpers_wrapNativeSuper__WEBPACK_IMPORTED_MODULE_4___default()(AudioWorkletProcessor)); // Globals
-  // Synchronously compile and instantiate the WASM module
-
-
-  FaustAudioWorkletProcessor.bufferSize = 128;
-  registerProcessor(FaustConst.id || "mydsp", FaustAudioWorkletProcessor);
-};
-
-/***/ }),
-
-/***/ "./src/FaustOfflineProcessor.ts":
-/*!**************************************!*\
-  !*** ./src/FaustOfflineProcessor.ts ***!
-  \**************************************/
-/*! exports provided: FaustOfflineProcessor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FaustOfflineProcessor", function() { return FaustOfflineProcessor; });
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3__);
-
-
-
-
-
-/* eslint-disable no-restricted-properties */
-
-/* eslint-disable @typescript-eslint/camelcase */
-
-/* eslint-disable object-property-newline */
-var FaustOfflineProcessor =
-/*#__PURE__*/
-function () {
-  function FaustOfflineProcessor() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_2___default()(this, FaustOfflineProcessor);
-
-    this.bufferSize = 1024;
-    this.sampleRate = void 0;
-    this.dspMeta = void 0;
-    this.$ins = void 0;
-    this.$outs = void 0;
-    this.dspInChannnels = void 0;
-    this.dspOutChannnels = void 0;
-    this.numIn = void 0;
-    this.numOut = void 0;
-    this.ptrSize = void 0;
-    this.sampleSize = void 0;
-    this.$audioHeap = void 0;
-    this.$$audioHeapInputs = void 0;
-    this.$$audioHeapOutputs = void 0;
-    this.$audioHeapInputs = void 0;
-    this.$audioHeapOutputs = void 0;
-    this.$dsp = void 0;
-    this.factory = void 0;
-    this.HEAP = void 0;
-    this.HEAP32 = void 0;
-    this.HEAPF32 = void 0;
-    this.output = void 0;
+    node.setup();
+    return node;
   }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_3___default()(FaustOfflineProcessor, [{
-    key: "init",
-    value: function () {
-      var _init = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(options) {
-        var _this = this;
-
-        var compiledDsp, dspInstance;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                compiledDsp = options.compiledDsp;
-
-                if (compiledDsp) {
-                  _context.next = 3;
-                  break;
-                }
-
-                throw new Error("No Dsp input");
-
-              case 3:
-                this.dspMeta = compiledDsp.dspMeta;
-                this.$ins = null;
-                this.$outs = null;
-                this.dspInChannnels = [];
-                this.dspOutChannnels = [];
-                this.numIn = this.dspMeta.inputs;
-                this.numOut = this.dspMeta.outputs; // Memory allocator
-
-                this.ptrSize = 4;
-                this.sampleSize = 4; // Create the WASM instance
-
-                _context.next = 14;
-                return WebAssembly.instantiate(compiledDsp.dspModule, FaustOfflineProcessor.importObject);
-
-              case 14:
-                dspInstance = _context.sent;
-                this.factory = dspInstance.exports;
-                this.HEAP = this.factory.memory.buffer;
-                this.HEAP32 = new Int32Array(this.HEAP);
-                this.HEAPF32 = new Float32Array(this.HEAP);
-                this.output = new Array(this.numOut).fill(null).map(function () {
-                  return new Float32Array(_this.bufferSize);
-                });
-
-              case 20:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function init(_x) {
-        return _init.apply(this, arguments);
-      }
-
-      return init;
-    }()
-  }, {
-    key: "setup",
-    value: function setup(options) {
-      if (!this.dspMeta) throw Error("No Dsp");
-      this.sampleRate = options && options.sampleRate || 48000; // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-
-      this.$audioHeap = this.dspMeta.size; // Setup pointers offset
-
-      this.$$audioHeapInputs = this.$audioHeap;
-      this.$$audioHeapOutputs = this.$$audioHeapInputs + this.numIn * this.ptrSize; // Setup buffer offset
-
-      this.$audioHeapInputs = this.$$audioHeapOutputs + this.numOut * this.ptrSize;
-      this.$audioHeapOutputs = this.$audioHeapInputs + this.numIn * this.bufferSize * this.sampleSize; // Start of DSP memory : Mono DSP is placed first with index 0
-
-      this.$dsp = 0;
-
-      if (this.numIn > 0) {
-        this.$ins = this.$$audioHeapInputs;
-
-        for (var i = 0; i < this.numIn; i++) {
-          this.HEAP32[(this.$ins >> 2) + i] = this.$audioHeapInputs + this.bufferSize * this.sampleSize * i;
-        } // Prepare Ins buffer tables
-
-
-        var dspInChans = this.HEAP32.subarray(this.$ins >> 2, this.$ins + this.numIn * this.ptrSize >> 2);
-
-        for (var _i = 0; _i < this.numIn; _i++) {
-          this.dspInChannnels[_i] = this.HEAPF32.subarray(dspInChans[_i] >> 2, dspInChans[_i] + this.bufferSize * this.sampleSize >> 2);
-        }
-      }
-
-      if (this.numOut > 0) {
-        this.$outs = this.$$audioHeapOutputs;
-
-        for (var _i2 = 0; _i2 < this.numOut; _i2++) {
-          this.HEAP32[(this.$outs >> 2) + _i2] = this.$audioHeapOutputs + this.bufferSize * this.sampleSize * _i2;
-        } // Prepare Out buffer tables
-
-
-        var dspOutChans = this.HEAP32.subarray(this.$outs >> 2, this.$outs + this.numOut * this.ptrSize >> 2);
-
-        for (var _i3 = 0; _i3 < this.numOut; _i3++) {
-          this.dspOutChannnels[_i3] = this.HEAPF32.subarray(dspOutChans[_i3] >> 2, dspOutChans[_i3] + this.bufferSize * this.sampleSize >> 2);
-        }
-      } // Init DSP
-
-
-      this.factory.init(this.$dsp, this.sampleRate);
-    }
-  }, {
-    key: "compute",
-    value: function compute() {
-      if (!this.factory) return this.output;
-
-      for (var i = 0; i < this.numIn; i++) {
-        this.dspInChannnels[i].fill(0);
-      }
-
-      this.factory.compute(this.$dsp, this.bufferSize, this.$ins, this.$outs); // Compute
-      // Copy outputs
-
-      if (this.output !== undefined) {
-        for (var _i4 = 0; _i4 < this.numOut; _i4++) {
-          this.output[_i4].set(this.dspOutChannnels[_i4]);
-        }
-      }
-
-      return this.output;
-    }
-  }, {
-    key: "plot",
-    value: function () {
-      var _plot = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2(options) {
-        var size, plotted, i, computed, j;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                if (!(options && options.compiledDsp)) {
-                  _context2.next = 3;
-                  break;
-                }
-
-                _context2.next = 3;
-                return this.init(options);
-
-              case 3:
-                this.setup(options);
-                size = options && options.size || 128;
-                plotted = new Array(this.numOut).fill(null).map(function () {
-                  return new Float32Array(size);
-                });
-
-                for (i = 0; i < size; i += this.bufferSize) {
-                  computed = this.compute();
-
-                  for (j = 0; j < plotted.length; j++) {
-                    plotted[j].set(size - i > this.bufferSize ? computed[j] : computed[j].subarray(0, size - i), i);
-                  }
-                }
-
-                return _context2.abrupt("return", plotted);
-
-              case 8:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-
-      function plot(_x2) {
-        return _plot.apply(this, arguments);
-      }
-
-      return plot;
-    }()
-  }], [{
-    key: "importObject",
-    get: function get() {
-      return {
-        env: {
-          memory: undefined,
-          memoryBase: 0,
-          tableBase: 0,
-          _abs: Math.abs,
-          // Float version
-          _acosf: Math.acos,
-          _asinf: Math.asin,
-          _atanf: Math.atan,
-          _atan2f: Math.atan2,
-          _ceilf: Math.ceil,
-          _cosf: Math.cos,
-          _expf: Math.exp,
-          _floorf: Math.floor,
-          _fmodf: function _fmodf(x, y) {
-            return x % y;
-          },
-          _logf: Math.log,
-          _log10f: Math.log10,
-          _max_f: Math.max,
-          _min_f: Math.min,
-          _remainderf: function _remainderf(x, y) {
-            return x - Math.round(x / y) * y;
-          },
-          _powf: Math.pow,
-          _roundf: Math.fround,
-          _sinf: Math.sin,
-          _sqrtf: Math.sqrt,
-          _tanf: Math.tan,
-          _acosfh: Math.acosh,
-          _asinfh: Math.asinh,
-          _atanfh: Math.atanh,
-          _cosfh: Math.cosh,
-          _sinfh: Math.sinh,
-          _tanfh: Math.tanh,
-          // Double version
-          _acos: Math.acos,
-          _asin: Math.asin,
-          _atan: Math.atan,
-          _atan2: Math.atan2,
-          _ceil: Math.ceil,
-          _cos: Math.cos,
-          _exp: Math.exp,
-          _floor: Math.floor,
-          _fmod: function _fmod(x, y) {
-            return x % y;
-          },
-          _log: Math.log,
-          _log10: Math.log10,
-          _max_: Math.max,
-          _min_: Math.min,
-          _remainder: function _remainder(x, y) {
-            return x - Math.round(x / y) * y;
-          },
-          _pow: Math.pow,
-          _round: Math.fround,
-          _sin: Math.sin,
-          _sqrt: Math.sqrt,
-          _tan: Math.tan,
-          _acosh: Math.acosh,
-          _asinh: Math.asinh,
-          _atanh: Math.atanh,
-          _cosh: Math.cosh,
-          _sinh: Math.sinh,
-          _tanh: Math.tanh,
-          table: new WebAssembly.Table({
-            initial: 0,
-            element: "anyfunc"
-          })
-        }
-      };
-    }
-  }]);
-
-  return FaustOfflineProcessor;
-}();
-
-/***/ }),
-
-/***/ "./src/FaustWasmToScriptProcessor.ts":
-/*!*******************************************!*\
-  !*** ./src/FaustWasmToScriptProcessor.ts ***!
-  \*******************************************/
-/*! exports provided: FaustWasmToScriptProcessor */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FaustWasmToScriptProcessor", function() { return FaustWasmToScriptProcessor; });
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js");
-/* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils */ "./src/utils.ts");
-
-
-
-
-
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-/* eslint-disable no-restricted-properties */
-
-/* eslint-disable @typescript-eslint/camelcase */
-
-/* eslint-disable object-property-newline */
-
-/* eslint-disable object-curly-newline */
-
-var FaustWasmToScriptProcessor =
-/*#__PURE__*/
-function () {
-  function FaustWasmToScriptProcessor(faust) {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_4___default()(this, FaustWasmToScriptProcessor);
-
-    this.faust = void 0;
-    this.faust = faust;
-  }
-
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_5___default()(FaustWasmToScriptProcessor, [{
-    key: "initNode",
-    value: function initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plotHandler) {
-      var _this = this;
-
-      var node;
-      var dspMeta = compiledDsp.dspMeta;
-      var inputs = dspMeta.inputs;
-      var outputs = dspMeta.outputs;
-
-      try {
-        node = audioCtx.createScriptProcessor(bufferSize, inputs, outputs);
-      } catch (e) {
-        this.faust.error("Error in createScriptProcessor: " + e);
-        throw e;
-      }
-
-      node.voices = voices;
-      node.dspMeta = dspMeta;
-      node.outputHandler = null;
-      node.computeHandler = null;
-      node.$ins = null;
-      node.$outs = null;
-      node.dspInChannnels = [];
-      node.dspOutChannnels = [];
-      node.fPitchwheelLabel = [];
-      node.fCtrlLabel = new Array(128).fill(null).map(function () {
-        return [];
-      });
-      node.numIn = inputs;
-      node.numOut = outputs;
-      this.faust.log(node.numIn);
-      this.faust.log(node.numOut); // Memory allocator
-
-      node.ptrSize = 4;
-      node.sampleSize = 4;
-      node.factory = dspInstance.exports;
-      node.HEAP = node.voices ? memory.buffer : node.factory.memory.buffer;
-      node.HEAP32 = new Int32Array(node.HEAP);
-      node.HEAPF32 = new Float32Array(node.HEAP);
-      this.faust.log(node.HEAP);
-      this.faust.log(node.HEAP32);
-      this.faust.log(node.HEAPF32); // JSON is as offset 0
-
-      /*
-      var HEAPU8 = new Uint8Array(sp.HEAP);
-      console.log(this.Heap2Str(HEAPU8));
-      */
-      // bargraph
-
-      node.outputsTimer = 5;
-      node.outputsItems = []; // input items
-
-      node.inputsItems = []; // Start of HEAP index
-      // DSP is placed first with index 0. Audio buffer start at the end of DSP.
-
-      node.$audioHeap = node.voices ? 0 : node.dspMeta.size; // Setup pointers offset
-
-      node.$$audioHeapInputs = node.$audioHeap;
-      node.$$audioHeapOutputs = node.$$audioHeapInputs + node.numIn * node.ptrSize;
-
-      if (node.voices) {
-        node.$$audioHeapMixing = node.$$audioHeapOutputs + node.numOut * node.ptrSize; // Setup buffer offset
-
-        node.$audioHeapInputs = node.$$audioHeapMixing + node.numOut * node.ptrSize;
-        node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * node.bufferSize * node.sampleSize;
-        node.$audioHeapMixing = node.$audioHeapOutputs + node.numOut * node.bufferSize * node.sampleSize;
-        node.$dsp = node.$audioHeapMixing + node.numOut * node.bufferSize * node.sampleSize;
-      } else {
-        node.$audioHeapInputs = node.$$audioHeapOutputs + node.numOut * node.ptrSize;
-        node.$audioHeapOutputs = node.$audioHeapInputs + node.numIn * node.bufferSize * node.sampleSize; // Start of DSP memory : Mono DSP is placed first with index 0
-
-        node.$dsp = 0;
-      }
-
-      if (node.voices) {
-        node.effectMeta = compiledDsp.effectMeta;
-        node.$mixing = null;
-        node.fFreqLabel$ = [];
-        node.fGateLabel$ = [];
-        node.fGainLabel$ = [];
-        node.fDate = 0;
-        node.mixer = mixerInstance.exports;
-        node.effect = effectInstance ? effectInstance.exports : null;
-        this.faust.log(node.mixer);
-        this.faust.log(node.factory);
-        this.faust.log(node.effect); // Start of DSP memory ('polyphony' DSP voices)
-
-        node.dspVoices$ = [];
-        node.dspVoicesState = [];
-        node.dspVoicesLevel = [];
-        node.dspVoicesDate = [];
-        node.kActiveVoice = 0;
-        node.kFreeVoice = -1;
-        node.kReleaseVoice = -2;
-        node.kNoVoice = -3;
-
-        for (var i = 0; i < node.voices; i++) {
-          node.dspVoices$[i] = node.$dsp + i * node.dspMeta.size;
-          node.dspVoicesState[i] = node.kFreeVoice;
-          node.dspVoicesLevel[i] = 0;
-          node.dspVoicesDate[i] = 0;
-        } // Effect memory starts after last voice
-
-
-        node.$effect = node.dspVoices$[node.voices - 1] + node.dspMeta.size;
-      }
-
-      node.pathTable$ = {};
-      node.$buffer = 0;
-      node.cachedEvents = [];
-      node.plotHandler = plotHandler;
-
-      node.updateOutputs = function () {
-        if (node.outputsItems.length > 0 && node.outputHandler && node.outputsTimer-- === 0) {
-          node.outputsTimer = 5;
-          node.outputsItems.forEach(function (item) {
-            return node.outputHandler(item, node.factory.getParamValue(node.$dsp, node.pathTable$[item]));
-          });
-        }
-      }; // JSON parsing
-
-
-      node.parseUI = function (ui) {
-        return ui.forEach(function (group) {
-          return node.parseGroup(group);
-        });
-      };
-
-      node.parseGroup = function (group) {
-        return group.items ? node.parseItems(group.items) : null;
-      };
-
-      node.parseItems = function (items) {
-        return items.forEach(function (item) {
-          return node.parseItem(item);
-        });
-      };
-
-      node.parseItem = function (item) {
-        if (item.type === "vgroup" || item.type === "hgroup" || item.type === "tgroup") {
-          node.parseItems(item.items);
-        } else if (item.type === "hbargraph" || item.type === "vbargraph") {
-          // Keep bargraph adresses
-          node.outputsItems.push(item.address);
-          node.pathTable$[item.address] = item.index;
-        } else if (item.type === "vslider" || item.type === "hslider" || item.type === "button" || item.type === "checkbox" || item.type === "nentry") {
-          // Keep inputs adresses
-          node.inputsItems.push(item.address);
-          node.pathTable$[item.address] = item.index;
-          if (!item.meta) return;
-          item.meta.forEach(function (meta) {
-            var midi = meta.midi;
-            if (!midi) return;
-            var strMidi = midi.trim();
-
-            if (strMidi === "pitchwheel") {
-              node.fPitchwheelLabel.push({
-                path: item.address,
-                min: item.min,
-                max: item.max
-              });
-            } else {
-              var matched = strMidi.match(/^ctrl\s(\d+)/);
-              if (!matched) return;
-              node.fCtrlLabel[parseInt(matched[1])].push({
-                path: item.address,
-                min: item.min,
-                max: item.max
-              });
-            }
-          });
-        }
-      };
-
-      if (node.voices) {
-        node.getPlayingVoice = function (pitch) {
-          var voice = node.kNoVoice;
-          var oldestDatePlaying = Number.MAX_VALUE;
-
-          for (var _i = 0; _i < node.voices; _i++) {
-            if (node.dspVoicesState[_i] === pitch) {
-              // Keeps oldest playing voice
-              if (node.dspVoicesDate[_i] < oldestDatePlaying) {
-                oldestDatePlaying = node.dspVoicesDate[_i];
-                voice = _i;
-              }
-            }
-          }
-
-          return voice;
-        }; // Always returns a voice
-
-
-        node.allocVoice = function (voice) {
-          // so that envelop is always re-initialized
-          node.factory.instanceClear(node.dspVoices$[voice]);
-          node.dspVoicesDate[voice] = node.fDate++;
-          node.dspVoicesState[voice] = node.kActiveVoice;
-          return voice;
-        };
-
-        node.getFreeVoice = function () {
-          for (var _i2 = 0; _i2 < node.voices; _i2++) {
-            if (node.dspVoicesState[_i2] === node.kFreeVoice) return node.allocVoice(_i2);
-          }
-
-          var voiceRelease = node.kNoVoice;
-          var voicePlaying = node.kNoVoice;
-          var oldestDateRelease = Number.MAX_VALUE;
-          var oldestDatePlaying = Number.MAX_VALUE;
-
-          for (var _i3 = 0; _i3 < node.voices; _i3++) {
-            // Scan all voices
-            // Try to steal a voice in kReleaseVoice mode...
-            if (node.dspVoicesState[_i3] === node.kReleaseVoice) {
-              // Keeps oldest release voice
-              if (node.dspVoicesDate[_i3] < oldestDateRelease) {
-                oldestDateRelease = node.dspVoicesDate[_i3];
-                voiceRelease = _i3;
-              }
-            } else if (node.dspVoicesDate[_i3] < oldestDatePlaying) {
-              oldestDatePlaying = node.dspVoicesDate[_i3];
-              voicePlaying = _i3;
-            }
-          } // Then decide which one to steal
-
-
-          if (oldestDateRelease !== Number.MAX_VALUE) {
-            _this.faust.log("Steal release voice : voice_date = ".concat(node.dspVoicesDate[voiceRelease], " cur_date = ").concat(node.fDate, " voice = ").concat(voiceRelease));
-
-            return node.allocVoice(voiceRelease);
-          }
-
-          if (oldestDatePlaying !== Number.MAX_VALUE) {
-            _this.faust.log("Steal playing voice : voice_date = ".concat(node.dspVoicesDate[voicePlaying], " cur_date = ").concat(node.fDate, " voice = ").concat(voicePlaying));
-
-            return node.allocVoice(voicePlaying);
-          }
-
-          return node.kNoVoice;
-        };
-
-        node.keyOn = function (channel, pitch, velocity) {
-          node.cachedEvents.push({
-            type: "keyOn",
-            data: [channel, pitch, velocity]
-          });
-          var voice = node.getFreeVoice();
-
-          _this.faust.log("keyOn voice " + voice);
-
-          node.fFreqLabel$.forEach(function ($) {
-            return node.factory.setParamValue(node.dspVoices$[voice], $, Object(_utils__WEBPACK_IMPORTED_MODULE_6__["midiToFreq"])(pitch));
-          });
-          node.fGateLabel$.forEach(function ($) {
-            return node.factory.setParamValue(node.dspVoices$[voice], $, 1);
-          });
-          node.fGainLabel$.forEach(function ($) {
-            return node.factory.setParamValue(node.dspVoices$[voice], $, velocity / 127);
-          });
-          node.dspVoicesState[voice] = pitch;
-        };
-
-        node.keyOff = function (channel, pitch, velocity) {
-          // eslint-disable-line @typescript-eslint/no-unused-vars
-          node.cachedEvents.push({
-            type: "keyOff",
-            data: [channel, pitch, velocity]
-          });
-          var voice = node.getPlayingVoice(pitch);
-          if (voice === node.kNoVoice) return _this.faust.log("Playing voice not found...");
-          node.fGateLabel$.forEach(function ($) {
-            return node.factory.setParamValue(node.dspVoices$[voice], $, 0);
-          }); // No use of velocity for now...
-
-          node.dspVoicesState[voice] = node.kReleaseVoice; // Release voice
-
-          return _this.faust.log("keyOff voice " + voice);
-        };
-
-        node.allNotesOff = function () {
-          node.cachedEvents.push({
-            type: "ctrlChange",
-            data: [0, 123, 0]
-          });
-
-          var _loop = function _loop(_i4) {
-            node.fGateLabel$.forEach(function ($gate) {
-              return node.factory.setParamValue(node.dspVoices$[_i4], $gate, 0);
-            });
-            node.dspVoicesState[_i4] = node.kReleaseVoice;
-          };
-
-          for (var _i4 = 0; _i4 < node.voices; _i4++) {
-            _loop(_i4);
-          }
-        };
-      }
-
-      node.midiMessage = function (data) {
-        node.cachedEvents.push({
-          data: data,
-          type: "midi"
-        });
-        var cmd = data[0] >> 4;
-        var channel = data[0] & 0xf;
-        var data1 = data[1];
-        var data2 = data[2];
-        if (channel === 9) return undefined;
-
-        if (node.voices) {
-          if (cmd === 8 || cmd === 9 && data2 === 0) return node.keyOff(channel, data1, data2);
-          if (cmd === 9) return node.keyOn(channel, data1, data2);
-        }
-
-        if (cmd === 11) return node.ctrlChange(channel, data1, data2);
-        if (cmd === 14) return node.pitchWheel(channel, data2 * 128.0 + data1);
-        return undefined;
-      };
-
-      node.ctrlChange = function (channel, ctrl, value) {
-        node.cachedEvents.push({
-          type: "ctrlChange",
-          data: [channel, ctrl, value]
-        });
-        if (!node.fCtrlLabel[ctrl].length) return;
-        node.fCtrlLabel[ctrl].forEach(function (ctrl) {
-          var path = ctrl.path;
-          node.setParamValue(path, Object(_utils__WEBPACK_IMPORTED_MODULE_6__["remap"])(value, 0, 127, ctrl.min, ctrl.max));
-          if (node.outputHandler) node.outputHandler(path, node.getParamValue(path));
-        });
-      };
-
-      node.pitchWheel = function (channel, wheel) {
-        node.cachedEvents.push({
-          type: "pitchWheel",
-          data: [channel, wheel]
-        });
-        node.fPitchwheelLabel.forEach(function (pw) {
-          node.setParamValue(pw.path, Object(_utils__WEBPACK_IMPORTED_MODULE_6__["remap"])(wheel, 0, 16383, pw.min, pw.max));
-          if (node.outputHandler) node.outputHandler(pw.path, node.getParamValue(pw.path));
-        });
-      };
-
-      node.compute = function (e) {
-        for (var _i5 = 0; _i5 < node.numIn; _i5++) {
-          // Read inputs
-          var input = e.inputBuffer.getChannelData(_i5);
-          var dspInput = node.dspInChannnels[_i5];
-          dspInput.set(input);
-        } // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
-
-
-        if (node.computeHandler) node.computeHandler(node.bufferSize);
-
-        if (node.voices) {
-          node.mixer.clearOutput(node.bufferSize, node.numOut, node.$outs); // First clear the outputs
-
-          for (var _i6 = 0; _i6 < node.voices; _i6++) {
-            // Compute all running voices
-            node.factory.compute(node.dspVoices$[_i6], node.bufferSize, node.$ins, node.$mixing); // Compute voice
-
-            node.mixer.mixVoice(node.bufferSize, node.numOut, node.$mixing, node.$outs); // Mix it in result
-          }
-
-          if (node.effect) node.effect.compute(node.$effect, node.bufferSize, node.$outs, node.$outs); // Apply effect. Not a typo, effect is applied on the outs.
-        } else {
-          node.factory.compute(node.$dsp, node.bufferSize, node.$ins, node.$outs); // Compute
-        }
-
-        node.updateOutputs(); // Update bargraph
-
-        var outputs = new Array(node.numOut).fill(null).map(function () {
-          return new Float32Array(node.bufferSize);
-        });
-
-        for (var _i7 = 0; _i7 < node.numOut; _i7++) {
-          // Write outputs
-          var output = e.outputBuffer.getChannelData(_i7);
-          var dspOutput = node.dspOutChannnels[_i7];
-          output.set(dspOutput);
-
-          outputs[_i7].set(dspOutput);
-        }
-
-        if (node.plotHandler) node.plotHandler(outputs, node.$buffer++, node.cachedEvents.length ? node.cachedEvents : undefined);
-        node.cachedEvents = [];
-      };
-
-      node.setup = function () {
-        // Setup web audio context
-        _this.faust.log("buffer_size " + node.bufferSize);
-
-        node.onaudioprocess = node.compute;
-
-        if (node.numIn > 0) {
-          node.$ins = node.$$audioHeapInputs;
-
-          for (var _i8 = 0; _i8 < node.numIn; _i8++) {
-            node.HEAP32[(node.$ins >> 2) + _i8] = node.$audioHeapInputs + node.bufferSize * node.sampleSize * _i8;
-          } // Prepare Ins buffer tables
-
-
-          var dspInChans = node.HEAP32.subarray(node.$ins >> 2, node.$ins + node.numIn * node.ptrSize >> 2);
-
-          for (var _i9 = 0; _i9 < node.numIn; _i9++) {
-            node.dspInChannnels[_i9] = node.HEAPF32.subarray(dspInChans[_i9] >> 2, dspInChans[_i9] + node.bufferSize * node.sampleSize >> 2);
-          }
-        }
-
-        if (node.numOut > 0) {
-          node.$outs = node.$$audioHeapOutputs;
-          if (node.voices) node.$mixing = node.$$audioHeapMixing;
-
-          for (var _i10 = 0; _i10 < node.numOut; _i10++) {
-            node.HEAP32[(node.$outs >> 2) + _i10] = node.$audioHeapOutputs + node.bufferSize * node.sampleSize * _i10;
-            if (node.voices) node.HEAP32[(node.$mixing >> 2) + _i10] = node.$audioHeapMixing + node.bufferSize * node.sampleSize * _i10;
-          } // Prepare Out buffer tables
-
-
-          var dspOutChans = node.HEAP32.subarray(node.$outs >> 2, node.$outs + node.numOut * node.ptrSize >> 2);
-
-          for (var _i11 = 0; _i11 < node.numOut; _i11++) {
-            node.dspOutChannnels[_i11] = node.HEAPF32.subarray(dspOutChans[_i11] >> 2, dspOutChans[_i11] + node.bufferSize * node.sampleSize >> 2);
-          }
-        } // Parse JSON UI part
-
-
-        node.parseUI(node.dspMeta.ui);
-        if (node.effect) node.parseUI(node.effectMeta.ui); // keep 'keyOn/keyOff' labels
-
-        if (node.voices) {
-          node.inputsItems.forEach(function (item) {
-            if (item.endsWith("/gate")) node.fGateLabel$.push(node.pathTable$[item]);else if (item.endsWith("/freq")) node.fFreqLabel$.push(node.pathTable$[item]);else if (item.endsWith("/gain")) node.fGainLabel$.push(node.pathTable$[item]);
-          }); // Init DSP voices
-
-          node.dspVoices$.forEach(function ($voice) {
-            return node.factory.init($voice, audioCtx.sampleRate);
-          }); // Init effect
-
-          if (node.effect) node.effect.init(node.$effect, audioCtx.sampleRate);
-        } else {
-          // Init DSP
-          node.factory.init(node.$dsp, audioCtx.sampleRate);
-        }
-      };
-
-      node.getSampleRate = function () {
-        return audioCtx.sampleRate;
-      };
-
-      node.getNumInputs = function () {
-        return node.numIn;
-      };
-
-      node.getNumOutputs = function () {
-        return node.numOut;
-      };
-
-      node.init = function (sampleRate) {
-        if (node.voices) node.dspVoices$.forEach(function ($voice) {
-          return node.factory.init($voice, sampleRate);
-        });else node.factory.init(node.$dsp, sampleRate);
-      };
-
-      node.instanceInit = function (sampleRate) {
-        if (node.voices) node.dspVoices$.forEach(function ($voice) {
-          return node.factory.instanceInit($voice, sampleRate);
-        });else node.factory.instanceInit(node.$dsp, sampleRate);
-      };
-
-      node.instanceConstants = function (sampleRate) {
-        if (node.voices) node.dspVoices$.forEach(function ($voice) {
-          return node.factory.instanceConstants($voice, sampleRate);
-        });else node.factory.instanceConstants(node.$dsp, sampleRate);
-      };
-
-      node.instanceResetUserInterface = function () {
-        if (node.voices) node.dspVoices$.forEach(function ($voice) {
-          return node.factory.instanceResetUserInterface($voice);
-        });else node.factory.instanceResetUserInterface(node.$dsp);
-      };
-
-      node.instanceClear = function () {
-        if (node.voices) node.dspVoices$.forEach(function ($voice) {
-          return node.factory.instanceClear($voice);
-        });else node.factory.instanceClear(node.$dsp);
-      };
-
-      node.metadata = function (handler) {
-        return node.dspMeta.meta ? node.dspMeta.meta.forEach(function (meta) {
-          return handler.declare(Object.keys(meta)[0], meta[Object.keys(meta)[0]]);
-        }) : undefined;
-      };
-
-      node.setOutputParamHandler = function (handler) {
-        return node.outputHandler = handler;
-      };
-
-      node.getOutputParamHandler = function () {
-        return node.outputHandler;
-      };
-
-      node.setComputeHandler = function (handler) {
-        return node.computeHandler = handler;
-      };
-
-      node.getComputeHandler = function () {
-        return node.computeHandler;
-      };
-
-      var findPath = function findPath(o, p) {
-        if (_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_3___default()(o) !== "object") return false;
-
-        if (o.address) {
-          if (o.address === p) return true;
-          return false;
-        }
-
-        for (var k in o) {
-          if (findPath(o[k], p)) return true;
-        }
-
-        return false;
-      };
-
-      node.setParamValue = function (path, value) {
-        node.cachedEvents.push({
-          type: "param",
-          data: {
-            path: path,
-            value: value
-          }
-        });
-
-        if (node.voices) {
-          if (node.effect && findPath(node.effectMeta.ui, path)) node.effect.setParamValue(node.$effect, node.pathTable$[path], value);else node.dspVoices$.forEach(function ($voice) {
-            return node.factory.setParamValue($voice, node.pathTable$[path], value);
-          });
-        } else {
-          node.factory.setParamValue(node.$dsp, node.pathTable$[path], value);
-        }
-      };
-
-      node.getParamValue = function (path) {
-        if (node.voices) {
-          if (node.effect && findPath(node.effectMeta.ui, path)) return node.effect.getParamValue(node.$effect, node.pathTable$[path]);
-          return node.factory.getParamValue(node.dspVoices$[0], node.pathTable$[path]);
-        }
-
-        return node.factory.getParamValue(node.$dsp, node.pathTable$[path]);
-      };
-
-      node.getParams = function () {
-        return node.inputsItems;
-      };
-
-      node.getJSON = function () {
-        if (node.voices) {
-          var o = node.dspMeta;
-          var e = node.effectMeta;
-
-          var r = _objectSpread({}, o);
-
-          if (e) {
-            r.ui = [{
-              type: "tgroup",
-              label: "Sequencer",
-              items: [{
-                type: "vgroup",
-                label: "Instrument",
-                items: o.ui
-              }, {
-                type: "vgroup",
-                label: "Effect",
-                items: e.ui
-              }]
-            }];
-          } else {
-            r.ui = [{
-              type: "tgroup",
-              label: "Polyphonic",
-              items: [{
-                type: "vgroup",
-                label: "Voices",
-                items: o.ui
-              }]
-            }];
-          }
-
-          return JSON.stringify(r);
-        }
-
-        return JSON.stringify(node.dspMeta);
-      };
-
-      node.getUI = function () {
-        if (node.voices) {
-          var o = node.dspMeta;
-          var e = node.effectMeta;
-
-          if (e) {
-            return [{
-              type: "tgroup",
-              label: "Sequencer",
-              items: [{
-                type: "vgroup",
-                label: "Instrument",
-                items: o.ui
-              }, {
-                type: "vgroup",
-                label: "Effect",
-                items: e.ui
-              }]
-            }];
-          }
-
-          return [{
-            type: "tgroup",
-            label: "Polyphonic",
-            items: [{
-              type: "vgroup",
-              label: "Voices",
-              items: o.ui
-            }]
-          }];
-        }
-
-        return node.dspMeta.ui;
-      }; // Init resulting DSP
-
-
-      node.setup();
-      return node;
-    }
-    /**
-     * Create a ScriptProcessorNode Web Audio object
-     * by loading and compiling the Faust wasm file
-     *
-     * @param {TAudioNodeOptions} optionsIn
-     * @returns {Promise<FaustScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
-     */
-
-  }, {
-    key: "getNode",
-    value: function () {
-      var _getNode = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(optionsIn) {
-        var compiledDsp, audioCtx, bufferSizeIn, voices, plotHandler, bufferSize, node, effectInstance, mixerInstance, memory, importObject, mixerObject, dspInstance;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                compiledDsp = optionsIn.compiledDsp, audioCtx = optionsIn.audioCtx, bufferSizeIn = optionsIn.bufferSize, voices = optionsIn.voices, plotHandler = optionsIn.plotHandler;
-                bufferSize = bufferSizeIn || 512;
-                _context.prev = 2;
-                memory = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["createWasmMemory"])(voices, compiledDsp.dspMeta, compiledDsp.effectMeta, bufferSize);
-                importObject = Object(_utils__WEBPACK_IMPORTED_MODULE_6__["createWasmImport"])(voices, memory);
-
-                if (!voices) {
-                  _context.next = 16;
-                  break;
-                }
-
-                mixerObject = {
-                  imports: {
-                    print: console.log
-                  },
-                  memory: {
-                    memory: memory
-                  }
-                }; // eslint-disable-line no-console
-
-                mixerInstance = new WebAssembly.Instance(_utils__WEBPACK_IMPORTED_MODULE_6__["mixer32Module"], mixerObject);
-                _context.prev = 8;
-                _context.next = 11;
-                return WebAssembly.instantiate(compiledDsp.effectModule, importObject);
-
-              case 11:
-                effectInstance = _context.sent;
+  /**
+   * Create a ScriptProcessorNode Web Audio object
+   * by loading and compiling the Faust wasm file
+   *
+   * @param {TAudioNodeOptions} optionsIn
+   * @returns {Promise<FaustScriptProcessorNode>} a Promise for valid WebAudio ScriptProcessorNode object or null
+   */
+
+
+  getNode(optionsIn) {
+    var _this = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+      var compiledDsp, audioCtx, bufferSizeIn, voices, plotHandler, bufferSize, node, effectInstance, mixerInstance, memory, importObject, mixerObject, dspInstance;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              compiledDsp = optionsIn.compiledDsp, audioCtx = optionsIn.audioCtx, bufferSizeIn = optionsIn.bufferSize, voices = optionsIn.voices, plotHandler = optionsIn.plotHandler;
+              bufferSize = bufferSizeIn || 512;
+              _context.prev = 2;
+              memory = Object(_utils__WEBPACK_IMPORTED_MODULE_3__["createWasmMemory"])(voices, compiledDsp.dspMeta, compiledDsp.effectMeta, bufferSize);
+              importObject = Object(_utils__WEBPACK_IMPORTED_MODULE_3__["createWasmImport"])(voices, memory);
+
+              if (!voices) {
                 _context.next = 16;
                 break;
+              }
 
-              case 14:
-                _context.prev = 14;
-                _context.t0 = _context["catch"](8);
+              mixerObject = {
+                imports: {
+                  print: console.log
+                },
+                memory: {
+                  memory
+                }
+              }; // eslint-disable-line no-console
 
-              case 16:
-                _context.next = 18;
-                return WebAssembly.instantiate(compiledDsp.dspModule, importObject);
+              mixerInstance = new WebAssembly.Instance(_utils__WEBPACK_IMPORTED_MODULE_3__["mixer32Module"], mixerObject);
+              _context.prev = 8;
+              _context.next = 11;
+              return WebAssembly.instantiate(compiledDsp.effectModule, importObject);
 
-              case 18:
-                dspInstance = _context.sent;
-                node = this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plotHandler);
-                _context.next = 26;
-                break;
+            case 11:
+              effectInstance = _context.sent;
+              _context.next = 16;
+              break;
 
-              case 22:
-                _context.prev = 22;
-                _context.t1 = _context["catch"](2);
-                this.faust.error("Faust " + compiledDsp.shaKey + " cannot be loaded or compiled");
-                throw _context.t1;
+            case 14:
+              _context.prev = 14;
+              _context.t0 = _context["catch"](8);
 
-              case 26:
-                return _context.abrupt("return", node);
+            case 16:
+              _context.next = 18;
+              return WebAssembly.instantiate(compiledDsp.dspModule, importObject);
 
-              case 27:
-              case "end":
-                return _context.stop();
-            }
+            case 18:
+              dspInstance = _context.sent;
+              node = _this.initNode(compiledDsp, dspInstance, effectInstance, mixerInstance, audioCtx, bufferSize, memory, voices, plotHandler);
+              _context.next = 26;
+              break;
+
+            case 22:
+              _context.prev = 22;
+              _context.t1 = _context["catch"](2);
+
+              _this.faust.error("Faust " + compiledDsp.shaKey + " cannot be loaded or compiled");
+
+              throw _context.t1;
+
+            case 26:
+              return _context.abrupt("return", node);
+
+            case 27:
+            case "end":
+              return _context.stop();
           }
-        }, _callee, this, [[2, 22], [8, 14]]);
-      }));
+        }
+      }, _callee, null, [[2, 22], [8, 14]]);
+    }))();
+  }
 
-      function getNode(_x) {
-        return _getNode.apply(this, arguments);
-      }
-
-      return getNode;
-    }()
-  }]);
-
-  return FaustWasmToScriptProcessor;
-}();
+}
 
 /***/ }),
 
@@ -28624,78 +27907,60 @@ function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LibFaustLoader", function() { return LibFaustLoader; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js");
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js");
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _libfaust_wasm__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./libfaust-wasm */ "./src/libfaust-wasm.js");
-/* harmony import */ var _libfaust_wasm__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_libfaust_wasm__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "LibFaust", function() { return _libfaust_wasm__WEBPACK_IMPORTED_MODULE_2__; });
+/* harmony import */ var _libfaust_wasm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./libfaust-wasm */ "./src/libfaust-wasm.js");
+/* harmony import */ var _libfaust_wasm__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_libfaust_wasm__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (module object) */ __webpack_require__.d(__webpack_exports__, "LibFaust", function() { return _libfaust_wasm__WEBPACK_IMPORTED_MODULE_0__; });
 
 
+class LibFaustLoader {
+  static load(wasmLocation, dataLocation) {
+    var locateFile = (path, dir) => ({
+      "libfaust-wasm.wasm": wasmLocation,
+      "libfaust-wasm.data": dataLocation
+    })[path] || dir + path;
 
+    var libFaust = _libfaust_wasm__WEBPACK_IMPORTED_MODULE_0__({
+      locateFile
+    });
 
-var LibFaustLoader =
-/*#__PURE__*/
-function () {
-  function LibFaustLoader() {
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, LibFaustLoader);
-  }
+    libFaust.then = f => {
+      // Workaround of issue https://github.com/emscripten-core/emscripten/issues/5820
+      delete libFaust.then; // We may already be ready to run code at this time. if
+      // so, just queue a call to the callback.
 
-  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(LibFaustLoader, null, [{
-    key: "load",
-    value: function load(wasmLocation, dataLocation) {
-      var locateFile = function locateFile(path, dir) {
-        return {
-          "libfaust-wasm.wasm": wasmLocation,
-          "libfaust-wasm.data": dataLocation
-        }[path] || dir + path;
-      };
+      if (libFaust.calledRun) {
+        f(libFaust);
+      } else {
+        // we are not ready to call then() yet. we must call it
+        // at the same time we would call onRuntimeInitialized.
+        var _onRuntimeInitialized = libFaust.onRuntimeInitialized;
 
-      var libFaust = _libfaust_wasm__WEBPACK_IMPORTED_MODULE_2__({
-        locateFile: locateFile
-      });
-
-      libFaust.then = function (f) {
-        // Workaround of issue https://github.com/emscripten-core/emscripten/issues/5820
-        delete libFaust.then; // We may already be ready to run code at this time. if
-        // so, just queue a call to the callback.
-
-        if (libFaust.calledRun) {
+        libFaust.onRuntimeInitialized = () => {
+          if (_onRuntimeInitialized) _onRuntimeInitialized();
           f(libFaust);
-        } else {
-          // we are not ready to call then() yet. we must call it
-          // at the same time we would call onRuntimeInitialized.
-          var _onRuntimeInitialized = libFaust.onRuntimeInitialized;
-
-          libFaust.onRuntimeInitialized = function () {
-            if (_onRuntimeInitialized) _onRuntimeInitialized();
-            f(libFaust);
-          };
-        }
-
-        return libFaust;
-      };
-
-      libFaust.lengthBytesUTF8 = function (str) {
-        var len = 0;
-
-        for (var i = 0; i < str.length; ++i) {
-          var u = str.charCodeAt(i); // eslint-disable-next-line no-mixed-operators
-
-          if (u >= 55296 && u <= 57343) u = 65536 + ((u & 1023) << 10) | str.charCodeAt(++i) & 1023;
-          if (u <= 127) ++len;else if (u <= 2047) len += 2;else if (u <= 65535) len += 3;else if (u <= 2097151) len += 4;else if (u <= 67108863) len += 5;else len += 6;
-        }
-
-        return len;
-      };
+        };
+      }
 
       return libFaust;
-    }
-  }]);
+    };
 
-  return LibFaustLoader;
-}();
+    libFaust.lengthBytesUTF8 = str => {
+      var len = 0;
+
+      for (var i = 0; i < str.length; ++i) {
+        var u = str.charCodeAt(i); // eslint-disable-next-line no-mixed-operators
+
+        if (u >= 55296 && u <= 57343) u = 65536 + ((u & 1023) << 10) | str.charCodeAt(++i) & 1023;
+        if (u <= 127) ++len;else if (u <= 2047) len += 2;else if (u <= 65535) len += 3;else if (u <= 2097151) len += 4;else if (u <= 67108863) len += 5;else len += 6;
+      }
+
+      return len;
+    };
+
+    return libFaust;
+  }
+
+}
 
 
 
@@ -28767,22 +28032,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createWasmImport", function() { return createWasmImport; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createWasmMemory", function() { return createWasmMemory; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toArgv", function() { return toArgv; });
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
-/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wasm/mixer32.wasm */ "./src/wasm/mixer32.wasm");
-/* harmony import */ var _wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_1__);
-
-
+/* harmony import */ var _wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./wasm/mixer32.wasm */ "./src/wasm/mixer32.wasm");
+/* harmony import */ var _wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0__);
 /* eslint-disable @typescript-eslint/camelcase */
 
 /* eslint-disable no-restricted-properties */
 
 /* eslint-disable object-property-newline */
 
-var ab2str = function ab2str(buf) {
-  return buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null;
-};
-var str2ab = function str2ab(str) {
+var ab2str = buf => buf ? String.fromCharCode.apply(null, new Uint8Array(buf)) : null;
+var str2ab = str => {
   if (!str) return null;
   var buf = new ArrayBuffer(str.length);
   var bufView = new Uint8Array(buf);
@@ -28793,11 +28052,11 @@ var str2ab = function str2ab(str) {
 
   return buf;
 };
-var atoUint6 = function atoUint6(nChr) {
+var atoUint6 = nChr => {
   // eslint-disable-line arrow-body-style
   return nChr > 64 && nChr < 91 ? nChr - 65 : nChr > 96 && nChr < 123 ? nChr - 71 : nChr > 47 && nChr < 58 ? nChr + 4 : nChr === 43 ? 62 : nChr === 47 ? 63 : 0;
 };
-var atoab = function atoab(sBase64, nBlocksSize) {
+var atoab = (sBase64, nBlocksSize) => {
   if (typeof window.atob === "function") return str2ab(atob(sBase64));
   var sB64Enc = sBase64.replace(/[^A-Za-z0-9+/]/g, "");
   var nInLen = sB64Enc.length;
@@ -28819,7 +28078,7 @@ var atoab = function atoab(sBase64, nBlocksSize) {
 
   return taBytes.buffer;
 };
-var heap2Str = function heap2Str(buf) {
+var heap2Str = buf => {
   var str = "";
   var i = 0;
 
@@ -28829,15 +28088,11 @@ var heap2Str = function heap2Str(buf) {
 
   return str;
 };
-var mixer32Module = new WebAssembly.Module(atoab(_wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_1___default.a.split(",")[1]));
-var midiToFreq = function midiToFreq(note) {
-  return 440.0 * Math.pow(2, (note - 69) / 12);
-};
-var remap = function remap(v, mn0, mx0, mn1, mx1) {
-  return (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
-};
-var findPath = function findPath(o, p) {
-  if (_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default()(o) !== "object") return false;
+var mixer32Module = new WebAssembly.Module(atoab(_wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0___default.a.split(",")[1]));
+var midiToFreq = note => 440.0 * Math.pow(2, (note - 69) / 12);
+var remap = (v, mn0, mx0, mn1, mx1) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
+var findPath = (o, p) => {
+  if (typeof o !== "object") return false;
 
   if (o.address) {
     return o.address === p;
@@ -28849,88 +28104,78 @@ var findPath = function findPath(o, p) {
 
   return false;
 };
-var createWasmImport = function createWasmImport(voices, memory) {
-  return {
-    env: {
-      memory: voices ? memory : undefined,
-      memoryBase: 0,
-      tableBase: 0,
-      _abs: Math.abs,
-      // Float version
-      _acosf: Math.acos,
-      _asinf: Math.asin,
-      _atanf: Math.atan,
-      _atan2f: Math.atan2,
-      _ceilf: Math.ceil,
-      _cosf: Math.cos,
-      _expf: Math.exp,
-      _floorf: Math.floor,
-      _fmodf: function _fmodf(x, y) {
-        return x % y;
-      },
-      _logf: Math.log,
-      _log10f: Math.log10,
-      _max_f: Math.max,
-      _min_f: Math.min,
-      _remainderf: function _remainderf(x, y) {
-        return x - Math.round(x / y) * y;
-      },
-      _powf: Math.pow,
-      _roundf: Math.fround,
-      _sinf: Math.sin,
-      _sqrtf: Math.sqrt,
-      _tanf: Math.tan,
-      _acosfh: Math.acosh,
-      _asinfh: Math.asinh,
-      _atanfh: Math.atanh,
-      _cosfh: Math.cosh,
-      _sinfh: Math.sinh,
-      _tanfh: Math.tanh,
-      // Double version
-      _acos: Math.acos,
-      _asin: Math.asin,
-      _atan: Math.atan,
-      _atan2: Math.atan2,
-      _ceil: Math.ceil,
-      _cos: Math.cos,
-      _exp: Math.exp,
-      _floor: Math.floor,
-      _fmod: function _fmod(x, y) {
-        return x % y;
-      },
-      _log: Math.log,
-      _log10: Math.log10,
-      _max_: Math.max,
-      _min_: Math.min,
-      _remainder: function _remainder(x, y) {
-        return x - Math.round(x / y) * y;
-      },
-      _pow: Math.pow,
-      _round: Math.fround,
-      _sin: Math.sin,
-      _sqrt: Math.sqrt,
-      _tan: Math.tan,
-      _acosh: Math.acosh,
-      _asinh: Math.asinh,
-      _atanh: Math.atanh,
-      _cosh: Math.cosh,
-      _sinh: Math.sinh,
-      _tanh: Math.tanh,
-      table: new WebAssembly.Table({
-        initial: 0,
-        element: "anyfunc"
-      })
-    }
-  };
-};
-var createWasmMemory = function createWasmMemory(voicesIn, dspMeta, effectMeta, bufferSize) {
+var createWasmImport = (voices, memory) => ({
+  env: {
+    memory: voices ? memory : undefined,
+    memoryBase: 0,
+    tableBase: 0,
+    _abs: Math.abs,
+    // Float version
+    _acosf: Math.acos,
+    _asinf: Math.asin,
+    _atanf: Math.atan,
+    _atan2f: Math.atan2,
+    _ceilf: Math.ceil,
+    _cosf: Math.cos,
+    _expf: Math.exp,
+    _floorf: Math.floor,
+    _fmodf: (x, y) => x % y,
+    _logf: Math.log,
+    _log10f: Math.log10,
+    _max_f: Math.max,
+    _min_f: Math.min,
+    _remainderf: (x, y) => x - Math.round(x / y) * y,
+    _powf: Math.pow,
+    _roundf: Math.fround,
+    _sinf: Math.sin,
+    _sqrtf: Math.sqrt,
+    _tanf: Math.tan,
+    _acosfh: Math.acosh,
+    _asinfh: Math.asinh,
+    _atanfh: Math.atanh,
+    _cosfh: Math.cosh,
+    _sinfh: Math.sinh,
+    _tanfh: Math.tanh,
+    // Double version
+    _acos: Math.acos,
+    _asin: Math.asin,
+    _atan: Math.atan,
+    _atan2: Math.atan2,
+    _ceil: Math.ceil,
+    _cos: Math.cos,
+    _exp: Math.exp,
+    _floor: Math.floor,
+    _fmod: (x, y) => x % y,
+    _log: Math.log,
+    _log10: Math.log10,
+    _max_: Math.max,
+    _min_: Math.min,
+    _remainder: (x, y) => x - Math.round(x / y) * y,
+    _pow: Math.pow,
+    _round: Math.fround,
+    _sin: Math.sin,
+    _sqrt: Math.sqrt,
+    _tan: Math.tan,
+    _acosh: Math.acosh,
+    _asinh: Math.asinh,
+    _atanh: Math.atanh,
+    _cosh: Math.cosh,
+    _sinh: Math.sinh,
+    _tanh: Math.tanh,
+    table: new WebAssembly.Table({
+      initial: 0,
+      element: "anyfunc"
+    })
+  }
+});
+var createWasmMemory = (voicesIn, dspMeta, effectMeta, bufferSize) => {
   // Hack : at least 4 voices (to avoid weird wasm memory bug?)
   var voices = Math.max(4, voicesIn); // Memory allocator
 
   var ptrSize = 4;
   var sampleSize = 4;
 
-  var pow2limit = function pow2limit(x) {
+  var pow2limit = x => {
     var n = 65536; // Minimum = 64 kB
 
     while (n < x) {
@@ -28949,14 +28194,12 @@ var createWasmMemory = function createWasmMemory(voicesIn, dspMeta, effectMeta, 
     maximum: memorySize
   });
 };
-var toArgv = function toArgv(args) {
+var toArgv = args => {
   var argv = [];
 
   var _loop = function _loop(key) {
     var arg = args[key];
-    if (Array.isArray(arg)) arg.forEach(function (s) {
-      return argv.push(key, s);
-    });else if (typeof arg === "number") argv.push(key, arg.toString());else argv.push(key, arg);
+    if (Array.isArray(arg)) arg.forEach(s => argv.push(key, s));else if (typeof arg === "number") argv.push(key, arg.toString());else argv.push(key, arg);
   };
 
   for (var key in args) {
