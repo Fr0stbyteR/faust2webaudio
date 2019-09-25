@@ -59,8 +59,7 @@ export const remap = (v: number, mn0: number, mx0: number, mn1: number, mx1: num
 export const findPath = (o: any, p: string) => {
     if (typeof o !== "object") return false;
     if (o.address) {
-        if (o.address === p) return true;
-        return false;
+        return (o.address === p);
     }
     for (const k in o) {
         if (findPath(o[k], p)) return true;

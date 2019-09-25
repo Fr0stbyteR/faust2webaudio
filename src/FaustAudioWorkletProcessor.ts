@@ -35,12 +35,12 @@ type FaustData = {
 declare const faustData: FaustData;
 
 declare const remap: (v: number, mn0: number, mx0: number, mn1: number, mx1: number) => number;
+declare const midiToFreq: (v: number) => number;
 declare const findPath: (o: any, p: string) => boolean;
 declare const createWasmImport: (voices: number, memory: WebAssembly.Memory) => { [key: string]: any };
 declare const createWasmMemory: (voicesIn: number, dspMeta: TDspMeta, effectMeta: TDspMeta, bufferSize: number) => WebAssembly.Memory;
 
 export const FaustAudioWorkletProcessorWrapper = () => {
-    const midiToFreq = (note: number) => 440.0 * 2 ** ((note - 69) / 12);
     class FaustConst {
         static id = faustData.id;
         static dspMeta = faustData.dspMeta;
@@ -92,7 +92,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                     if (!midi) return;
                     const strMidi = midi.trim();
                     if (strMidi === "pitchwheel") {
-                        obj.fPitchwheelLabel.push(item.address);
+                        obj.fPitchwheelLabel.push({ path: item.address, min: item.min, max: item.max });
                     } else {
                         const matched = strMidi.match(/^ctrl\s(\d+)/);
                         if (!matched) return;
@@ -480,7 +480,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             if (cmd === 8 || (cmd === 9 && data2 === 0)) return this.keyOff(channel, data1, data2);
             if (cmd === 9) return this.keyOn(channel, data1, data2);
             if (cmd === 11) return this.ctrlChange(channel, data1, data2);
-            if (cmd === 14) return this.pitchWheel(channel, (data2 * 128.0 + data1 - 8192) / 8192);
+            if (cmd === 14) return this.pitchWheel(channel, (data2 * 128.0 + data1));
             return undefined;
         }
         ctrlChange(channel: number, ctrl: number, value: number) {
@@ -492,9 +492,9 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             });
         }
         pitchWheel(channel: number, wheel: number) {
-            this.fPitchwheelLabel.forEach((path) => {
-                this.setParamValue(path, Math.pow(2, wheel / 12));
-                if (this.outputHandler) this.outputHandler(path, this.getParamValue(path));
+            this.fPitchwheelLabel.forEach((pw) => {
+                this.setParamValue(pw.path, remap(wheel, 0, 16383, pw.min, pw.max));
+                if (this.outputHandler) this.outputHandler(pw.path, this.getParamValue(pw.path));
             });
         }
         process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: any) { // eslint-disable-line @typescript-eslint/no-unused-vars
