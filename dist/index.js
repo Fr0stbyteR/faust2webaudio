@@ -25718,7 +25718,7 @@ class Faust {
                 break;
               }
 
-              strProcessor = "\nconst remap = ".concat(_utils__WEBPACK_IMPORTED_MODULE_8__["remap"].toString(), ";\nconst midiToFreq = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["midiToFreq"].toString(), ";\nconst findPath = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["findPath"].toString(), ";\nconst createWasmImport = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmImport"].toString(), ";\nconst createWasmMemory = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmMemory"].toString(), ";\nconst faustData = ").concat(JSON.stringify({
+              strProcessor = "\nconst remap = ".concat(_utils__WEBPACK_IMPORTED_MODULE_8__["remap"].toString(), ";\nconst midiToFreq = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["midiToFreq"].toString(), ";\nconst findPath = (").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["findPathClosure"].toString(), ")();\nconst createWasmImport = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmImport"].toString(), ";\nconst createWasmMemory = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmMemory"].toString(), ";\nconst faustData = ").concat(JSON.stringify({
                 id,
                 dspMeta: compiledDsp.dspMeta,
                 effectMeta: compiledDsp.effectMeta
@@ -28015,7 +28015,7 @@ if (true)
 /*!**********************!*\
   !*** ./src/utils.ts ***!
   \**********************/
-/*! exports provided: ab2str, str2ab, atoUint6, atoab, heap2Str, mixer32Module, midiToFreq, remap, findPath, createWasmImport, createWasmMemory, toArgv */
+/*! exports provided: ab2str, str2ab, atoUint6, atoab, heap2Str, mixer32Module, midiToFreq, remap, findPath, findPathClosure, createWasmImport, createWasmMemory, toArgv */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -28029,6 +28029,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "midiToFreq", function() { return midiToFreq; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "remap", function() { return remap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findPath", function() { return findPath; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findPathClosure", function() { return findPathClosure; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createWasmImport", function() { return createWasmImport; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createWasmMemory", function() { return createWasmMemory; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toArgv", function() { return toArgv; });
@@ -28103,6 +28104,23 @@ var findPath = (o, p) => {
   }
 
   return false;
+};
+var findPathClosure = () => {
+  var findPath = (o, p) => {
+    if (typeof o !== "object") return false;
+
+    if (o.address) {
+      return o.address === p;
+    }
+
+    for (var k in o) {
+      if (findPath(o[k], p)) return true;
+    }
+
+    return false;
+  };
+
+  return findPath;
 };
 var createWasmImport = (voices, memory) => ({
   env: {
