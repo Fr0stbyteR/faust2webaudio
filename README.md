@@ -67,6 +67,12 @@ Install dev dependencies:
 npm install
 ```
 
+Possibly:
+
+```bash
+npm update
+```
+
 To upgrade Libfaust version: replace `src/libfaust-wasm.js`, `dist/libfaust-wasm.wasm` and `dist/libfaust-wasm.data` with the new files
 
 To build everything (using Webpack 4, Babel 7, TypeScript), this will produce `dist/index.js` and `dist/index.min.js`
