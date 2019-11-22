@@ -39,8 +39,8 @@ export class FaustOfflineProcessor {
                 _logf: Math.log, _log10f: Math.log10, _max_f: Math.max, _min_f: Math.min,
                 _remainderf: (x: number, y: number) => x - Math.round(x / y) * y,
                 _powf: Math.pow, _roundf: Math.fround, _sinf: Math.sin, _sqrtf: Math.sqrt, _tanf: Math.tan,
-                _acosfh: Math.acosh, _asinfh: Math.asinh, _atanfh: Math.atanh,
-                _cosfh: Math.cosh, _sinfh: Math.sinh, _tanfh: Math.tanh,
+                _acoshf: Math.acosh, _asinhf: Math.asinh, _atanhf: Math.atanh,
+                _coshf: Math.cosh, _sinhf: Math.sinh, _tanhf: Math.tanh,
                 // Double version
                 _acos: Math.acos, _asin: Math.asin, _atan: Math.atan, _atan2: Math.atan2,
                 _ceil: Math.ceil, _cos: Math.cos, _exp: Math.exp, _floor: Math.floor,
