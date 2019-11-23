@@ -66,6 +66,19 @@ export const findPath = (o: any, p: string) => {
     }
     return false;
 };
+export const findPathClosure = () => {
+    const findPath = (o: any, p: string) => {
+        if (typeof o !== "object") return false;
+        if (o.address) {
+            return (o.address === p);
+        }
+        for (const k in o) {
+            if (findPath(o[k], p)) return true;
+        }
+        return false;
+    };
+    return findPath;
+};
 export const createWasmImport = (voices: number, memory: WebAssembly.Memory) => ({
     env: {
         memory: voices ? memory : undefined, memoryBase: 0, tableBase: 0,

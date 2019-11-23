@@ -120,7 +120,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         $outs: number;
         dspInChannnels: Float32Array[];
         dspOutChannnels: Float32Array[];
-        fPitchwheelLabel: string[];
+        fPitchwheelLabel: { path: string; min: number; max: number }[];
         fCtrlLabel: { path: string; min: number; max: number }[][];
         numIn: number;
         numOut: number;
