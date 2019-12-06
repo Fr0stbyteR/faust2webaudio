@@ -501,12 +501,12 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             const input = inputs[0];
             const output = outputs[0];
             // Check inputs
-            if (this.numIn > 0 && (input === undefined || input[0].length === 0)) {
+            if (this.numIn > 0 && (!input || !input[0] || input[0].length === 0)) {
                 // console.log("Process input error");
                 return true;
             }
             // Check outputs
-            if (this.numOut > 0 && (output === undefined || output[0].length === 0)) {
+            if (this.numOut > 0 && (!output || !output[0] || output[0].length === 0)) {
                 // console.log("Process output error");
                 return true;
             }
