@@ -97,7 +97,7 @@ export type TFaustCompileOptions = {
      *
      * @type {(plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any}
      */
-    plotHandler: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
+    plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
 }
 export type TAudioNodeOptions = {
     /**
@@ -124,7 +124,7 @@ export type TAudioNodeOptions = {
      *
      * @type {(plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any}
      */
-    plotHandler: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
+    plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
 }
 
 export interface FaustWebAssemblyExports {

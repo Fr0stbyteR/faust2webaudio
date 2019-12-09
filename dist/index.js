@@ -27970,13 +27970,17 @@ class LibFaustLoader {
 /*!**********************!*\
   !*** ./src/index.ts ***!
   \**********************/
-/*! exports provided: Faust */
+/*! exports provided: Faust, FaustAudioWorkletNode */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Faust__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Faust */ "./src/Faust.ts");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Faust", function() { return _Faust__WEBPACK_IMPORTED_MODULE_0__["Faust"]; });
+
+/* harmony import */ var _FaustAudioWorkletNode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FaustAudioWorkletNode */ "./src/FaustAudioWorkletNode.ts");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FaustAudioWorkletNode", function() { return _FaustAudioWorkletNode__WEBPACK_IMPORTED_MODULE_1__["FaustAudioWorkletNode"]; });
+
 
 
 
