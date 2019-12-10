@@ -279,7 +279,7 @@ export interface FaustDspNode {
     pitchWheel(channel: number, wheel: number): void;
 }
 
-export class FaustScriptProcessorNode extends ScriptProcessorNode implements FaustDspNode {
+export interface FaustScriptProcessorNode extends ScriptProcessorNode, FaustDspNode {
     // From FaustDSPNode interface
     bufferSize: number;
     voices: number;
