@@ -26318,7 +26318,7 @@ var FaustAudioWorkletProcessorWrapper = () => {
         FaustAudioWorkletProcessor.parseItems(item.items, obj, callback); // callback may not binded to this
       } else if (item.type === "hbargraph" || item.type === "vbargraph") {// Nothing
       } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
-        if (faustData.voices && !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
+        if (!faustData.voices || !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
           obj.push({
             name: item.address,
             defaultValue: item.init || 0,
@@ -26327,7 +26327,7 @@ var FaustAudioWorkletProcessorWrapper = () => {
           });
         }
       } else if (item.type === "button" || item.type === "checkbox") {
-        if (faustData.voices && !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
+        if (!faustData.voices || !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
           obj.push({
             name: item.address,
             defaultValue: item.init || 0,
