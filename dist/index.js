@@ -24946,7 +24946,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /* eslint-disable no-console */
 
@@ -25720,6 +25720,7 @@ class Faust {
 
               strProcessor = "\nconst remap = ".concat(_utils__WEBPACK_IMPORTED_MODULE_8__["remap"].toString(), ";\nconst midiToFreq = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["midiToFreq"].toString(), ";\nconst findPath = (").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["findPathClosure"].toString(), ")();\nconst createWasmImport = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmImport"].toString(), ";\nconst createWasmMemory = ").concat(_utils__WEBPACK_IMPORTED_MODULE_8__["createWasmMemory"].toString(), ";\nconst faustData = ").concat(JSON.stringify({
                 id,
+                voices,
                 dspMeta: compiledDsp.dspMeta,
                 effectMeta: compiledDsp.effectMeta
               }), ";\n(").concat(_FaustAudioWorkletProcessor__WEBPACK_IMPORTED_MODULE_6__["FaustAudioWorkletProcessorWrapper"].toString(), ")();\n");
@@ -25965,7 +25966,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /* eslint-disable object-curly-newline */
 
@@ -26047,6 +26048,8 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
     this.outputsItems = [];
     this.plotHandler = options.plotHandler;
     this.parseUI(this.dspMeta.ui);
+    if (this.effectMeta) this.parseUI(this.effectMeta.ui);
+    if (this.parameters) this.parameters.forEach(p => p.automationRate = "k-rate");
   }
 
   parseUI(ui) {
@@ -26315,19 +26318,23 @@ var FaustAudioWorkletProcessorWrapper = () => {
         FaustAudioWorkletProcessor.parseItems(item.items, obj, callback); // callback may not binded to this
       } else if (item.type === "hbargraph" || item.type === "vbargraph") {// Nothing
       } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
-        obj.push({
-          name: item.address,
-          defaultValue: item.init || 0,
-          minValue: item.min || 0,
-          maxValue: item.max || 0
-        });
+        if (faustData.voices && !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
+          obj.push({
+            name: item.address,
+            defaultValue: item.init || 0,
+            minValue: item.min || 0,
+            maxValue: item.max || 0
+          });
+        }
       } else if (item.type === "button" || item.type === "checkbox") {
-        obj.push({
-          name: item.address,
-          defaultValue: item.init || 0,
-          minValue: 0,
-          maxValue: 1
-        });
+        if (faustData.voices && !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
+          obj.push({
+            name: item.address,
+            defaultValue: item.init || 0,
+            minValue: 0,
+            maxValue: 1
+          });
+        }
       }
     }
 
@@ -26825,7 +26832,6 @@ var FaustAudioWorkletProcessorWrapper = () => {
     }
 
     process(inputs, outputs, parameters) {
-      // eslint-disable-line @typescript-eslint/no-unused-vars
       var input = inputs[0];
       var output = outputs[0]; // Check inputs
 
@@ -26846,14 +26852,13 @@ var FaustAudioWorkletProcessorWrapper = () => {
           var dspInput = this.dspInChannnels[chan];
           dspInput.set(input[chan]);
         }
-      }
-      /*
-      // Update controls (possibly needed for sample accurate control)
-      for (const key in parameters) {
-          const value = parameters[key];
-          this.HEAPF32[this.pathTable$[key] >> 2] = value[0];
-      }*/
-      // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
+      } // Update controls (possibly needed for sample accurate control)
+
+
+      for (var path in parameters) {
+        var paramArray = parameters[path];
+        this.setParamValue(path, paramArray[0]);
+      } // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
 
 
       if (this.computeHandler) this.computeHandler(this.bufferSize);
@@ -27226,7 +27231,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /* eslint-disable no-restricted-properties */
 
@@ -28038,10 +28043,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createWasmMemory", function() { return createWasmMemory; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "toArgv", function() { return toArgv; });
 /* harmony import */ var _wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./wasm/mixer32.wasm */ "./src/wasm/mixer32.wasm");
-/* harmony import */ var _wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0__);
 /* eslint-disable @typescript-eslint/camelcase */
-
-/* eslint-disable no-restricted-properties */
 
 /* eslint-disable object-property-newline */
 
@@ -28093,7 +28095,7 @@ var heap2Str = buf => {
 
   return str;
 };
-var mixer32Module = new WebAssembly.Module(atoab(_wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0___default.a.split(",")[1]));
+var mixer32Module = new WebAssembly.Module(atoab(_wasm_mixer32_wasm__WEBPACK_IMPORTED_MODULE_0__["default"].split(",")[1]));
 var midiToFreq = note => 440.0 * Math.pow(2, (note - 69) / 12);
 var remap = (v, mn0, mx0, mn1, mx1) => (v - mn0) / (mx0 - mn0) * (mx1 - mn1) + mn1;
 var findPath = (o, p) => {
@@ -28237,10 +28239,12 @@ var toArgv = args => {
 /*!*******************************!*\
   !*** ./src/wasm/mixer32.wasm ***!
   \*******************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = "data:application/wasm;base64,AGFzbQEAAAABj4CAgAACYAN/f38AYAR/f39/AX0CkoCAgAABBm1lbW9yeQZtZW1vcnkCAAIDg4CAgAACAAEHmoCAgAACC2NsZWFyT3V0cHV0AAAIbWl4Vm9pY2UAAQqKgoCAAALigICAAAEDfwJAQQAhBQNAAkAgAiAFQQJ0aigCACEDQQAhBANAAkAgAyAEQQJ0akMAAAAAOAIAIARBAWohBCAEIABIBEAMAgUMAQsACwsgBUEBaiEFIAUgAUgEQAwCBQwBCwALCwsLnYGAgAACBH8DfQJ9QQAhB0MAAAAAIQgDQAJAQQAhBiACIAdBAnRqKAIAIQQgAyAHQQJ0aigCACEFA0ACQCAEIAZBAnRqKgIAIQkgCCAJi5chCCAFIAZBAnRqKgIAIQogBSAGQQJ0aiAKIAmSOAIAIAZBAWohBiAGIABIBEAMAgUMAQsACwsgB0EBaiEHIAcgAUgEQAwCBQwBCwALCyAIDwsL"
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("data:application/wasm;base64,AGFzbQEAAAABj4CAgAACYAN/f38AYAR/f39/AX0CkoCAgAABBm1lbW9yeQZtZW1vcnkCAAIDg4CAgAACAAEHmoCAgAACC2NsZWFyT3V0cHV0AAAIbWl4Vm9pY2UAAQqKgoCAAALigICAAAEDfwJAQQAhBQNAAkAgAiAFQQJ0aigCACEDQQAhBANAAkAgAyAEQQJ0akMAAAAAOAIAIARBAWohBCAEIABIBEAMAgUMAQsACwsgBUEBaiEFIAUgAUgEQAwCBQwBCwALCwsLnYGAgAACBH8DfQJ9QQAhB0MAAAAAIQgDQAJAQQAhBiACIAdBAnRqKAIAIQQgAyAHQQJ0aigCACEFA0ACQCAEIAZBAnRqKgIAIQkgCCAJi5chCCAFIAZBAnRqKgIAIQogBSAGQQJ0aiAKIAmSOAIAIAZBAWohBiAGIABIBEAMAgUMAQsACwsgB0EBaiEHIAcgAUgEQAwCBQwBCwALCyAIDwsL");
 
 /***/ }),
 

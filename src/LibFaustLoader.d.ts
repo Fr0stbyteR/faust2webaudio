@@ -1,7 +1,7 @@
 declare namespace Emscripten {
     type EnvironmentType = "WEB" | "NODE" | "SHELL" | "WORKER";
     interface FileSystemType {} // eslint-disable-line @typescript-eslint/no-empty-interface
-    class Module {
+    export class Module {
         print(str: string): void;
         printErr(str: string): void;
         arguments: string[];
@@ -39,8 +39,7 @@ declare namespace Emscripten {
         ALLOC_DYNAMIC: number;
         ALLOC_NONE: number;
 
-        allocate(slab: any, types: string, allocator: number, ptr: number): number;
-        allocate(slab: any, types: string[], allocator: number, ptr: number): number;
+        allocate(slab: any, types: string | string[], allocator: number, ptr: number): number;
 
         Pointer_stringify(ptr: number, length?: number): string; // eslint-disable-line @typescript-eslint/camelcase
         UTF16ToString(ptr: number): string;

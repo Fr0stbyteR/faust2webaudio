@@ -73,6 +73,8 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
         this.outputsItems = [];
         this.plotHandler = options.plotHandler;
         this.parseUI(this.dspMeta.ui);
+        if (this.effectMeta) this.parseUI(this.effectMeta.ui);
+        if (this.parameters) this.parameters.forEach(p => p.automationRate = "k-rate");
     }
     parseUI(ui: TFaustUI) {
         ui.forEach(group => this.parseGroup(group));

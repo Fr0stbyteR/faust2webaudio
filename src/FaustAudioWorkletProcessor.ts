@@ -72,11 +72,11 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 // Nothing
             } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
                 if (faustData.voices && !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
-                    obj.push({ name: item.address, defaultValue: item.init || 0, minValue: item.min || 0, maxValue: item.max || 0, automationRate: "k-rate" });
+                    obj.push({ name: item.address, defaultValue: item.init || 0, minValue: item.min || 0, maxValue: item.max || 0 });
                 }
             } else if (item.type === "button" || item.type === "checkbox") {
                 if (faustData.voices && !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
-                    obj.push({ name: item.address, defaultValue: item.init || 0, minValue: 0, maxValue: 1, automationRate: "k-rate" });
+                    obj.push({ name: item.address, defaultValue: item.init || 0, minValue: 0, maxValue: 1 });
                 }
             }
         }

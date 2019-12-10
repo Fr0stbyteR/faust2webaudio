@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/camelcase */
-/* eslint-disable no-restricted-properties */
 /* eslint-disable object-property-newline */
 import { TDspMeta, TFaustCompileArgs } from "./types";
 import mixer32DataURI from "./wasm/mixer32.wasm";
