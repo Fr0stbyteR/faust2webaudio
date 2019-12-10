@@ -8,7 +8,7 @@ import { TDspMeta, FaustDspNode, TFaustUI, TFaustUIGroup, TFaustUIItem, FaustWeb
 // AudioWorklet Globals
 declare class AudioWorkletProcessor {
     public port: MessagePort;
-    public process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: any): boolean;
+    public process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: { [key: string]: Float32Array }): boolean;
     constructor(options: AudioWorkletNodeOptions);
 }
 type AudioWorkletProcessorConstructor<T extends AudioWorkletProcessor> = {
@@ -29,6 +29,7 @@ interface AudioParamDescriptor {
 // Injected by Faust
 type FaustData = {
     id: string;
+    voices: number;
     dspMeta: TDspMeta;
     effectMeta?: TDspMeta;
 };
@@ -70,9 +71,13 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             } else if (item.type === "hbargraph" || item.type === "vbargraph") {
                 // Nothing
             } else if (item.type === "vslider" || item.type === "hslider" || item.type === "nentry") {
-                obj.push({ name: item.address, defaultValue: item.init || 0, minValue: item.min || 0, maxValue: item.max || 0 });
+                if (faustData.voices && !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
+                    obj.push({ name: item.address, defaultValue: item.init || 0, minValue: item.min || 0, maxValue: item.max || 0, automationRate: "k-rate" });
+                }
             } else if (item.type === "button" || item.type === "checkbox") {
-                obj.push({ name: item.address, defaultValue: item.init || 0, minValue: 0, maxValue: 1 });
+                if (faustData.voices && !item.address.endsWith("/gate") && !item.address.endsWith("/freq") && !item.address.endsWith("/gain")) {
+                    obj.push({ name: item.address, defaultValue: item.init || 0, minValue: 0, maxValue: 1, automationRate: "k-rate" });
+                }
             }
         }
         static parseItem2(item: TFaustUIItem, obj: FaustAudioWorkletProcessor, callback: (...args: any[]) => any) {
@@ -497,7 +502,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 if (this.outputHandler) this.outputHandler(pw.path, this.getParamValue(pw.path));
             });
         }
-        process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: any) { // eslint-disable-line @typescript-eslint/no-unused-vars
+        process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: { [key: string]: Float32Array }) {
             const input = inputs[0];
             const output = outputs[0];
             // Check inputs
@@ -517,12 +522,11 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                     dspInput.set(input[chan]);
                 }
             }
-            /*
             // Update controls (possibly needed for sample accurate control)
-            for (const key in parameters) {
-                const value = parameters[key];
-                this.HEAPF32[this.pathTable$[key] >> 2] = value[0];
-            }*/
+            for (const path in parameters) {
+                const paramArray = parameters[path];
+                this.setParamValue(path, paramArray[0]);
+            }
             // Possibly call an externally given callback (for instance to synchronize playing a MIDIFile...)
             if (this.computeHandler) this.computeHandler(this.bufferSize);
             if (this.voices) {

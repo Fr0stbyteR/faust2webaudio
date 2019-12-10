@@ -460,6 +460,7 @@ const createWasmImport = ${utils.createWasmImport.toString()};
 const createWasmMemory = ${utils.createWasmMemory.toString()};
 const faustData = ${JSON.stringify({
         id,
+        voices,
         dspMeta: compiledDsp.dspMeta,
         effectMeta: compiledDsp.effectMeta
     })};
