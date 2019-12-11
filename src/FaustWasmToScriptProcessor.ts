@@ -22,6 +22,7 @@ export class FaustWasmToScriptProcessor {
             this.faust.error("Error in createScriptProcessor: " + e);
             throw e;
         }
+        node.destroyed = false;
         node.voices = voices;
         node.dspMeta = dspMeta;
 
@@ -279,6 +280,7 @@ export class FaustWasmToScriptProcessor {
             });
         };
         node.compute = (e) => {
+            if (node.destroyed) return false;
             for (let i = 0; i < node.numIn; i++) { // Read inputs
                 const input = e.inputBuffer.getChannelData(i);
                 const dspInput = node.dspInChannnels[i];
@@ -306,6 +308,7 @@ export class FaustWasmToScriptProcessor {
             }
             if (node.plotHandler) node.plotHandler(outputs, node.$buffer++, node.cachedEvents.length ? node.cachedEvents : undefined);
             node.cachedEvents = [];
+            return true;
         };
         node.setup = () => { // Setup web audio context
             this.faust.log("buffer_size " + node.bufferSize);
@@ -444,6 +447,12 @@ export class FaustWasmToScriptProcessor {
                 ] }];
             }
             return node.dspMeta.ui;
+        };
+        node.destroy = () => {
+            node.destroyed = true;
+            delete node.outputHandler;
+            delete node.computeHandler;
+            delete node.plotHandler;
         };
         // Init resulting DSP
         node.setup();

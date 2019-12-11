@@ -145,6 +145,7 @@ export interface FaustWebAssemblyMixerExports {
 }
 
 export interface FaustDspNode {
+    destroyed: boolean;
     bufferSize: number;
     voices?: number;
     dspMeta: TDspMeta;
@@ -473,4 +474,10 @@ export interface FaustScriptProcessorNode extends ScriptProcessorNode, FaustDspN
     $buffer: number;
     cachedEvents: { type: string; data: any }[];
     plotHandler: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
+    /**
+     * Called on destroy
+     *
+     * @memberof FaustScriptProcessorNode
+     */
+    destroy: () => any;
 }

@@ -74,7 +74,9 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
         this.plotHandler = options.plotHandler;
         this.parseUI(this.dspMeta.ui);
         if (this.effectMeta) this.parseUI(this.effectMeta.ui);
-        if (this.parameters) this.parameters.forEach(p => p.automationRate = "k-rate");
+        try {
+            if (this.parameters) this.parameters.forEach(p => p.automationRate = "k-rate");
+        } catch (e) {} // eslint-disable-line no-empty
     }
     parseUI(ui: TFaustUI) {
         ui.forEach(group => this.parseGroup(group));
@@ -200,5 +202,11 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
             ] }];
         }
         return this.dspMeta.ui;
+    }
+    destroy() {
+        this.port.postMessage({ type: "destroy" });
+        this.port.close();
+        delete this.plotHandler;
+        delete this.outputHandler;
     }
 }

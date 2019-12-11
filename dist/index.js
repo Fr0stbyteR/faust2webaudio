@@ -15199,7 +15199,7 @@ utils.intFromLE = intFromLE;
 /*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.1\",\"D:\\\\p\\\\faust2webaudio\"]],\"_development\":true,\"_from\":\"elliptic@6.5.1\",\"_id\":\"elliptic@6.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.1\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.1\",\"saveSpec\":null,\"fetchSpec\":\"6.5.1\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.1.tgz\",\"_spec\":\"6.5.1\",\"_where\":\"D:\\\\p\\\\faust2webaudio\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.1\",\"/Users/fr0stbyter/p/faust2webaudio\"]],\"_development\":true,\"_from\":\"elliptic@6.5.1\",\"_id\":\"elliptic@6.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.1\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.1\",\"saveSpec\":null,\"fetchSpec\":\"6.5.1\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.1.tgz\",\"_spec\":\"6.5.1\",\"_where\":\"/Users/fr0stbyter/p/faust2webaudio\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
 
 /***/ }),
 
@@ -26049,7 +26049,11 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
     this.plotHandler = options.plotHandler;
     this.parseUI(this.dspMeta.ui);
     if (this.effectMeta) this.parseUI(this.effectMeta.ui);
-    if (this.parameters) this.parameters.forEach(p => p.automationRate = "k-rate");
+
+    try {
+      if (this.parameters) this.parameters.forEach(p => p.automationRate = "k-rate");
+    } catch (e) {} // eslint-disable-line no-empty
+
   }
 
   parseUI(ui) {
@@ -26261,6 +26265,15 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
     return this.dspMeta.ui;
   }
 
+  destroy() {
+    this.port.postMessage({
+      type: "destroy"
+    });
+    this.port.close();
+    delete this.plotHandler;
+    delete this.outputHandler;
+  }
+
 }
 
 /***/ }),
@@ -26385,6 +26398,7 @@ var FaustAudioWorkletProcessorWrapper = () => {
 
     constructor(options) {
       super(options);
+      this.destroyed = void 0;
       this.dspInstance = void 0;
       this.effectInstance = void 0;
       this.mixerInstance = void 0;
@@ -26477,6 +26491,15 @@ var FaustAudioWorkletProcessorWrapper = () => {
             break;
           // case "patch": this.onpatch(msg.data); break;
 
+          case "destroy":
+            {
+              this.port.close();
+              this.destroyed = true;
+              delete this.outputHandler;
+              delete this.computeHandler;
+              break;
+            }
+
           default:
         }
       };
@@ -26485,6 +26508,7 @@ var FaustAudioWorkletProcessorWrapper = () => {
       this.instantiateWasm(processorOptions);
       this.port.onmessage = this.handleMessage; // Naturally binded with arrow function property
 
+      this.destroyed = false;
       this.bufferSize = 128;
       this.voices = processorOptions.voices;
       this.dspMeta = processorOptions.compiledDsp.dspMeta;
@@ -26832,6 +26856,7 @@ var FaustAudioWorkletProcessorWrapper = () => {
     }
 
     process(inputs, outputs, parameters) {
+      if (this.destroyed) return false;
       var input = inputs[0];
       var output = outputs[0]; // Check inputs
 
@@ -27260,6 +27285,7 @@ class FaustWasmToScriptProcessor {
       throw e;
     }
 
+    node.destroyed = false;
     node.voices = voices;
     node.dspMeta = dspMeta;
     node.outputHandler = null;
@@ -27561,6 +27587,8 @@ class FaustWasmToScriptProcessor {
     };
 
     node.compute = e => {
+      if (node.destroyed) return false;
+
       for (var _i5 = 0; _i5 < node.numIn; _i5++) {
         // Read inputs
         var input = e.inputBuffer.getChannelData(_i5);
@@ -27601,6 +27629,7 @@ class FaustWasmToScriptProcessor {
 
       if (node.plotHandler) node.plotHandler(outputs, node.$buffer++, node.cachedEvents.length ? node.cachedEvents : undefined);
       node.cachedEvents = [];
+      return true;
     };
 
     node.setup = () => {
@@ -27808,6 +27837,13 @@ class FaustWasmToScriptProcessor {
       }
 
       return node.dspMeta.ui;
+    };
+
+    node.destroy = () => {
+      node.destroyed = true;
+      delete node.outputHandler;
+      delete node.computeHandler;
+      delete node.plotHandler;
     }; // Init resulting DSP
 
 

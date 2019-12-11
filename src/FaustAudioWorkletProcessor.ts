@@ -113,6 +113,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             if (FaustConst.effectMeta) this.parseUI(FaustConst.effectMeta.ui, params, this.parseItem);
             return params;
         }
+        destroyed: boolean;
         dspInstance: WebAssembly.Instance;
         effectInstance?: WebAssembly.Instance;
         mixerInstance?: WebAssembly.Instance;
@@ -186,6 +187,13 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 // Generic data message
                 case "param": this.setParamValue(msg.data.path, msg.data.value); break;
                 // case "patch": this.onpatch(msg.data); break;
+                case "destroy": {
+                    this.port.close();
+                    this.destroyed = true;
+                    delete this.outputHandler;
+                    delete this.computeHandler;
+                    break;
+                }
                 default:
             }
         }
@@ -194,6 +202,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             const processorOptions: { id: string; voices: number; compiledDsp: TCompiledDsp; mixer32Module: WebAssembly.Module } = options.processorOptions;
             this.instantiateWasm(processorOptions);
             this.port.onmessage = this.handleMessage; // Naturally binded with arrow function property
+            this.destroyed = false;
 
             this.bufferSize = 128;
             this.voices = processorOptions.voices;
@@ -503,6 +512,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             });
         }
         process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: { [key: string]: Float32Array }) {
+            if (this.destroyed) return false;
             const input = inputs[0];
             const output = outputs[0];
             // Check inputs
