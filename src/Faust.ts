@@ -589,7 +589,7 @@ const faustData = ${JSON.stringify({
             this.cleanupAfterException();
             throw errorMsg;
         }
-        return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", { encoding: "utf8" });
+        return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", { encoding: "utf8" }) as string;
     }
     /**
      * Expose LibFaust Emscripten Module File System

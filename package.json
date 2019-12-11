@@ -20,8 +20,8 @@
     "@babel/preset-env": "^7.7.6",
     "@babel/preset-typescript": "^7.7.4",
     "@babel/runtime": "^7.7.6",
-    "@types/node": "^11.15.3",
-    "@types/webassembly-js-api": "0.0.2",
+    "@types/emscripten": "^1.38.0",
+    "@types/node": "^12.12.17",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "babel-loader": "^8.0.6",
@@ -33,7 +33,7 @@
     "url-loader": "^3.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "ws": "^6.2.1"
+    "ws": "^7.2.0"
   },
   "dependencies": {}
 }

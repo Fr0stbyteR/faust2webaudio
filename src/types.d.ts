@@ -1,5 +1,3 @@
-/// <reference types="webassembly-js-api" />
-
 declare global {
     interface Window {
         AudioWorkletNode?: AudioWorkletNode;
