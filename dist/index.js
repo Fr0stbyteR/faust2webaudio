@@ -15199,7 +15199,7 @@ utils.intFromLE = intFromLE;
 /*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.1\",\"/Users/fr0stbyter/p/faust2webaudio\"]],\"_development\":true,\"_from\":\"elliptic@6.5.1\",\"_id\":\"elliptic@6.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.1\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.1\",\"saveSpec\":null,\"fetchSpec\":\"6.5.1\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.1.tgz\",\"_spec\":\"6.5.1\",\"_where\":\"/Users/fr0stbyter/p/faust2webaudio\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.1\",\"D:\\\\p\\\\faust2webaudio\"]],\"_development\":true,\"_from\":\"elliptic@6.5.1\",\"_id\":\"elliptic@6.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.1\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.1\",\"saveSpec\":null,\"fetchSpec\":\"6.5.1\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.1.tgz\",\"_spec\":\"6.5.1\",\"_where\":\"D:\\\\p\\\\faust2webaudio\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
 
 /***/ }),
 
@@ -25311,7 +25311,7 @@ class Faust {
       var time2 = performance.now();
       this.log("Faust compilation duration : " + (time2 - time1));
       var errorMsg = this.libFaust.UTF8ToString($errorMsg);
-      if (errorMsg) throw errorMsg;
+      if (errorMsg) throw new Error(errorMsg);
       if (_$moduleCode === 0) return null;
       var $compiledCode = this.getWasmCModule(_$moduleCode);
       var compiledCodeSize = this.getWasmCModuleSize(_$moduleCode); // Copy native 'binary' string in JavaScript Uint8Array
@@ -25350,12 +25350,11 @@ class Faust {
       };
     } catch (e) {
       // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-      var _errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
+      var _errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
 
+      this.cleanupAfterException(); // Report the Emscripten error
 
-      if (!_errorMsg) _errorMsg = e;
-      this.cleanupAfterException();
-      throw _errorMsg;
+      throw _errorMsg ? new Error(_errorMsg) : e;
     }
   }
   /**
@@ -25502,12 +25501,11 @@ class Faust {
       return expandedCode;
     } catch (e) {
       // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-      var _errorMsg2 = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
+      var _errorMsg2 = this.libFaust.UTF8ToString(this.getErrorAfterException());
 
+      this.cleanupAfterException(); // Report the Emscripten error
 
-      if (!_errorMsg2) _errorMsg2 = e;
-      this.cleanupAfterException();
-      throw _errorMsg2;
+      throw _errorMsg2 ? new Error(_errorMsg2) : e;
     }
   }
   /**
@@ -25593,7 +25591,7 @@ class Faust {
               _context5.prev = 16;
               _context5.t0 = _context5["catch"](10);
 
-              _this5.error("Error in JSON.parse: " + _context5.t0);
+              _this5.error("Error in JSON.parse: " + _context5.t0.message);
 
               throw _context5.t0;
 
@@ -25631,7 +25629,7 @@ class Faust {
               _context5.prev = 34;
               _context5.t1 = _context5["catch"](28);
 
-              _this5.error("Error in JSON.parse: " + _context5.t1);
+              _this5.error("Error in JSON.parse: " + _context5.t1.message);
 
               throw _context5.t1;
 
@@ -25896,11 +25894,10 @@ class Faust {
       this.libFaust._free($argv);
     } catch (e) {
       // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-      var errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException()); // Report the Emscripten error
+      var errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
+      this.cleanupAfterException(); // Report the Emscripten error
 
-      if (!errorMsg) errorMsg = e;
-      this.cleanupAfterException();
-      throw errorMsg;
+      throw errorMsg ? new Error(errorMsg) : e;
     }
 
     return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", {
@@ -26021,7 +26018,7 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
     this.onprocessorerror = e => {
       console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: "); // eslint-disable-line no-console
 
-      throw e;
+      throw e.error;
     };
 
     this.voices = void 0;
@@ -27119,7 +27116,7 @@ class FaustOfflineProcessor {
   }
 
   setup(options) {
-    if (!this.dspMeta) throw Error("No Dsp");
+    if (!this.dspMeta) throw new Error("No Dsp");
     this.sampleRate = options && options.sampleRate || 48000; // DSP is placed first with index 0. Audio buffer start at the end of DSP.
 
     this.$audioHeap = this.dspMeta.size; // Setup pointers offset
@@ -27281,7 +27278,7 @@ class FaustWasmToScriptProcessor {
     try {
       node = audioCtx.createScriptProcessor(bufferSize, inputs, outputs);
     } catch (e) {
-      this.faust.error("Error in createScriptProcessor: " + e);
+      this.faust.error("Error in createScriptProcessor: " + e.message);
       throw e;
     }
 

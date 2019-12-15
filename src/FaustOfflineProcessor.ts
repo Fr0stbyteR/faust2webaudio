@@ -74,7 +74,7 @@ export class FaustOfflineProcessor {
 
         // Create the WASM instance
         const dspInstance = await WebAssembly.instantiate(compiledDsp.dspModule, FaustOfflineProcessor.importObject);
-        this.factory = dspInstance.exports;
+        this.factory = dspInstance.exports as FaustWebAssemblyExports;
         this.HEAP = this.factory.memory.buffer;
         this.HEAP32 = new Int32Array(this.HEAP);
         this.HEAPF32 = new Float32Array(this.HEAP);
@@ -82,7 +82,7 @@ export class FaustOfflineProcessor {
         this.output = new Array(this.numOut).fill(null).map(() => new Float32Array(this.bufferSize));
     }
     setup(options?: { sampleRate?: number }) {
-        if (!this.dspMeta) throw Error("No Dsp");
+        if (!this.dspMeta) throw new Error("No Dsp");
         this.sampleRate = options && options.sampleRate || 48000;
 
         // DSP is placed first with index 0. Audio buffer start at the end of DSP.

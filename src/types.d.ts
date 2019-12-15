@@ -125,7 +125,7 @@ export type TAudioNodeOptions = {
     plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
 }
 
-export interface FaustWebAssemblyExports {
+export interface FaustWebAssemblyExports extends WebAssembly.Exports {
     getParamValue($dsp: number, $param: number): number;
     setParamValue($dsp: number, $param: number, val: number): void;
     instanceClear($dsp: number): any;
@@ -137,7 +137,7 @@ export interface FaustWebAssemblyExports {
     memory: WebAssembly.Memory;
 }
 
-export interface FaustWebAssemblyMixerExports {
+export interface FaustWebAssemblyMixerExports extends WebAssembly.Exports {
     clearOutput(count: number, channels: number, $outputs: number): void;
     mixVoice(count: number, channels: number, $inputs: number, $outputs: number): number;
 }

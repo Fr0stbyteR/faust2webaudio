@@ -3,9 +3,9 @@
 import { TDspMeta, TCompiledDsp, TFaustUI, TFaustUIGroup, TFaustUIItem } from "./types";
 
 export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode : null) {
-    onprocessorerror = (e: Event) => {
+    onprocessorerror = (e: ErrorEvent) => {
         console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: "); // eslint-disable-line no-console
-        throw e;
+        throw e.error;
     }
     /* WAP ??
     getMetadata = this.getJSON;

@@ -228,7 +228,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
             this.sampleSize = 4;
 
             // Create the WASM instance
-            this.factory = this.dspInstance.exports;
+            this.factory = this.dspInstance.exports as FaustWebAssemblyExports;
             this.HEAP = this.voices ? this.memory.buffer : this.factory.memory.buffer;
             this.HEAP32 = new Int32Array(this.HEAP);
             this.HEAPF32 = new Float32Array(this.HEAP);
@@ -278,8 +278,8 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 this.fGainLabel$ = [];
                 this.fDate = 0;
 
-                this.mixer = this.mixerInstance.exports;
-                this.effect = this.effectInstance ? this.effectInstance.exports : null;
+                this.mixer = this.mixerInstance.exports as FaustWebAssemblyMixerExports;
+                this.effect = this.effectInstance ? this.effectInstance.exports as FaustWebAssemblyExports : null;
 
                 // Start of DSP memory ('polyphony' DSP voices)
                 this.dspVoices$ = [];

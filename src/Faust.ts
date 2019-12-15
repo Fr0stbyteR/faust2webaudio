@@ -215,7 +215,7 @@ export class Faust {
             const time2 = performance.now();
             this.log("Faust compilation duration : " + (time2 - time1));
             const errorMsg = this.libFaust.UTF8ToString($errorMsg);
-            if (errorMsg) throw errorMsg;
+            if (errorMsg) throw new Error(errorMsg);
 
             if ($moduleCode === 0) return null;
             const $compiledCode = this.getWasmCModule($moduleCode);
@@ -244,11 +244,10 @@ export class Faust {
             return { ui8Code, code, helpersCode };
         } catch (e) {
             // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-            let errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
-            // Report the Emscripten error
-            if (!errorMsg) errorMsg = e;
+            const errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
             this.cleanupAfterException();
-            throw errorMsg;
+            // Report the Emscripten error
+            throw errorMsg ? new Error(errorMsg) : e;
         }
     }
     /**
@@ -347,11 +346,10 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
             return expandedCode;
         } catch (e) {
             // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-            let errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
-            // Report the Emscripten error
-            if (!errorMsg) errorMsg = e;
+            const errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
             this.cleanupAfterException();
-            throw errorMsg;
+            // Report the Emscripten error
+            throw errorMsg ? new Error(errorMsg) : e;
         }
     }
     /**
@@ -398,7 +396,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
             const meta = JSON.parse(json);
             compiledDsp.dspMeta = meta;
         } catch (e) {
-            this.error("Error in JSON.parse: " + e);
+            this.error("Error in JSON.parse: " + e.message);
             throw e;
         }
         this.dspTable[shaKey] = compiledDsp;
@@ -417,7 +415,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
                 const meta = JSON.parse(json);
                 compiledDsp.effectMeta = meta;
             } catch (e) {
-                this.error("Error in JSON.parse: " + e);
+                this.error("Error in JSON.parse: " + e.message);
                 throw e;
             }
         } catch (e) {
@@ -583,11 +581,10 @@ const faustData = ${JSON.stringify({
             this.libFaust._free($argv);
         } catch (e) {
             // libfaust is compiled without C++ exception activated, so a JS exception is throwed and catched here
-            let errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
-            // Report the Emscripten error
-            if (!errorMsg) errorMsg = e;
+            const errorMsg = this.libFaust.UTF8ToString(this.getErrorAfterException());
             this.cleanupAfterException();
-            throw errorMsg;
+            // Report the Emscripten error
+            throw errorMsg ? new Error(errorMsg) : e;
         }
         return this.libFaust.FS.readFile("FaustDSP-svg/process.svg", { encoding: "utf8" }) as string;
     }

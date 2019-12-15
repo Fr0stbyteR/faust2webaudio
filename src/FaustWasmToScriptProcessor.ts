@@ -4,7 +4,7 @@
 /* eslint-disable object-curly-newline */
 import { Faust } from "./Faust";
 import { mixer32Module, createWasmMemory, createWasmImport, midiToFreq, remap } from "./utils";
-import { TCompiledDsp, FaustScriptProcessorNode, TAudioNodeOptions } from "./types";
+import { TCompiledDsp, FaustScriptProcessorNode, TAudioNodeOptions, FaustWebAssemblyMixerExports, FaustWebAssemblyExports } from "./types";
 
 export class FaustWasmToScriptProcessor {
     faust: Faust;
@@ -19,7 +19,7 @@ export class FaustWasmToScriptProcessor {
         try {
             node = audioCtx.createScriptProcessor(bufferSize, inputs, outputs) as FaustScriptProcessorNode;
         } catch (e) {
-            this.faust.error("Error in createScriptProcessor: " + e);
+            this.faust.error("Error in createScriptProcessor: " + e.message);
             throw e;
         }
         node.destroyed = false;
@@ -47,7 +47,7 @@ export class FaustWasmToScriptProcessor {
         node.ptrSize = 4;
         node.sampleSize = 4;
 
-        node.factory = dspInstance.exports;
+        node.factory = dspInstance.exports as FaustWebAssemblyExports;
         node.HEAP = node.voices ? memory.buffer : node.factory.memory.buffer;
         node.HEAP32 = new Int32Array(node.HEAP);
         node.HEAPF32 = new Float32Array(node.HEAP);
@@ -98,8 +98,8 @@ export class FaustWasmToScriptProcessor {
             node.fGainLabel$ = [];
             node.fDate = 0;
 
-            node.mixer = mixerInstance.exports;
-            node.effect = effectInstance ? effectInstance.exports : null;
+            node.mixer = mixerInstance.exports as FaustWebAssemblyMixerExports;
+            node.effect = effectInstance ? effectInstance.exports as FaustWebAssemblyExports : null;
             this.faust.log(node.mixer);
             this.faust.log(node.factory);
             this.faust.log(node.effect);
