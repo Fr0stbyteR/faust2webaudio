@@ -7470,7 +7470,7 @@ module.exports = verify
 /* WEBPACK VAR INJECTION */(function(global) {/*!
  * The buffer module from node.js, for the browser.
  *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @author   Feross Aboukhadijeh <http://feross.org>
  * @license  MIT
  */
 /* eslint-disable no-proto */
@@ -10360,9 +10360,8 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
 var assert = __webpack_require__(/*! minimalistic-assert */ "./node_modules/minimalistic-assert/index.js");
 var inherits = __webpack_require__(/*! inherits */ "./node_modules/inherits/inherits_browser.js");
 
-var des = __webpack_require__(/*! ../des */ "./node_modules/des.js/lib/des.js");
-var utils = des.utils;
-var Cipher = des.Cipher;
+var utils = __webpack_require__(/*! ./utils */ "./node_modules/des.js/lib/des/utils.js");
+var Cipher = __webpack_require__(/*! ./cipher */ "./node_modules/des.js/lib/des/cipher.js");
 
 function DESState() {
   this.tmp = new Array(2);
@@ -10515,9 +10514,8 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
 var assert = __webpack_require__(/*! minimalistic-assert */ "./node_modules/minimalistic-assert/index.js");
 var inherits = __webpack_require__(/*! inherits */ "./node_modules/inherits/inherits_browser.js");
 
-var des = __webpack_require__(/*! ../des */ "./node_modules/des.js/lib/des.js");
-var Cipher = des.Cipher;
-var DES = des.DES;
+var Cipher = __webpack_require__(/*! ./cipher */ "./node_modules/des.js/lib/des/cipher.js");
+var DES = __webpack_require__(/*! ./des */ "./node_modules/des.js/lib/des/des.js");
 
 function EDEState(type, key) {
   assert.equal(key.length, 24, 'Invalid key length');
@@ -11257,6 +11255,8 @@ function BaseCurve(type, conf) {
   this._wnafT3 = new Array(4);
   this._wnafT4 = new Array(4);
 
+  this._bitLength = this.n ? this.n.bitLength() : 0;
+
   // Generalized Greg Maxwell's trick
   var adjustCount = this.n && this.p.div(this.n);
   if (!adjustCount || adjustCount.cmpn(100) > 0) {
@@ -11280,7 +11280,7 @@ BaseCurve.prototype._fixedNafMul = function _fixedNafMul(p, k) {
   assert(p.precomputed);
   var doubles = p._getDoubles();
 
-  var naf = getNAF(k, 1);
+  var naf = getNAF(k, 1, this._bitLength);
   var I = (1 << (doubles.step + 1)) - (doubles.step % 2 === 0 ? 2 : 1);
   I /= 3;
 
@@ -11317,7 +11317,7 @@ BaseCurve.prototype._wnafMul = function _wnafMul(p, k) {
   var wnd = nafPoints.points;
 
   // Get NAF form
-  var naf = getNAF(k, w);
+  var naf = getNAF(k, w, this._bitLength);
 
   // Add `this`*(N+1) for every w-NAF index
   var acc = this.jpoint(null, null, null);
@@ -11373,8 +11373,8 @@ BaseCurve.prototype._wnafMulAdd = function _wnafMulAdd(defW,
     var a = i - 1;
     var b = i;
     if (wndWidth[a] !== 1 || wndWidth[b] !== 1) {
-      naf[a] = getNAF(coeffs[a], wndWidth[a]);
-      naf[b] = getNAF(coeffs[b], wndWidth[b]);
+      naf[a] = getNAF(coeffs[a], wndWidth[a], this._bitLength);
+      naf[b] = getNAF(coeffs[b], wndWidth[b], this._bitLength);
       max = Math.max(naf[a].length, max);
       max = Math.max(naf[b].length, max);
       continue;
@@ -15082,14 +15082,17 @@ utils.toHex = minUtils.toHex;
 utils.encode = minUtils.encode;
 
 // Represent num in a w-NAF form
-function getNAF(num, w) {
-  var naf = [];
+function getNAF(num, w, bits) {
+  var naf = new Array(Math.max(num.bitLength(), bits) + 1);
+  naf.fill(0);
+
   var ws = 1 << (w + 1);
   var k = num.clone();
-  while (k.cmpn(1) >= 0) {
+
+  for (var i = 0; i < naf.length; i++) {
     var z;
+    var mod = k.andln(ws - 1);
     if (k.isOdd()) {
-      var mod = k.andln(ws - 1);
       if (mod > (ws >> 1) - 1)
         z = (ws >> 1) - mod;
       else
@@ -15098,13 +15101,9 @@ function getNAF(num, w) {
     } else {
       z = 0;
     }
-    naf.push(z);
 
-    // Optimization, shift by word if possible
-    var shift = (k.cmpn(0) !== 0 && k.andln(ws - 1) === 0) ? (w + 1) : 1;
-    for (var i = 1; i < shift; i++)
-      naf.push(0);
-    k.iushrn(shift);
+    naf[i] = z;
+    k.iushrn(1);
   }
 
   return naf;
@@ -15196,10 +15195,10 @@ utils.intFromLE = intFromLE;
 /*!********************************************!*\
   !*** ./node_modules/elliptic/package.json ***!
   \********************************************/
-/*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
+/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, dependencies, deprecated, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.1\",\"/Documents/faust2webaudio\"]],\"_development\":true,\"_from\":\"elliptic@6.5.1\",\"_id\":\"elliptic@6.5.1\",\"_inBundle\":false,\"_integrity\":\"sha512-xvJINNLbTeWQjrl6X+7eQCrIy/YPv5XCpKW6kB5mKvtnGILoLDcySuwomfdzt0BMdLNVnuRNTuzKNHj0bva1Cg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.1\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.1\",\"saveSpec\":null,\"fetchSpec\":\"6.5.1\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.1.tgz\",\"_spec\":\"6.5.1\",\"_where\":\"/Documents/faust2webaudio\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.4\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.6.0\",\"mocha\":\"^6.1.4\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.1\"}");
+module.exports = JSON.parse("{\"_from\":\"elliptic@^6.0.0\",\"_id\":\"elliptic@6.5.2\",\"_inBundle\":false,\"_integrity\":\"sha1-BcVnjXFzwEnYykM1UiJKSV0ON2I=\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"range\",\"registry\":true,\"raw\":\"elliptic@^6.0.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"^6.0.0\",\"saveSpec\":null,\"fetchSpec\":\"^6.0.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npm.taobao.org/elliptic/download/elliptic-6.5.2.tgz?cache=0&sync_timestamp=1574449776597&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felliptic%2Fdownload%2Felliptic-6.5.2.tgz\",\"_shasum\":\"05c5678d7173c049d8ca433552224a495d0e3762\",\"_spec\":\"elliptic@^6.0.0\",\"_where\":\"D:\\\\p\\\\faust2webaudio\\\\node_modules\\\\browserify-sign\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"bundleDependencies\":false,\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"deprecated\":false,\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.2\"}");
 
 /***/ }),
 
@@ -15279,6 +15278,12 @@ EventEmitter.prototype._maxListeners = undefined;
 // added to it. This is a useful default which helps finding memory leaks.
 var defaultMaxListeners = 10;
 
+function checkListener(listener) {
+  if (typeof listener !== 'function') {
+    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
+  }
+}
+
 Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
   enumerable: true,
   get: function() {
@@ -15313,14 +15318,14 @@ EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
   return this;
 };
 
-function $getMaxListeners(that) {
+function _getMaxListeners(that) {
   if (that._maxListeners === undefined)
     return EventEmitter.defaultMaxListeners;
   return that._maxListeners;
 }
 
 EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
-  return $getMaxListeners(this);
+  return _getMaxListeners(this);
 };
 
 EventEmitter.prototype.emit = function emit(type) {
@@ -15372,9 +15377,7 @@ function _addListener(target, type, listener, prepend) {
   var events;
   var existing;
 
-  if (typeof listener !== 'function') {
-    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-  }
+  checkListener(listener);
 
   events = target._events;
   if (events === undefined) {
@@ -15411,7 +15414,7 @@ function _addListener(target, type, listener, prepend) {
     }
 
     // Check for listener leak
-    m = $getMaxListeners(target);
+    m = _getMaxListeners(target);
     if (m > 0 && existing.length > m && !existing.warned) {
       existing.warned = true;
       // No error code for this since it is a Warning
@@ -15443,12 +15446,12 @@ EventEmitter.prototype.prependListener =
     };
 
 function onceWrapper() {
-  var args = [];
-  for (var i = 0; i < arguments.length; i++) args.push(arguments[i]);
   if (!this.fired) {
     this.target.removeListener(this.type, this.wrapFn);
     this.fired = true;
-    ReflectApply(this.listener, this.target, args);
+    if (arguments.length === 0)
+      return this.listener.call(this.target);
+    return this.listener.apply(this.target, arguments);
   }
 }
 
@@ -15461,18 +15464,14 @@ function _onceWrap(target, type, listener) {
 }
 
 EventEmitter.prototype.once = function once(type, listener) {
-  if (typeof listener !== 'function') {
-    throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-  }
+  checkListener(listener);
   this.on(type, _onceWrap(this, type, listener));
   return this;
 };
 
 EventEmitter.prototype.prependOnceListener =
     function prependOnceListener(type, listener) {
-      if (typeof listener !== 'function') {
-        throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-      }
+      checkListener(listener);
       this.prependListener(type, _onceWrap(this, type, listener));
       return this;
     };
@@ -15482,9 +15481,7 @@ EventEmitter.prototype.removeListener =
     function removeListener(type, listener) {
       var list, events, position, i, originalListener;
 
-      if (typeof listener !== 'function') {
-        throw new TypeError('The "listener" argument must be of type Function. Received type ' + typeof listener);
-      }
+      checkListener(listener);
 
       events = this._events;
       if (events === undefined)
@@ -25147,13 +25144,13 @@ class Faust {
     return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee2() {
-      var audioCtx, voices, useWorklet, bufferSize, plotHandler, argv, compiledDsp, options, node;
+      var audioCtx, voices, useWorklet, bufferSize, plotHandler, args, argv, compiledDsp, options;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              audioCtx = optionsIn.audioCtx, voices = optionsIn.voices, useWorklet = optionsIn.useWorklet, bufferSize = optionsIn.bufferSize, plotHandler = optionsIn.plotHandler;
-              argv = _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](optionsIn.args);
+              audioCtx = optionsIn.audioCtx, voices = optionsIn.voices, useWorklet = optionsIn.useWorklet, bufferSize = optionsIn.bufferSize, plotHandler = optionsIn.plotHandler, args = optionsIn.args;
+              argv = _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](args);
               _context2.next = 4;
               return _this2.compileCodes(code, argv, !voices);
 
@@ -25175,32 +25172,47 @@ class Faust {
                 plotHandler,
                 bufferSize: useWorklet ? 128 : bufferSize
               };
-              _context2.next = 10;
-              return useWorklet;
+              return _context2.abrupt("return", useWorklet ? _this2.getAudioWorkletNode(options) : _this2.getScriptProcessorNode(options));
 
-            case 10:
-              if (!_context2.sent) {
-                _context2.next = 14;
-                break;
-              }
-
-              _context2.t0 = _this2.getAudioWorkletNode(options);
-              _context2.next = 15;
-              break;
-
-            case 14:
-              _context2.t0 = _this2.getScriptProcessorNode(options);
-
-            case 15:
-              node = _context2.t0;
-              return _context2.abrupt("return", node);
-
-            case 17:
+            case 9:
             case "end":
               return _context2.stop();
           }
         }
       }, _callee2);
+    }))();
+  }
+  /**
+   * Get DSP information
+   *
+   * @param {string} code
+   * @param {TFaustCompileOptions} optionsIn
+   * @returns {Promise<TCompiledDsp>}
+   * @memberof Faust
+   */
+
+
+  inspect(code, optionsIn) {
+    var _this3 = this;
+
+    return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
+    /*#__PURE__*/
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee3() {
+      var voices, args, argv;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              voices = optionsIn.voices, args = optionsIn.args;
+              argv = _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](args);
+              return _context3.abrupt("return", _this3.compileCodes(code, argv, !voices));
+
+            case 3:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
     }))();
   }
   /**
@@ -25213,47 +25225,47 @@ class Faust {
 
 
   plot(optionsIn) {
-    var _this3 = this;
+    var _this4 = this;
 
     return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee3() {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee4() {
       var compiledDsp, argv;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee3$(_context3) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee4$(_context4) {
         while (1) {
-          switch (_context3.prev = _context3.next) {
+          switch (_context4.prev = _context4.next) {
             case 0:
               argv = _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](optionsIn.args);
 
               if (!optionsIn.code) {
-                _context3.next = 7;
+                _context4.next = 7;
                 break;
               }
 
-              _context3.next = 4;
-              return _this3.compileCodes(optionsIn.code, argv, true);
+              _context4.next = 4;
+              return _this4.compileCodes(optionsIn.code, argv, true);
 
             case 4:
-              compiledDsp = _context3.sent;
+              compiledDsp = _context4.sent;
 
               if (compiledDsp) {
-                _context3.next = 7;
+                _context4.next = 7;
                 break;
               }
 
-              return _context3.abrupt("return", null);
+              return _context4.abrupt("return", null);
 
             case 7:
-              return _context3.abrupt("return", _this3.offlineProcessor.plot(_objectSpread({
+              return _context4.abrupt("return", _this4.offlineProcessor.plot(_objectSpread({
                 compiledDsp
               }, optionsIn)));
 
             case 8:
             case "end":
-              return _context3.stop();
+              return _context4.stop();
           }
         }
-      }, _callee3);
+      }, _callee4);
     }))();
   }
   /**
@@ -25371,42 +25383,42 @@ class Faust {
 
 
   compileCodes(code, argv, internalMemory) {
-    var _this4 = this;
+    var _this5 = this;
 
     return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee4() {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee5() {
       var strArgv, shaKey, compiledDsp, effectCode, dspCompiledCode, effectCompiledCode, compiledCodes;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee4$(_context4) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee5$(_context5) {
         while (1) {
-          switch (_context4.prev = _context4.next) {
+          switch (_context5.prev = _context5.next) {
             case 0:
               // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
               strArgv = argv.join("");
               shaKey = crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_3__["default"].hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, {
                 msgFormat: "string"
               });
-              compiledDsp = _this4.dspTable[shaKey];
+              compiledDsp = _this5.dspTable[shaKey];
 
               if (!compiledDsp) {
-                _context4.next = 6;
+                _context5.next = 6;
                 break;
               }
 
-              _this4.log("Existing library : " + shaKey); // Existing factory, do not create it...
+              _this5.log("Existing library : " + shaKey); // Existing factory, do not create it...
 
 
-              return _context4.abrupt("return", compiledDsp);
+              return _context5.abrupt("return", compiledDsp);
 
             case 6:
-              _this4.log("libfaust.js version : " + _this4.getLibFaustVersion()); // Create 'effect' expression
+              _this5.log("libfaust.js version : " + _this5.getLibFaustVersion()); // Create 'effect' expression
 
 
               effectCode = "adapt(1,1) = _; adapt(2,2) = _,_; adapt(1,2) = _ <: _,_; adapt(2,1) = _,_ :> _;\nadaptor(F,G) = adapt(outputs(F),inputs(G));\ndsp_code = environment{".concat(code, "};\nprocess = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;");
-              dspCompiledCode = _this4.compileCode(shaKey, code, argv, internalMemory);
+              dspCompiledCode = _this5.compileCode(shaKey, code, argv, internalMemory);
 
               try {
-                effectCompiledCode = _this4.compileCode(shaKey + "_", effectCode, argv, internalMemory);
+                effectCompiledCode = _this5.compileCode(shaKey + "_", effectCode, argv, internalMemory);
               } catch (e) {} // eslint-disable-line no-empty
 
 
@@ -25414,14 +25426,14 @@ class Faust {
                 dsp: dspCompiledCode,
                 effect: effectCompiledCode
               };
-              return _context4.abrupt("return", _this4.compileDsp(compiledCodes, shaKey));
+              return _context5.abrupt("return", _this5.compileDsp(compiledCodes, shaKey));
 
             case 12:
             case "end":
-              return _context4.stop();
+              return _context5.stop();
           }
         }
-      }, _callee4);
+      }, _callee5);
     }))();
   }
   /**
@@ -25521,16 +25533,16 @@ class Faust {
 
 
   compileDsp(codes, shaKey) {
-    var _this5 = this;
+    var _this6 = this;
 
     return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee5() {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee6() {
       var time1, dspModule, time2, compiledDsp, json, meta, effectModule, _json, _meta;
 
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee5$(_context5) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee6$(_context6) {
         while (1) {
-          switch (_context5.prev = _context5.next) {
+          switch (_context6.prev = _context6.next) {
             case 0:
               time1 = performance.now();
               /*
@@ -25548,25 +25560,25 @@ class Faust {
               }
               */
 
-              _context5.next = 3;
+              _context6.next = 3;
               return WebAssembly.compile(codes.dsp.ui8Code);
 
             case 3:
-              dspModule = _context5.sent;
+              dspModule = _context6.sent;
 
               if (dspModule) {
-                _context5.next = 7;
+                _context6.next = 7;
                 break;
               }
 
-              _this5.error("Faust DSP factory cannot be compiled");
+              _this6.error("Faust DSP factory cannot be compiled");
 
               throw new Error("Faust DSP factory cannot be compiled");
 
             case 7:
               time2 = performance.now();
 
-              _this5.log("WASM compilation duration : " + (time2 - time1));
+              _this6.log("WASM compilation duration : " + (time2 - time1));
 
               compiledDsp = {
                 shaKey,
@@ -25579,78 +25591,78 @@ class Faust {
               // factory.getJSON = eval("getJSON" + dspName);
               // factory.getBase64Code = eval("getBase64Code" + dspName);
 
-              _context5.prev = 10;
+              _context6.prev = 10;
               json = codes.dsp.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'"); // const base64Code = codes.dsp.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
 
               meta = JSON.parse(json);
               compiledDsp.dspMeta = meta;
-              _context5.next = 20;
+              _context6.next = 20;
               break;
 
             case 16:
-              _context5.prev = 16;
-              _context5.t0 = _context5["catch"](10);
+              _context6.prev = 16;
+              _context6.t0 = _context6["catch"](10);
 
-              _this5.error("Error in JSON.parse: " + _context5.t0.message);
+              _this6.error("Error in JSON.parse: " + _context6.t0.message);
 
-              throw _context5.t0;
+              throw _context6.t0;
 
             case 20:
-              _this5.dspTable[shaKey] = compiledDsp; // Possibly compile effect
+              _this6.dspTable[shaKey] = compiledDsp; // Possibly compile effect
 
               if (codes.effect) {
-                _context5.next = 23;
+                _context6.next = 23;
                 break;
               }
 
-              return _context5.abrupt("return", compiledDsp);
+              return _context6.abrupt("return", compiledDsp);
 
             case 23:
-              _context5.prev = 23;
-              _context5.next = 26;
+              _context6.prev = 23;
+              _context6.next = 26;
               return WebAssembly.compile(codes.effect.ui8Code);
 
             case 26:
-              effectModule = _context5.sent;
+              effectModule = _context6.sent;
               compiledDsp.effectModule = effectModule; // 'libfaust.js' wasm backend generates UI methods, then we compile the code
               // eval(helpers_code2);
               // factory.getJSONeffect = eval("getJSON" + factory_name2);
               // factory.getBase64Codeeffect = eval("getBase64Code" + factory_name2);
 
-              _context5.prev = 28;
+              _context6.prev = 28;
               _json = codes.effect.helpersCode.match(/getJSON\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*'(\{.+?)';}/)[1].replace(/\\'/g, "'"); // const base64Code = codes.effect.helpersCode.match(/getBase64Code\w+?\(\)[\s\n]*{[\s\n]*return[\s\n]*"([A-Za-z0-9+/=]+?)";[\s\n]+}/)[1];
 
               _meta = JSON.parse(_json);
               compiledDsp.effectMeta = _meta;
-              _context5.next = 38;
+              _context6.next = 38;
               break;
 
             case 34:
-              _context5.prev = 34;
-              _context5.t1 = _context5["catch"](28);
+              _context6.prev = 34;
+              _context6.t1 = _context6["catch"](28);
 
-              _this5.error("Error in JSON.parse: " + _context5.t1.message);
+              _this6.error("Error in JSON.parse: " + _context6.t1.message);
 
-              throw _context5.t1;
+              throw _context6.t1;
 
             case 38:
-              _context5.next = 43;
+              _context6.next = 43;
               break;
 
             case 40:
-              _context5.prev = 40;
-              _context5.t2 = _context5["catch"](23);
-              return _context5.abrupt("return", compiledDsp);
+              _context6.prev = 40;
+              _context6.t2 = _context6["catch"](23);
+              return _context6.abrupt("return", compiledDsp);
 
             case 43:
-              return _context5.abrupt("return", compiledDsp);
+              return _context6.abrupt("return", compiledDsp);
 
             case 44:
             case "end":
-              return _context5.stop();
+              return _context6.stop();
           }
         }
-      }, _callee5, null, [[10, 16], [23, 40], [28, 34]]);
+      }, _callee6, null, [[10, 16], [23, 40], [28, 34]]);
     }))();
   }
   /**
@@ -25665,23 +25677,23 @@ class Faust {
 
 
   getScriptProcessorNode(optionsIn) {
-    var _this6 = this;
+    var _this7 = this;
 
     return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee6() {
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee6$(_context6) {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee7() {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee7$(_context7) {
         while (1) {
-          switch (_context6.prev = _context6.next) {
+          switch (_context7.prev = _context7.next) {
             case 0:
-              return _context6.abrupt("return", new _FaustWasmToScriptProcessor__WEBPACK_IMPORTED_MODULE_5__["FaustWasmToScriptProcessor"](_this6).getNode(optionsIn));
+              return _context7.abrupt("return", new _FaustWasmToScriptProcessor__WEBPACK_IMPORTED_MODULE_5__["FaustWasmToScriptProcessor"](_this7).getNode(optionsIn));
 
             case 1:
             case "end":
-              return _context6.stop();
+              return _context7.stop();
           }
         }
-      }, _callee6);
+      }, _callee7);
     }))();
   } // deleteDSPInstance() {}
 
@@ -25696,23 +25708,23 @@ class Faust {
 
 
   getAudioWorkletNode(optionsIn) {
-    var _this7 = this;
+    var _this8 = this;
 
     return _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2___default()(
     /*#__PURE__*/
-    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee7() {
+    _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.mark(function _callee8() {
       var compiledDspWithCodes, audioCtx, voices, plotHandler, compiledDsp, id, strProcessor, url;
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee7$(_context7) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_1___default.a.wrap(function _callee8$(_context8) {
         while (1) {
-          switch (_context7.prev = _context7.next) {
+          switch (_context8.prev = _context8.next) {
             case 0:
               compiledDspWithCodes = optionsIn.compiledDsp, audioCtx = optionsIn.audioCtx, voices = optionsIn.voices, plotHandler = optionsIn.plotHandler;
               compiledDsp = _objectSpread({}, compiledDspWithCodes);
               delete compiledDsp.codes;
               id = compiledDsp.shaKey + "_" + voices;
 
-              if (!(_this7.workletProcessors.indexOf(id) === -1)) {
-                _context7.next = 10;
+              if (!(_this8.workletProcessors.indexOf(id) === -1)) {
+                _context8.next = 10;
                 break;
               }
 
@@ -25725,14 +25737,14 @@ class Faust {
               url = window.URL.createObjectURL(new Blob([strProcessor], {
                 type: "text/javascript"
               }));
-              _context7.next = 9;
+              _context8.next = 9;
               return audioCtx.audioWorklet.addModule(url);
 
             case 9:
-              _this7.workletProcessors.push(id);
+              _this8.workletProcessors.push(id);
 
             case 10:
-              return _context7.abrupt("return", new _FaustAudioWorkletNode__WEBPACK_IMPORTED_MODULE_7__["FaustAudioWorkletNode"]({
+              return _context8.abrupt("return", new _FaustAudioWorkletNode__WEBPACK_IMPORTED_MODULE_7__["FaustAudioWorkletNode"]({
                 audioCtx,
                 id,
                 voices,
@@ -25743,10 +25755,10 @@ class Faust {
 
             case 11:
             case "end":
-              return _context7.stop();
+              return _context8.stop();
           }
         }
-      }, _callee7);
+      }, _callee8);
     }))();
   }
   /**
@@ -25802,12 +25814,12 @@ class Faust {
 
 
   parseDspTable(str) {
-    var _this8 = this;
+    var _this9 = this;
 
     var strTable = JSON.parse(str);
 
     var _loop = function _loop(_shaKey) {
-      if (_this8.dspTable[_shaKey]) return "continue";
+      if (_this9.dspTable[_shaKey]) return "continue";
       var strCodes = strTable[_shaKey];
       var compiledCodes = {
         dsp: {
@@ -25822,7 +25834,7 @@ class Faust {
         } : undefined
       };
 
-      _this8.compileDsp(compiledCodes, _shaKey).then(dsp => _this8.dspTable[_shaKey] = dsp);
+      _this9.compileDsp(compiledCodes, _shaKey).then(dsp => _this9.dspTable[_shaKey] = dsp);
     };
 
     for (var _shaKey in strTable) {
