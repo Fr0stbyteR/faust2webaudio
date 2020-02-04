@@ -162,11 +162,11 @@ export class Faust {
      * Get DSP information
      *
      * @param {string} code
-     * @param {TFaustCompileOptions} optionsIn
+     * @param {{ voices?: number; args?: TFaustCompileArgs }} optionsIn
      * @returns {Promise<TCompiledDsp>}
      * @memberof Faust
      */
-    async inspect(code: string, optionsIn: TFaustCompileOptions): Promise<TCompiledDsp> {
+    async inspect(code: string, optionsIn: { voices?: number; args?: TFaustCompileArgs }): Promise<TCompiledDsp> {
         const { voices, args } = optionsIn;
         const argv = utils.toArgv(args);
         return this.compileCodes(code, argv, !voices);

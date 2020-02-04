@@ -25186,7 +25186,7 @@ class Faust {
    * Get DSP information
    *
    * @param {string} code
-   * @param {TFaustCompileOptions} optionsIn
+   * @param {{ voices?: number; args?: TFaustCompileArgs }} optionsIn
    * @returns {Promise<TCompiledDsp>}
    * @memberof Faust
    */
