@@ -1,6 +1,6 @@
 {
   "name": "faust2webaudio",
-  "version": "0.6.23",
+  "version": "0.6.25",
   "description": "Generate WebAudio Node from Faust code.",
   "main": "./dist/index.min.js",
   "types": "./dist/index.d.ts",
@@ -18,10 +18,10 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-typescript": "^7.8.3",
     "@babel/runtime": "^7.8.4",
-    "@types/emscripten": "^1.39.1",
-    "@types/node": "^12.12.26",
-    "@typescript-eslint/eslint-plugin": "^2.19.0",
-    "@typescript-eslint/parser": "^2.19.0",
+    "@types/emscripten": "^1.39.2",
+    "@types/node": "^13.7.1",
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
     "babel-loader": "^8.0.6",
     "crypto-libraries": "github:chrisveness/crypto",
     "eslint": "^6.8.0",
@@ -29,8 +29,8 @@
     "eslint-plugin-import": "^2.20.1",
     "typescript": "^3.7.5",
     "url-loader": "^3.0.0",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
     "ws": "^7.2.1"
   },
   "dependencies": {}

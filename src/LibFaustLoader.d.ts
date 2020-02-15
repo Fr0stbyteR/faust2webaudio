@@ -1,4 +1,3 @@
-
 interface FS {
     ignorePermissions: boolean;
     trackingDelegate: any;
