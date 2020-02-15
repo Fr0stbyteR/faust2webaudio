@@ -1,4 +1,3 @@
-
 interface FS {
     ignorePermissions: boolean;
     trackingDelegate: any;
@@ -84,6 +83,7 @@ interface FS {
         canRead: boolean, canWrite: boolean, onload?: () => void, onerror?: () => void, dontCreateFile?: boolean, canOwn?: boolean): void;
 }
 declare interface LibFaust extends EmscriptenModule {
+    cwrap(name: string, type: string, args: string[]): (...args: any[]) => any;
     UTF8ArrayToString(u8Array: number[], ptr: number, maxBytesToRead?: number): string;
     stringToUTF8Array(str: string, outU8Array: number[], outIdx: number, maxBytesToWrite: number): number;
     UTF8ToString(ptr: number, maxBytesToRead?: number): string;
@@ -97,7 +97,7 @@ declare interface LibFaust extends EmscriptenModule {
     stringToUTF32(str: string, outPtr: number, maxBytesToRead?: number): void;
     lengthBytesUTF32(str: string): number;
     // Undocumented Promise-like, has issue in https://github.com/emscripten-core/emscripten/issues/5820
-    then(func: (module: any) => any): LibFaust;
+    // then(func: (module: any) => any): LibFaust;
     FS: FS;
 }
 declare function FaustModule(FaustModule: LibFaust, ...args: any[]): LibFaust;

@@ -109,6 +109,8 @@ export class Faust {
      */
     async loadLibFaust(): Promise<Faust> {
         if (this.libFaust) return this;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore
         this.libFaust = await LibFaustLoader.load(this.wasmLocation, this.dataLocation);
         this.importLibFaustFunctions();
         return this;
@@ -149,13 +151,25 @@ export class Faust {
      * @memberof Faust
      */
     async getNode(code: string, optionsIn: TFaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
-        const { audioCtx, voices, useWorklet, bufferSize, plotHandler } = optionsIn;
-        const argv = utils.toArgv(optionsIn.args);
+        const { audioCtx, voices, useWorklet, bufferSize, plotHandler, args } = optionsIn;
+        const argv = utils.toArgv(args);
         const compiledDsp = await this.compileCodes(code, argv, !voices);
         if (!compiledDsp) return null;
         const options = { compiledDsp, audioCtx, voices, plotHandler, bufferSize: useWorklet ? 128 : bufferSize };
-        const node = await useWorklet ? this.getAudioWorkletNode(options) : this.getScriptProcessorNode(options);
-        return node;
+        return useWorklet ? this.getAudioWorkletNode(options) : this.getScriptProcessorNode(options);
+    }
+    /**
+     * Get DSP information
+     *
+     * @param {string} code
+     * @param {{ voices?: number; args?: TFaustCompileArgs }} optionsIn
+     * @returns {Promise<TCompiledDsp>}
+     * @memberof Faust
+     */
+    async inspect(code: string, optionsIn: { voices?: number; args?: TFaustCompileArgs }): Promise<TCompiledDsp> {
+        const { voices, args } = optionsIn;
+        const argv = utils.toArgv(args);
+        return this.compileCodes(code, argv, !voices);
     }
     /**
      * Plot a dsp offline.
