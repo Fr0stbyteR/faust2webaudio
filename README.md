@@ -75,7 +75,7 @@ npm update
 
 To upgrade Libfaust version: replace `src/libfaust-wasm.js`, `dist/libfaust-wasm.wasm` and `dist/libfaust-wasm.data` with the new files
 
-To build everything (using Webpack 4, Babel 7, TypeScript), this will produce `dist/index.js` and `dist/index.min.js`
+To build everything (using Webpack 4, Babel 7, TypeScript), this will produce `dist/index.js` and `dist/index.min.js` (this command must be done before commit + push on GitHub):
 ```bash
 npm run dist
 ```
@@ -87,11 +87,8 @@ npm run build
 To test, put the directory in a local server, then open the following pages:
 
 For Mono ScriptProcessor: `./test/mono.html`
-
 For Poly ScriptProcessor: `./test/poly.html`
-
 For Mono AudioWorklet: `./test/wmono.html`
-
 For Poly AudioWorklet: `./test/wpoly.html`
 
 ## Versioning 
