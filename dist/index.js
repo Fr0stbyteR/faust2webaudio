@@ -26208,11 +26208,14 @@ class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkletNode 
       }
     };
     this.port.postMessage(e);
-    this.parameters.get(path).setValueAtTime(value, 0);
+    var param = this.parameters.get(path);
+    if (param) param.setValueAtTime(value, this.context.currentTime);
   }
 
   getParamValue(path) {
-    return this.parameters.get(path).value;
+    var param = this.parameters.get(path);
+    if (param) return param.value;
+    return null;
   }
 
   setOutputParamHandler(handler) {
