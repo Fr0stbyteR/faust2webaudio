@@ -188,10 +188,13 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     setParamValue(path: string, value: number) {
         const e = { type: "param", data: { path, value } };
         this.port.postMessage(e);
-        this.parameters.get(path).setValueAtTime(value, 0);
+        const param = this.parameters.get(path);
+        if (param) param.setValueAtTime(value, this.context.currentTime);
     }
     getParamValue(path: string) {
-        return this.parameters.get(path).value;
+        const param = this.parameters.get(path);
+        if (param) return param.value;
+        return null;
     }
     setOutputParamHandler(handler: (address: string, value: number) => any) {
         this.outputHandler = handler;
