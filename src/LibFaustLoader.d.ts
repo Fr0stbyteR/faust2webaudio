@@ -82,7 +82,7 @@ interface FS {
     createPreloadedFile(parent: string | FS.FSNode, name: string, url: string,
         canRead: boolean, canWrite: boolean, onload?: () => void, onerror?: () => void, dontCreateFile?: boolean, canOwn?: boolean): void;
 }
-declare interface LibFaust extends EmscriptenModule {
+export interface LibFaust extends EmscriptenModule {
     cwrap(name: string, type: string, args: string[]): (...args: any[]) => any;
     UTF8ArrayToString(u8Array: number[], ptr: number, maxBytesToRead?: number): string;
     stringToUTF8Array(str: string, outU8Array: number[], outIdx: number, maxBytesToWrite: number): number;
@@ -102,5 +102,5 @@ declare interface LibFaust extends EmscriptenModule {
 }
 declare function FaustModule(FaustModule: LibFaust, ...args: any[]): LibFaust;
 export class LibFaustLoader {
-    static load(wasmLocation: string, dataLocation: string): Promise<LibFaust>;
+    static load(jsLocation: string, wasmLocation: string, dataLocation: string): Promise<LibFaust>;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 /* eslint-disable no-console */
 import sha1 from "crypto-libraries/sha1";
 import { LibFaustLoader, LibFaust } from "./LibFaustLoader";
@@ -73,6 +74,14 @@ export class Faust {
      */
     private offlineProcessor: FaustOfflineProcessor = new FaustOfflineProcessor();
     /**
+     * Location of `libfaust-wasm.js`
+     *
+     * @private
+     * @type {string}
+     * @memberof Faust
+     */
+    private jsLocation: string;
+    /**
      * Location of `libfaust-wasm.wasm`
      *
      * @private
@@ -93,11 +102,12 @@ export class Faust {
      * Creates an instance of Faust
      * usage: `new Faust().ready.then(faust => any);`
      *
-     * @param {{ debug?: boolean; wasmLocation?: string; dataLocation?: string }} [options]
+     * @param {{ debug?: boolean; jsLocation?: string; wasmLocation?: string; dataLocation?: string }} [options]
      * @memberof Faust
      */
-    constructor(options?: { debug?: boolean; wasmLocation?: string; dataLocation?: string }) {
+    constructor(options?: { debug?: boolean; jsLocation?: string; wasmLocation?: string; dataLocation?: string }) {
         this.debug = !!(options && options.debug);
+        this.jsLocation = options.jsLocation || "http://fr0stbyter.github.io/faust2webaudio/dist/libfaust-wasm.js";
         this.wasmLocation = options.wasmLocation || "http://fr0stbyter.github.io/faust2webaudio/dist/libfaust-wasm.wasm";
         this.dataLocation = options.dataLocation || "http://fr0stbyter.github.io/faust2webaudio/dist/libfaust-wasm.data";
     }
@@ -111,7 +121,7 @@ export class Faust {
         if (this.libFaust) return this;
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
         // @ts-ignore
-        this.libFaust = await LibFaustLoader.load(this.wasmLocation, this.dataLocation);
+        this.libFaust = await LibFaustLoader.load(this.jsLocation, this.wasmLocation, this.dataLocation);
         this.importLibFaustFunctions();
         return this;
     }
