@@ -24911,7 +24911,7 @@ module.exports = function(module) {
 "use strict";
 
 
-module.exports = function() {
+module.exports = function () {
   throw new Error(
     'ws does not work in the browser. Browser clients must use the native ' +
       'WebSocket object'
@@ -26881,6 +26881,10 @@ var FaustAudioWorkletProcessorWrapper = () => {
     }
 
     ctrlChange(channel, ctrl, value) {
+      if (ctrl === 123 || ctrl === 120) {
+        this.allNotesOff();
+      }
+
       if (!this.fCtrlLabel[ctrl].length) return;
       this.fCtrlLabel[ctrl].forEach(ctrl => {
         var path = ctrl.path;
@@ -27604,6 +27608,11 @@ class FaustWasmToScriptProcessor {
         type: "ctrlChange",
         data: [channel, ctrl, value]
       });
+
+      if (ctrl === 123 || ctrl === 120) {
+        node.allNotesOff();
+      }
+
       if (!node.fCtrlLabel[ctrl].length) return;
       node.fCtrlLabel[ctrl].forEach(ctrl => {
         var path = ctrl.path;
