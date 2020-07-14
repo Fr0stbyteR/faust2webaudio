@@ -1,5 +1,7 @@
 # Faust2WebAudio
 
+The repository is now maintained by [Grame-CNCM](https://github.com/grame-cncm/faust2webaudio). Please check that fork for the latest version.
+
 Produce a ScriptProcessorNode or an AudioWorkletNode with Faust .dsp code using the libfaust WebAssembly compiler.
 
 Supported Platforms: Chrome >= 49, Firefox >= 45, Edge >= 13, Safari >= 10, iOS >= 10, Android >= 68
