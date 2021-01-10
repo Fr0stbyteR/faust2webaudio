@@ -1,6 +1,6 @@
 {
   "name": "faust2webaudio",
-  "version": "0.6.37",
+  "version": "0.6.38",
   "description": "Generate WebAudio Node from Faust code.",
   "main": "./dist/index.min.js",
   "types": "./dist/index.d.ts",
