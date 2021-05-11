@@ -27,6 +27,7 @@ effect = dm.freeverb_demo;`;
                 node.keyOn(0, 60, 64);
                 setTimeout(() => node.keyOn(0, 64, 64), 500);
                 setTimeout(() => node.keyOn(0, 67, 64), 1000);
+                setTimeout(() => node.allNotesOff(), 5000);
             });
         })
         const unlockAudioContext = (audioCtx) => {
