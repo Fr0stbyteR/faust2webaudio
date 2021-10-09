@@ -1,6 +1,6 @@
 {
   "name": "faust2webaudio",
-  "version": "0.6.50",
+  "version": "0.6.51",
   "description": "Generate WebAudio Node from Faust code.",
   "main": "./dist/index.min.js",
   "types": "./dist/index.d.ts",
@@ -9,7 +9,7 @@
     "dist": "npm run build && webpack --mode production"
   },
   "author": "Grame-CNCM",
-  "repository": "http://github.com/Fr0stbyteR/faust2webaudio",
+  "repository": "http://github.com/grame-cncm/faust2webaudio",
   "license": "GPL-2.0-or-later",
   "devDependencies": {
     "@babel/core": "^7.12.10",
