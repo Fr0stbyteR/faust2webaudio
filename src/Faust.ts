@@ -224,7 +224,7 @@ export class Faust {
     private async compileCodes(code: string, argv: string[], internalMemory: boolean): Promise<TCompiledDsp> {
         // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
         const strArgv = argv.join("");
-        const shaKey = sha1.hash(this.expandCode(code, argv) + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
+        const shaKey = sha1.hash(/* this.expandCode(code, argv) */code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
         const compiledDsp = this.dspTable[shaKey];
         if (compiledDsp) {
             this.log("Existing library : " + shaKey);

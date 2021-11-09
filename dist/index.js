@@ -199,7 +199,7 @@ class Faust {
   compileCodes(code, argv, internalMemory) {
     return __async(this, null, function* () {
       const strArgv = argv.join("");
-      const shaKey = crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_0__["default"].hash(this.expandCode(code, argv) + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
+      const shaKey = crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_0__["default"].hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
       const compiledDsp = this.dspTable[shaKey];
       if (compiledDsp) {
         this.log("Existing library : " + shaKey);
