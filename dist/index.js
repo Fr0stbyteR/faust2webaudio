@@ -32615,10 +32615,10 @@ utils.intFromLE = intFromLE;
 /*!********************************************!*\
   !*** ./node_modules/elliptic/package.json ***!
   \********************************************/
-/*! exports provided: name, version, description, main, files, scripts, repository, keywords, author, license, bugs, homepage, devDependencies, dependencies, default */
+/*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"elliptic\",\"version\":\"6.5.4\",\"description\":\"EC cryptography\",\"main\":\"lib/elliptic.js\",\"files\":[\"lib\"],\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"test\":\"npm run lint && npm run unit\",\"version\":\"grunt dist && git add dist/\"},\"repository\":{\"type\":\"git\",\"url\":\"git@github.com:indutny/elliptic\"},\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"author\":\"Fedor Indutny <fedor@indutny.com>\",\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"homepage\":\"https://github.com/indutny/elliptic\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"}}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.4\",\"D:\\\\p\\\\faust2webaudio\"]],\"_development\":true,\"_from\":\"elliptic@6.5.4\",\"_id\":\"elliptic@6.5.4\",\"_inBundle\":false,\"_integrity\":\"sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.4\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.4\",\"saveSpec\":null,\"fetchSpec\":\"6.5.4\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.4.tgz\",\"_spec\":\"6.5.4\",\"_where\":\"D:\\\\p\\\\faust2webaudio\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.11.9\",\"brorand\":\"^1.1.0\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.1\",\"inherits\":\"^2.0.4\",\"minimalistic-assert\":\"^1.0.1\",\"minimalistic-crypto-utils\":\"^1.0.1\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^2.0.2\",\"coveralls\":\"^3.1.0\",\"eslint\":\"^7.6.0\",\"grunt\":\"^1.2.1\",\"grunt-browserify\":\"^5.3.0\",\"grunt-cli\":\"^1.3.2\",\"grunt-contrib-connect\":\"^3.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^5.0.0\",\"grunt-mocha-istanbul\":\"^5.0.2\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.5\",\"mocha\":\"^8.0.1\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"lint\":\"eslint lib test\",\"lint:fix\":\"npm run lint -- --fix\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.4\"}");
 
 /***/ }),
 
@@ -53184,7 +53184,7 @@ class Faust {
             case 0:
               // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
               strArgv = argv.join("");
-              shaKey = crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_3__["default"].hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, {
+              shaKey = crypto_libraries_sha1__WEBPACK_IMPORTED_MODULE_3__["default"].hash(_this5.expandCode(code, argv) + (internalMemory ? "internal_memory" : "external_memory") + strArgv, {
                 msgFormat: "string"
               });
               compiledDsp = _this5.dspTable[shaKey];
@@ -53230,7 +53230,7 @@ class Faust {
    * All compilations options are 'normalized' and included as a comment in the expanded string.
    *
    * @param {string} code - dsp source code
-   * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
+   * @param {TFaustCompileArgs | string[]} args - Paramaters to be given to the Faust compiler
    * @returns {string} "self-contained" DSP source string where all needed librairies
    * @memberof Faust
    */
@@ -53254,7 +53254,7 @@ class Faust {
 
     this.libFaust.stringToUTF8(name, $name, nameSize);
     this.libFaust.stringToUTF8(code, $code, codeSize);
-    var argvIn = args ? _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](args) : []; // Force "wasm" compilation
+    var argvIn = args ? Array.isArray(args) ? args : _utils__WEBPACK_IMPORTED_MODULE_8__["toArgv"](args) : []; // Force "wasm" compilation
 
     var argv = [...argvIn, "-lang", "wasm"]; // Prepare 'argv' array for C side
 
@@ -54870,12 +54870,8 @@ class FaustOfflineProcessor {
         _sinhf: Math.sinh,
         _tanhf: Math.tanh,
         _isnanf: Number.isNaN,
-        _isinff: function _isinff(x) {
-          return !isFinite(x);
-        },
-        _copysignf: function _copysignf(x, y) {
-          return Math.sign(x) === Math.sign(y) ? x : -x;
-        },
+        _isinff: x => !isFinite(x),
+        _copysignf: (x, y) => Math.sign(x) === Math.sign(y) ? x : -x,
         // Double version
         _acos: Math.acos,
         _asin: Math.asin,
@@ -54903,12 +54899,8 @@ class FaustOfflineProcessor {
         _sinh: Math.sinh,
         _tanh: Math.tanh,
         _isnan: Number.isNaN,
-        _isinf: function _isinf(x) {
-          return !isFinite(x);
-        },
-        _copysign: function _copysign(x, y) {
-          return Math.sign(x) === Math.sign(y) ? x : -x;
-        },
+        _isinf: x => !isFinite(x),
+        _copysign: (x, y) => Math.sign(x) === Math.sign(y) ? x : -x,
         table: new WebAssembly.Table({
           initial: 0,
           element: "anyfunc"
@@ -56048,12 +56040,8 @@ var createWasmImport = (voices, memory) => ({
     _sinhf: Math.sinh,
     _tanhf: Math.tanh,
     _isnanf: Number.isNaN,
-    _isinff: function _isinff(x) {
-      return !isFinite(x);
-    },
-    _copysignf: function _copysignf(x, y) {
-      return Math.sign(x) === Math.sign(y) ? x : -x;
-    },
+    _isinff: x => !isFinite(x),
+    _copysignf: (x, y) => Math.sign(x) === Math.sign(y) ? x : -x,
     // Double version
     _acos: Math.acos,
     _asin: Math.asin,
@@ -56081,12 +56069,8 @@ var createWasmImport = (voices, memory) => ({
     _sinh: Math.sinh,
     _tanh: Math.tanh,
     _isnan: Number.isNaN,
-    _isinf: function _isinf(x) {
-      return !isFinite(x);
-    },
-    _copysign: function _copysign(x, y) {
-      return Math.sign(x) === Math.sign(y) ? x : -x;
-    },
+    _isinf: x => !isFinite(x),
+    _copysign: (x, y) => Math.sign(x) === Math.sign(y) ? x : -x,
     table: new WebAssembly.Table({
       initial: 0,
       element: "anyfunc"

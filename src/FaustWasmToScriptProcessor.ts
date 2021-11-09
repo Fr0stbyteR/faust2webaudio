@@ -266,7 +266,7 @@ export class FaustWasmToScriptProcessor {
         node.ctrlChange = (channel, ctrl, value) => {
             node.cachedEvents.push({ type: "ctrlChange", data: [channel, ctrl, value] });
             if (ctrl === 123 || ctrl === 120) {
-               node.allNotesOff();
+                node.allNotesOff();
             }
             if (!node.fCtrlLabel[ctrl].length) return;
             node.fCtrlLabel[ctrl].forEach((ctrl) => {

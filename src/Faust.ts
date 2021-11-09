@@ -278,7 +278,7 @@ export class Faust {
     private async compileCodes(code: string, argv: string[], internalMemory: boolean): Promise<TCompiledDsp> {
         // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
         const strArgv = argv.join("");
-        const shaKey = sha1.hash(code + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
+        const shaKey = sha1.hash(this.expandCode(code, argv) + (internalMemory ? "internal_memory" : "external_memory") + strArgv, { msgFormat: "string" });
         const compiledDsp = this.dspTable[shaKey];
         if (compiledDsp) {
             this.log("Existing library : " + shaKey);
@@ -304,11 +304,11 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * All compilations options are 'normalized' and included as a comment in the expanded string.
      *
      * @param {string} code - dsp source code
-     * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
+     * @param {TFaustCompileArgs | string[]} args - Paramaters to be given to the Faust compiler
      * @returns {string} "self-contained" DSP source string where all needed librairies
      * @memberof Faust
      */
-    expandCode(code: string, args?: TFaustCompileArgs): string {
+    expandCode(code: string, args?: TFaustCompileArgs | string[]): string {
         this.log("libfaust.js version : " + this.getLibFaustVersion());
         // Allocate strings on the HEAP
         const codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
@@ -324,7 +324,7 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
         this.libFaust.stringToUTF8(name, $name, nameSize);
         this.libFaust.stringToUTF8(code, $code, codeSize);
 
-        const argvIn = args ? utils.toArgv(args) : [];
+        const argvIn = args ? Array.isArray(args) ? args : utils.toArgv(args) : [];
         // Force "wasm" compilation
         const argv = [...argvIn, "-lang", "wasm"];
 

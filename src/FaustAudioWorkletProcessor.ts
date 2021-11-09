@@ -498,7 +498,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
         }
         ctrlChange(channel: number, ctrl: number, value: number) {
             if (ctrl === 123 || ctrl === 120) {
-              this.allNotesOff();
+                this.allNotesOff();
             }
             if (!this.fCtrlLabel[ctrl].length) return;
             this.fCtrlLabel[ctrl].forEach((ctrl) => {

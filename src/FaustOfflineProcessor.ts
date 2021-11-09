@@ -41,8 +41,8 @@ export class FaustOfflineProcessor {
                 _powf: Math.pow, _roundf: Math.fround, _sinf: Math.sin, _sqrtf: Math.sqrt, _tanf: Math.tan,
                 _acoshf: Math.acosh, _asinhf: Math.asinh, _atanhf: Math.atanh,
                 _coshf: Math.cosh, _sinhf: Math.sinh, _tanhf: Math.tanh,
-                _isnanf: Number.isNaN, _isinff: function (x: number) { return !isFinite(x); },
-                _copysignf: function (x: number, y: number) { return Math.sign(x) === Math.sign(y) ? x : -x; },
+                _isnanf: Number.isNaN, _isinff: (x: number) => !isFinite(x),
+                _copysignf: (x: number, y: number) => (Math.sign(x) === Math.sign(y) ? x : -x),
 
                 // Double version
                 _acos: Math.acos, _asin: Math.asin, _atan: Math.atan, _atan2: Math.atan2,
@@ -53,8 +53,8 @@ export class FaustOfflineProcessor {
                 _pow: Math.pow, _round: Math.fround, _sin: Math.sin, _sqrt: Math.sqrt, _tan: Math.tan,
                 _acosh: Math.acosh, _asinh: Math.asinh, _atanh: Math.atanh,
                 _cosh: Math.cosh, _sinh: Math.sinh, _tanh: Math.tanh,
-                _isnan: Number.isNaN, _isinf: function (x: number) { return !isFinite(x); },
-                _copysign: function (x: number, y: number) { return Math.sign(x) === Math.sign(y) ? x : -x; },
+                _isnan: Number.isNaN, _isinf: (x: number) => !isFinite(x),
+                _copysign: (x: number, y: number) => (Math.sign(x) === Math.sign(y) ? x : -x),
 
                 table: new WebAssembly.Table({ initial: 0, element: "anyfunc" })
             }
