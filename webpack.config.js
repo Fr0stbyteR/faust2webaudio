@@ -1,8 +1,15 @@
 const path = require('path');
 
+/** @type {import('webpack').Configuration} */
 const config = {
   entry: './src/index.ts',
   resolve: {
+    fallback: {
+      "path": false,
+      "fs": false,
+      "ws": false,
+      "crypto": false
+    },
     extensions: ['.ts', '.js']
   },
   output: {
@@ -11,12 +18,17 @@ const config = {
     libraryTarget: 'umd'
   },
   node: {
-    fs: 'empty'
   },
   module: {
     rules: [{
         test: /\.(ts|js)x?$/,
-        use: "babel-loader",
+        use: {
+          loader: "esbuild-loader",
+          options: {
+            loader: 'ts',
+            target: 'es2016'
+          }
+        },
         exclude: /(node_modules|libfaust-wasm.js)/,
       },
       {

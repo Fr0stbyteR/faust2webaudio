@@ -4,11 +4,11 @@
         "es6": true
     },
     "settings": {
-    "import/resolver": {
-        "node": {
-            "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
+        "import/resolver": {
+            "node": {
+                "extensions": [".js", ".jsx", ".ts", ".tsx", ".d.ts"]
+            }
         }
-    }
     },
     "extends": [
         "airbnb-base",
@@ -24,8 +24,10 @@
         "jsx": true,
         "useJSXTextNode": true
     },
+    "ignorePatterns": ["lib.*.d.ts"],
     "rules": {
         "array-callback-return": "warn",
+        "arrow-body-style": "off",
         "arrow-parens": ["warn", "as-needed", { "requireForBlockBody": true }],
         "class-methods-use-this": "off",
         "comma-dangle": ["error", "never"],
@@ -49,6 +51,7 @@
         "max-len": "off",
         "new-parens": "warn",
         "no-array-constructor": "off",
+        "no-await-in-loop": "off",
         "no-bitwise": "off",
         "no-caller": "warn",
         "no-cond-assign": ["warn", "except-parens"],
@@ -57,10 +60,10 @@
         "no-continue": "off",
         "no-delete-var": "warn",
         "no-dupe-args": "warn",
-        "no-dupe-class-members": "warn",
+        "no-dupe-class-members": "off",
         "no-dupe-keys": "warn",
         "no-duplicate-case": "warn",
-        "no-empty": "warn",
+        "no-empty": ["warn", { "allowEmptyCatch": true }],
         "no-empty-character-class": "warn",
         "no-empty-pattern": "warn",
         "no-eval": "warn",
@@ -112,10 +115,6 @@
         "no-restricted-syntax": [
             "error",
             {
-                "selector": "ForOfStatement",
-                "message": "iterators/generators require regenerator-runtime, which is too heavyweight for this guide to allow them. Separately, loops should be avoided in favor of array iterations."
-            },
-            {
                 "selector": "LabeledStatement",
                 "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
             },
@@ -131,12 +130,12 @@
         "no-self-compare": "warn",
         "no-sequences": "warn",
         "no-shadow-restricted-names": "warn",
-        "no-sparse-arrays": "warn",
+        "no-sparse-arrays": "off",
         "no-template-curly-in-string": "warn",
         "no-this-before-super": "warn",
         "no-throw-literal": "warn",
         "no-trailing-spaces": "warn",
-        "no-undef": "error",
+        "no-undef": "off",
         "no-underscore-dangle": "off",
         "no-use-before-define": "off",
         "no-unreachable": "warn",
@@ -165,7 +164,7 @@
         "prefer-destructuring": "off",
         "prefer-template":"off",
         "quotes": ["error", "double", { "avoidEscape": true }],
-        "semi": "warn",
+        "semi": "off",
         "spaced-comment": [2, "always", { "markers": ["/"] }],
         "radix": "off",
         "require-yield": "warn",
@@ -174,15 +173,17 @@
         "unicode-bom": ["warn", "never"],
         "use-isnan": "warn",
         "valid-typeof": "warn",
-        "@typescript-eslint/camelcase": "warn",
+        "@typescript-eslint/ban-types": "off",
         "@typescript-eslint/class-name-casing": "off",
         "@typescript-eslint/consistent-type-assertions": "warn",
         "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
-        "@typescript-eslint/no-array-constructor": "warn",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-empty-interface": "off",
         "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-inferrable-types": "off",
+        "@typescript-eslint/prefer-interface": "off",
+        "@typescript-eslint/no-array-constructor": "warn",
         "@typescript-eslint/no-namespace": "error",
         "@typescript-eslint/no-use-before-define": [
             "warn",
@@ -209,7 +210,7 @@
             }
         ],
         "@typescript-eslint/no-useless-constructor": "warn",
-        "@typescript-eslint/prefer-interface": "off"
+        "@typescript-eslint/semi": ["error", "always"]
     },
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint"]

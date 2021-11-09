@@ -7,7 +7,7 @@ export class FaustAudioWorkletNode extends (window.AudioWorkletNode ? AudioWorkl
     onprocessorerror = (e: ErrorEvent) => {
         console.error("Error from " + this.dspMeta.name + " AudioWorkletNode: "); // eslint-disable-line no-console
         throw e.error;
-    }
+    };
     /* WAP ??
     getMetadata = this.getJSON;
     setParam = this.setParamValue;

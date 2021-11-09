@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-properties */
-/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable object-property-newline */
 /* eslint-disable object-curly-newline */
 import { Faust } from "./Faust";

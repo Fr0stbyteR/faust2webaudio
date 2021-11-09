@@ -46,7 +46,7 @@ type TFaustUIMeta = {
     tooltip?: string;
     hidden?: string;
     [key: string]: string;
-}
+};
 export type TFaustUIGroupType = "vgroup" | "hgroup" | "tgroup";
 export type TFaustUIOutputType = "hbargraph" | "vbargraph";
 export type TFaustUIInputType = "vslider" | "hslider" | "button" | "checkbox" | "nentry";
@@ -54,7 +54,7 @@ export type TFaustUIGroup = {
     type: TFaustUIGroupType;
     label: string;
     items: TFaustUIItem[];
-}
+};
 export type TFaustUIType = TFaustUIGroupType | TFaustUIOutputType | TFaustUIInputType;
 export type TCompiledCode = { ui8Code: ArrayBuffer; code: string; helpersCode: string };
 export type TCompiledStrCode = { strCode: string; code: string; helpersCode: string };
@@ -68,7 +68,7 @@ export type TCompiledDsp = {
     effectModule?: WebAssembly.Module;
     effectMeta?: TDspMeta;
     codes: TCompiledCodes;
-}
+};
 export type TFaustCompileArgs = {
     /**
      * Flush to zero the code added to recursive signals [0:no (default), 1:fabs based, 2:mask based (fastest)]
@@ -83,7 +83,7 @@ export type TFaustCompileArgs = {
      */
     "-I"?: string | string[];
     [key: string]: number | string | string[];
-}
+};
 export type TFaustCompileOptions = {
     audioCtx: AudioContext;
     useWorklet?: boolean;
@@ -96,7 +96,7 @@ export type TFaustCompileOptions = {
      * @type {(plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any}
      */
     plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
-}
+};
 export type TAudioNodeOptions = {
     /**
      * DSP compiled by libfaust
@@ -123,7 +123,7 @@ export type TAudioNodeOptions = {
      * @type {(plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any}
      */
     plotHandler?: (plotted: Float32Array[], index: number, events?: { type: string; data: any }[]) => any;
-}
+};
 
 export interface FaustWebAssemblyExports extends WebAssembly.Exports {
     getParamValue($dsp: number, $param: number): number;

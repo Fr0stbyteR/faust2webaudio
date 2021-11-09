@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-console */
 /* eslint-disable no-restricted-properties */
-/* eslint-disable @typescript-eslint/camelcase */
 /* eslint-disable object-property-newline */
 /* eslint-env worker */
 import { TDspMeta, FaustDspNode, TFaustUI, TFaustUIGroup, TFaustUIItem, FaustWebAssemblyExports, FaustWebAssemblyMixerExports, TCompiledDsp } from "./types";
@@ -196,7 +196,7 @@ export const FaustAudioWorkletProcessorWrapper = () => {
                 }
                 default:
             }
-        }
+        };
         constructor(options: AudioWorkletNodeOptions) {
             super(options);
             const processorOptions: { id: string; voices: number; compiledDsp: TCompiledDsp; mixer32Module: WebAssembly.Module } = options.processorOptions;

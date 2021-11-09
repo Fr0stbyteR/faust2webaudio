@@ -14,17 +14,10 @@ import { TCompiledDsp, TFaustCompileOptions, FaustScriptProcessorNode, TFaustCom
 /**
  * Main Faust class,
  * usage: `new Faust().ready.then(faust => any);`
- *
- * @export
- * @class Faust
  */
 export class Faust {
     /**
      * The libfaust Wasm Emscripten Module
-     *
-     * @private
-     * @type {LibFaust}
-     * @memberof Faust
      */
     private libFaust: LibFaust;
     private createWasmCDSPFactoryFromString: ($name: number, $code: number, argc: number, $argv: number, $errorMsg: number, internalMemory: boolean) => number;
@@ -42,59 +35,33 @@ export class Faust {
     private generateCAuxFilesFromString: ($name: number, $code: number, argc: number, $argv: number, $errorMsg: number) => number;
     /**
      * Debug mode, set to true to print out each message
-     *
-     * @type {boolean}
-     * @memberof Faust
      */
-    debug: boolean = false;
+    debug = false;
     /**
      * An object to storage compiled dsp with it's sha1
-     *
-     * @private
-     * @type {{ [shaKey: string]: TCompiledDsp }}
-     * @memberof Faust
      */
     private dspTable: { [shaKey: string]: TCompiledDsp } = {};
     /**
      * Registered WorkletProcessor names
-     *
-     * @private
-     * @type {string[]}
-     * @memberof Faust
      */
     private workletProcessors: string[] = [];
     private _log: string[] = [];
     /**
      * Offline processor used to plot
-     *
-     * @private
-     * @type {FaustOfflineProcessor}
-     * @memberof Faust
      */
     private offlineProcessor: FaustOfflineProcessor = new FaustOfflineProcessor();
     /**
      * Location of `libfaust-wasm.wasm`
-     *
-     * @private
-     * @type {string}
-     * @memberof Faust
      */
     private wasmLocation: string;
     /**
      * Location of `libfaust-wasm.data`
-     *
-     * @private
-     * @type {string}
-     * @memberof Faust
      */
     private dataLocation: string;
 
     /**
      * Creates an instance of Faust
      * usage: `new Faust().ready.then(faust => any);`
-     *
-     * @param {{ debug?: boolean; wasmLocation?: string; dataLocation?: string }} [options]
-     * @memberof Faust
      */
     constructor(options?: { debug?: boolean; wasmLocation?: string; dataLocation?: string }) {
         this.debug = !!(options && options.debug);
@@ -109,18 +76,12 @@ export class Faust {
      */
     async loadLibFaust(): Promise<Faust> {
         if (this.libFaust) return this;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore
         this.libFaust = await LibFaustLoader.load(this.wasmLocation, this.dataLocation);
         this.importLibFaustFunctions();
         return this;
     }
     /**
      * A promise to resolve when libfaust is ready.
-     *
-     * @readonly
-     * @type {Promise<Faust>}
-     * @memberof Faust
      */
     get ready(): Promise<Faust> {
         return this.loadLibFaust();
@@ -147,8 +108,6 @@ export class Faust {
      *
      * @param {string} code - the source code
      * @param {TFaustCompileOptions} optionsIn - options with audioCtx, bufferSize, voices, useWorklet, args, plot and plotHandler
-     * @returns {Promise<FaustAudioWorkletNode | FaustScriptProcessorNode>}
-     * @memberof Faust
      */
     async getNode(code: string, optionsIn: TFaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
         const { audioCtx, voices, useWorklet, bufferSize, plotHandler, args } = optionsIn;
@@ -160,11 +119,6 @@ export class Faust {
     }
     /**
      * Get DSP information
-     *
-     * @param {string} code
-     * @param {{ voices?: number; args?: TFaustCompileArgs }} optionsIn
-     * @returns {Promise<TCompiledDsp>}
-     * @memberof Faust
      */
     async inspect(code: string, optionsIn: { voices?: number; args?: TFaustCompileArgs }): Promise<TCompiledDsp> {
         const { voices, args } = optionsIn;
@@ -173,10 +127,6 @@ export class Faust {
     }
     /**
      * Plot a dsp offline.
-     *
-     * @param {{ code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }} [optionsIn]
-     * @returns {Promise<Float32Array[]>}
-     * @memberof Faust
      */
     async plot(optionsIn?: { code?: string; size?: number; sampleRate?: number; args?: TFaustCompileArgs }): Promise<Float32Array[]> {
         let compiledDsp;
@@ -190,13 +140,11 @@ export class Faust {
     /**
      * Generate Uint8Array and helpersCode from a dsp source code
      *
-     * @private
      * @param {string} factoryName - Class name of the source code
      * @param {string} code - dsp source code
      * @param {string[]} argvIn - Array of paramaters to be given to the Faust compiler
      * @param {boolean} internalMemory - Use internal Memory flag, false for poly, true for mono
      * @returns {TCompiledCode} - An object with ui8Code, code, helpersCode
-     * @memberof Faust
      */
     private compileCode(factoryName: string, code: string, argvIn: string[], internalMemory: boolean): TCompiledCode {
         const codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
@@ -268,12 +216,10 @@ export class Faust {
      * createDSPFactoryAux
      * Generate shaKey, effects, dsp, their Wasm Modules and helpers from a dsp source code
      *
-     * @private
      * @param {string} code - dsp source code
      * @param {string[]} argv - Array of paramaters to be given to the Faust compiler
      * @param {boolean} internalMemory - Use internal Memory flag, false for poly, true for mono
      * @returns {Promise<TCompiledDsp>} - An object contains shaKey, empty polyphony map, original codes, modules and helpers
-     * @memberof Faust
      */
     private async compileCodes(code: string, argv: string[], internalMemory: boolean): Promise<TCompiledDsp> {
         // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
@@ -306,7 +252,6 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * @param {string} code - dsp source code
      * @param {TFaustCompileArgs | string[]} args - Paramaters to be given to the Faust compiler
      * @returns {string} "self-contained" DSP source string where all needed librairies
-     * @memberof Faust
      */
     expandCode(code: string, args?: TFaustCompileArgs | string[]): string {
         this.log("libfaust.js version : " + this.getLibFaustVersion());
@@ -370,11 +315,9 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
      * readDSPFactoryFromMachineAux
      * Compile wasm modules from dsp and effect Uint8Arrays
      *
-     * @private
      * @param {TCompiledCodes} codes
      * @param {string} shaKey
      * @returns {Promise<TCompiledDsp>}
-     * @memberof Faust
      */
     private async compileDsp(codes: TCompiledCodes, shaKey: string): Promise<TCompiledDsp> {
         const time1 = performance.now();
@@ -440,11 +383,8 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
     /**
      * Get a ScriptProcessorNode from compiled dsp
      *
-     * @private
      * @param {TCompiledDsp} compiledDsp - DSP compiled by libfaust
      * @param {TAudioNodeOptions} optionsIn
-     * @returns {Promise<FaustScriptProcessorNode>}
-     * @memberof Faust
      */
     private async getScriptProcessorNode(optionsIn: TAudioNodeOptions): Promise<FaustScriptProcessorNode> {
         return new FaustWasmToScriptProcessor(this).getNode(optionsIn);
@@ -452,11 +392,6 @@ process = adaptor(dsp_code.process, dsp_code.effect) : dsp_code.effect;`;
     // deleteDSPInstance() {}
     /**
      * Get a AudioWorkletNode from compiled dsp
-     *
-     * @private
-     * @param {TAudioNodeOptions} optionsIn
-     * @returns {Promise<FaustAudioWorkletNode>}
-     * @memberof Faust
      */
     private async getAudioWorkletNode(optionsIn: TAudioNodeOptions): Promise<FaustAudioWorkletNode> {
         const { compiledDsp: compiledDspWithCodes, audioCtx, voices, plotHandler } = optionsIn;
@@ -486,10 +421,6 @@ const faustData = ${JSON.stringify({
     }
     /**
      * Remove a DSP from registry
-     *
-     * @private
-     * @param {TCompiledDsp} compiledDsp
-     * @memberof Faust
      */
     private deleteDsp(compiledDsp: TCompiledDsp): void {
         // The JS side is cleared
@@ -499,9 +430,6 @@ const faustData = ${JSON.stringify({
     }
     /**
      * Stringify current storaged DSP Table.
-     *
-     * @returns {string}
-     * @memberof Faust
      */
     stringifyDspTable(): string {
         const strTable: { [shaKey: string]: TCompiledStrCodes } = {};
@@ -524,9 +452,6 @@ const faustData = ${JSON.stringify({
     }
     /**
      * parse and store a stringified DSP Table.
-     *
-     * @param {string} str
-     * @memberof Faust
      */
     parseDspTable(str: string) {
         const strTable = JSON.parse(str) as { [shaKey: string]: TCompiledStrCodes };
@@ -555,7 +480,6 @@ const faustData = ${JSON.stringify({
      * @param {string} code faust source code
      * @param {TFaustCompileArgs} args - Paramaters to be given to the Faust compiler
      * @returns {string} svg file as string
-     * @memberof Faust
      */
     getDiagram(code: string, args?: TFaustCompileArgs): string {
         const codeSize = this.libFaust.lengthBytesUTF8(code) + 1;
@@ -606,8 +530,7 @@ const faustData = ${JSON.stringify({
      * Expose LibFaust Emscripten Module File System
      *
      * @param {string} path path string
-     * @returns {Emscripten.FS} Emscripten Module File System
-     * @memberof Faust
+     * @returns Emscripten Module File System
      */
     get fs() {
         return this.libFaust.FS;
