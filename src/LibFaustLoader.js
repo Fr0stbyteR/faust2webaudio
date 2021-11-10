@@ -1,29 +1,12 @@
 import * as LibFaust from "./libfaust-wasm";
 
 class LibFaustLoader {
-    static load(wasmLocation, dataLocation) {
+    static async load(wasmLocation, dataLocation) {
         const locateFile = (path, dir) => ({
             "libfaust-wasm.wasm": wasmLocation,
             "libfaust-wasm.data": dataLocation
         }[path]) || dir + path;
-        const libFaust = LibFaust({ locateFile });
-        libFaust.then = (f) => { // Workaround of issue https://github.com/emscripten-core/emscripten/issues/5820
-            delete libFaust.then;
-            // We may already be ready to run code at this time. if
-            // so, just queue a call to the callback.
-            if (libFaust.calledRun) {
-                f(libFaust);
-            } else {
-                // we are not ready to call then() yet. we must call it
-                // at the same time we would call onRuntimeInitialized.
-                const _onRuntimeInitialized = libFaust.onRuntimeInitialized;
-                libFaust.onRuntimeInitialized = () => {
-                    if (_onRuntimeInitialized) _onRuntimeInitialized();
-                    f(libFaust);
-                };
-            }
-            return libFaust;
-        };
+        const libFaust = await LibFaust({ locateFile });
         libFaust.lengthBytesUTF8 = (str) => {
             let len = 0;
             for (let i = 0; i < str.length; ++i) {
