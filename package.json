@@ -1,6 +1,6 @@
 {
   "name": "faust2webaudio",
-  "version": "0.6.52",
+  "version": "0.6.53",
   "description": "Generate WebAudio Node from Faust code.",
   "main": "./dist/index.min.js",
   "types": "./dist/index.d.ts",
@@ -12,11 +12,12 @@
   "repository": "http://github.com/grame-cncm/faust2webaudio",
   "license": "GPL-2.0-or-later",
   "devDependencies": {
+    "@types/crypto-js": "^4.0.2",
     "@types/emscripten": "^1.39.5",
     "@types/node": "^16.11.7",
     "@typescript-eslint/eslint-plugin": "^5.3.1",
     "@typescript-eslint/parser": "^5.3.1",
-    "crypto-libraries": "github:chrisveness/crypto",
+    "crypto-js": "^4.1.1",
     "esbuild": "^0.13.13",
     "esbuild-loader": "^2.16.0",
     "eslint": "^8.2.0",
