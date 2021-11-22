@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { SHA256 } from "crypto-js";
+import { sha256 } from "js-sha256";
 import { LibFaustLoader, LibFaust } from "./LibFaustLoader";
 import { FaustWasmToScriptProcessor } from "./FaustWasmToScriptProcessor";
 import { FaustAudioWorkletProcessorWrapper } from "./FaustAudioWorkletProcessor";
@@ -224,7 +224,7 @@ export class Faust {
     private async compileCodes(code: string, argv: string[], internalMemory: boolean): Promise<TCompiledDsp> {
         // Code memory type and argv in the SHAKey to differentiate compilation flags and Monophonic and Polyphonic factories
         const strArgv = argv.join("");
-        const shaKey = SHA256(/* this.expandCode(code, argv) */code + (internalMemory ? "internal_memory" : "external_memory") + strArgv).toString();
+        const shaKey = sha256(/* this.expandCode(code, argv) */code + (internalMemory ? "internal_memory" : "external_memory") + strArgv);
         const compiledDsp = this.dspTable[shaKey];
         if (compiledDsp) {
             this.log("Existing library : " + shaKey);
