@@ -109,7 +109,8 @@ export class Faust {
      * @param {string} code - the source code
      * @param {TFaustCompileOptions} optionsIn - options with audioCtx, bufferSize, voices, useWorklet, args, plot and plotHandler
      */
-    async getNode(code: string, optionsIn: TFaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode> {
+     async getNode<O extends TFaustCompileOptions>(code: string, optionsIn: O): Promise<O["useWorklet"] extends true ?  FaustAudioWorkletNode : FaustScriptProcessorNode> 
+     async getNode(code: string, optionsIn: TFaustCompileOptions): Promise<FaustAudioWorkletNode | FaustScriptProcessorNode>  {
         const { audioCtx, voices, useWorklet, bufferSize, plotHandler, args } = optionsIn;
         const argv = utils.toArgv(args);
         const compiledDsp = await this.compileCodes(code, argv, !voices);
